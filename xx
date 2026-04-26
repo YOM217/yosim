@@ -954,7 +954,7 @@ if (queue.length > 0) {
   currentItem = queue.splice(si, 1)[0];
   seenStack = [currentItem]; stackPos = 0;
   showItem(false);
-}
+}1
 renderHistory();
 </script>
 </body>
