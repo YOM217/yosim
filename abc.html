@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>דאטום — מדריך מהיר למתכנן ולמודד</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0e0e0c;
+    --bg-2: #16161410;
+    --ink: #f4f1ea;
+    --ink-dim: #a8a39a;
+    --ink-faint: #6b665e;
+    --accent: #ff6a1f;
+    --accent-2: #ffb347;
+    --grid: rgba(244, 241, 234, 0.06);
+    --line: rgba(244, 241, 234, 0.18);
+    --warn: #e8d34c;
+  }
+
+  html, body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Heebo', sans-serif;
+    font-weight: 400;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  body {
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 40px 40px;
+    background-position: -1px -1px;
+  }
+
+  .mono { font-family: 'JetBrains Mono', monospace; letter-spacing: -0.02em; }
+
+  /* ─── HEADER ─── */
+  header {
+    border-bottom: 1px solid var(--line);
+    padding: 18px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--bg);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    backdrop-filter: blur(8px);
+    background: rgba(14, 14, 12, 0.85);
+  }
+
+  .logo {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .logo::before {
+    content: '';
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background: var(--accent);
+    clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
+  }
+
+  nav { display: flex; gap: 24px; font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+  nav a {
+    color: var(--ink-dim);
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    transition: color 0.2s;
+  }
+  nav a:hover { color: var(--accent); }
+
+  /* ─── HERO ─── */
+  .hero {
+    padding: 100px 32px 80px;
+    max-width: 1400px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .hero-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-bottom: 32px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .hero-tag::before {
+    content: '';
+    width: 40px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  h1 {
+    font-size: clamp(48px, 8vw, 120px);
+    font-weight: 900;
+    line-height: 0.95;
+    letter-spacing: -0.04em;
+    margin-bottom: 32px;
+  }
+
+  h1 .stroke {
+    -webkit-text-stroke: 1.5px var(--ink);
+    color: transparent;
+    font-style: italic;
+    font-weight: 300;
+  }
+
+  .hero-sub {
+    font-size: 20px;
+    color: var(--ink-dim);
+    max-width: 620px;
+    line-height: 1.6;
+    margin-bottom: 48px;
+  }
+
+  .hero-sub strong { color: var(--accent-2); font-weight: 500; }
+
+  .hero-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 24px;
+    border-top: 1px solid var(--line);
+    padding-top: 32px;
+    max-width: 800px;
+  }
+
+  .stat-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 48px;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: 13px;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-top: 8px;
+  }
+
+  /* ─── SECTION GENERIC ─── */
+  section {
+    padding: 80px 32px;
+    max-width: 1400px;
+    margin: 0 auto;
+    border-top: 1px solid var(--line);
+  }
+
+  .sec-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    margin-bottom: 16px;
+  }
+
+  h2 {
+    font-size: clamp(32px, 5vw, 64px);
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    margin-bottom: 48px;
+    max-width: 900px;
+  }
+
+  /* ─── ANALOGY (THE CORNER) ─── */
+  .corner-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: center;
+  }
+
+  @media (max-width: 900px) {
+    .corner-grid { grid-template-columns: 1fr; }
+  }
+
+  .corner-svg {
+    background: #1a1a17;
+    border: 1px solid var(--line);
+    padding: 32px;
+    aspect-ratio: 1;
+  }
+
+  .corner-svg svg { width: 100%; height: 100%; }
+
+  .corner-text h3 {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 24px;
+    line-height: 1.2;
+  }
+
+  .corner-list {
+    list-style: none;
+    counter-reset: corner;
+  }
+
+  .corner-list li {
+    counter-increment: corner;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--line);
+    display: grid;
+    grid-template-columns: 60px 80px 1fr;
+    align-items: baseline;
+    gap: 16px;
+  }
+
+  .corner-list li::before {
+    content: counter(corner, decimal-leading-zero);
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--accent);
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  .corner-list .key {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  .corner-list .desc {
+    color: var(--ink-dim);
+    font-size: 16px;
+    line-height: 1.5;
+  }
+
+  /* ─── TYPES OF DATUMS ─── */
+  .types-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+  }
+
+  @media (max-width: 900px) { .types-grid { grid-template-columns: 1fr; } }
+
+  .type-card {
+    background: #16161410;
+    background: #161614;
+    padding: 40px 32px;
+    position: relative;
+    transition: background 0.3s;
+    cursor: default;
+  }
+
+  .type-card:hover { background: #1c1c19; }
+
+  .type-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 80px;
+    font-weight: 900;
+    line-height: 1;
+    color: transparent;
+    -webkit-text-stroke: 1px var(--accent);
+    margin-bottom: 16px;
+  }
+
+  .type-name {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .type-locks {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent-2);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 24px;
+    padding: 6px 10px;
+    background: rgba(255, 179, 71, 0.08);
+    display: inline-block;
+    border: 1px solid rgba(255, 179, 71, 0.2);
+  }
+
+  .type-desc {
+    color: var(--ink-dim);
+    font-size: 15px;
+    line-height: 1.7;
+    margin-bottom: 20px;
+  }
+
+  .type-analogy {
+    border-top: 1px dashed var(--line);
+    padding-top: 16px;
+    font-size: 14px;
+    color: var(--ink-faint);
+    font-style: italic;
+  }
+
+  .type-analogy::before {
+    content: 'אנלוגיה';
+    display: block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-bottom: 4px;
+    font-style: normal;
+  }
+
+  /* ─── SYMBOLS DECODER ─── */
+  .symbols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+
+  @media (max-width: 900px) { .symbols { grid-template-columns: 1fr; } }
+
+  .symbol-row {
+    border: 1px solid var(--line);
+    padding: 28px;
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 24px;
+    align-items: center;
+    background: #161614;
+  }
+
+  .symbol-vis {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--line);
+    background: #0e0e0c;
+  }
+
+  .symbol-row h4 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .symbol-row p {
+    color: var(--ink-dim);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* ─── HIERARCHY (THE 3-2-1) ─── */
+  .hierarchy {
+    background: #161614;
+    border: 1px solid var(--line);
+    padding: 48px;
+    margin-top: 32px;
+  }
+
+  .hier-row {
+    display: grid;
+    grid-template-columns: 80px 100px 1fr 200px;
+    gap: 24px;
+    align-items: center;
+    padding: 24px 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .hier-row:last-child { border-bottom: none; }
+
+  @media (max-width: 900px) {
+    .hier-row { grid-template-columns: 60px 80px 1fr; }
+    .hier-bar { display: none; }
+  }
+
+  .hier-letter {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 56px;
+    font-weight: 900;
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  .hier-rank {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+  }
+
+  .hier-rank strong { display: block; color: var(--ink); font-size: 16px; margin-top: 4px; letter-spacing: 0; }
+
+  .hier-desc { color: var(--ink-dim); font-size: 15px; line-height: 1.6; }
+
+  .hier-bar {
+    height: 8px;
+    background: rgba(255, 106, 31, 0.15);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hier-bar::after {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    height: 100%;
+    background: var(--accent);
+    width: var(--w, 50%);
+  }
+
+  /* ─── WORKFLOW ─── */
+  .workflow {
+    counter-reset: step;
+  }
+
+  .step {
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    gap: 32px;
+    padding: 32px 0;
+    border-top: 1px solid var(--line);
+    counter-increment: step;
+  }
+
+  .step:last-child { border-bottom: 1px solid var(--line); }
+
+  .step-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    color: var(--ink-faint);
+    letter-spacing: 0.1em;
+  }
+
+  .step-num::before {
+    content: 'STEP / ' counter(step, decimal-leading-zero);
+  }
+
+  .step-title {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+
+  .step-body { color: var(--ink-dim); font-size: 16px; max-width: 720px; }
+
+  .step-body code {
+    font-family: 'JetBrains Mono', monospace;
+    background: #1a1a17;
+    border: 1px solid var(--line);
+    padding: 2px 8px;
+    color: var(--accent-2);
+    font-size: 14px;
+  }
+
+  /* ─── MISTAKES ─── */
+  .mistake-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+  }
+
+  @media (max-width: 700px) { .mistake-grid { grid-template-columns: 1fr; } }
+
+  .mistake {
+    border: 1px solid rgba(232, 211, 76, 0.3);
+    background: rgba(232, 211, 76, 0.04);
+    padding: 28px;
+    position: relative;
+  }
+
+  .mistake::before {
+    content: '⚠';
+    position: absolute;
+    top: 24px;
+    left: 24px;
+    color: var(--warn);
+    font-size: 24px;
+  }
+
+  .mistake h4 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    padding-left: 40px;
+    color: var(--warn);
+  }
+
+  .mistake p { color: var(--ink-dim); font-size: 14px; line-height: 1.7; }
+  .mistake .fix {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px dashed rgba(232, 211, 76, 0.2);
+    color: var(--ink);
+    font-size: 14px;
+  }
+  .mistake .fix::before {
+    content: 'הפתרון: ';
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  /* ─── MENTAL MODEL ─── */
+  .mental {
+    background: var(--accent);
+    color: var(--bg);
+    padding: 80px 48px;
+    margin: 0 -32px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .mental::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-image:
+      linear-gradient(rgba(0,0,0,0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,0,0,0.06) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+  }
+
+  .mental-inner { max-width: 1000px; position: relative; }
+
+  .mental .sec-label { color: rgba(14, 14, 12, 0.6); }
+
+  .mental h2 {
+    color: var(--bg);
+    font-size: clamp(36px, 6vw, 80px);
+  }
+
+  .mental-quote {
+    font-family: 'Heebo', sans-serif;
+    font-size: clamp(22px, 3vw, 32px);
+    font-weight: 500;
+    line-height: 1.4;
+    max-width: 800px;
+    margin-top: 32px;
+    padding-right: 32px;
+    border-right: 4px solid var(--bg);
+  }
+
+  /* ─── QUIZ ─── */
+  .quiz {
+    background: #161614;
+    border: 1px solid var(--line);
+    padding: 40px;
+  }
+
+  .quiz-q {
+    font-size: 20px;
+    font-weight: 500;
+    margin-bottom: 24px;
+    line-height: 1.5;
+  }
+
+  .quiz-options {
+    display: grid;
+    gap: 12px;
+  }
+
+  .quiz-opt {
+    background: transparent;
+    border: 1px solid var(--line);
+    color: var(--ink);
+    padding: 16px 20px;
+    text-align: right;
+    font-family: inherit;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.2s;
+    direction: rtl;
+  }
+
+  .quiz-opt:hover {
+    border-color: var(--accent);
+    background: rgba(255, 106, 31, 0.05);
+  }
+
+  .quiz-opt.correct {
+    border-color: #5dcaa5;
+    background: rgba(93, 202, 165, 0.08);
+    color: #5dcaa5;
+  }
+
+  .quiz-opt.wrong {
+    border-color: #e24b4a;
+    background: rgba(226, 75, 74, 0.08);
+    color: #e24b4a;
+  }
+
+  .quiz-opt.disabled { pointer-events: none; opacity: 0.6; }
+
+  .quiz-feedback {
+    margin-top: 20px;
+    padding: 16px;
+    border-right: 3px solid var(--accent);
+    background: rgba(255, 106, 31, 0.05);
+    font-size: 14px;
+    color: var(--ink-dim);
+    display: none;
+  }
+
+  .quiz-feedback.show { display: block; }
+
+  .quiz-nav {
+    margin-top: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--line);
+    padding-top: 20px;
+  }
+
+  .quiz-counter {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--ink-faint);
+    letter-spacing: 0.1em;
+  }
+
+  .quiz-next {
+    background: var(--accent);
+    color: var(--bg);
+    border: none;
+    padding: 12px 24px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+
+  .quiz-next:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  /* ─── FOOTER ─── */
+  footer {
+    border-top: 1px solid var(--line);
+    padding: 48px 32px;
+    margin-top: 80px;
+    text-align: center;
+    color: var(--ink-faint);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+  }
+
+  footer .ascii {
+    font-size: 10px;
+    line-height: 1.2;
+    margin-bottom: 24px;
+    white-space: pre;
+    color: var(--ink-faint);
+  }
+
+  /* ─── ANIMATIONS ─── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .fade-up { animation: fadeUp 0.8s ease-out backwards; }
+  .fade-up:nth-child(2) { animation-delay: 0.1s; }
+  .fade-up:nth-child(3) { animation-delay: 0.2s; }
+  .fade-up:nth-child(4) { animation-delay: 0.3s; }
+
+  /* SVG colors */
+  .svg-grid { stroke: rgba(244, 241, 234, 0.1); stroke-width: 0.5; }
+  .svg-part { fill: #2a2a25; stroke: var(--ink); stroke-width: 1.5; }
+  .svg-floor { fill: var(--accent); opacity: 0.85; }
+  .svg-wall { fill: var(--accent-2); opacity: 0.75; }
+  .svg-front { fill: #5dcaa5; opacity: 0.75; }
+  .svg-text { fill: var(--ink); font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 700; }
+  .svg-arrow { stroke: var(--ink-dim); stroke-width: 1; fill: none; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">DATUM/REF</div>
+  <nav>
+    <a href="#analogy">פינה</a>
+    <a href="#types">סוגים</a>
+    <a href="#symbols">סימנים</a>
+    <a href="#hierarchy">היררכיה</a>
+    <a href="#workflow">תהליך</a>
+    <a href="#mistakes">טעויות</a>
+    <a href="#quiz">תרגול</a>
+  </nav>
+</header>
+
+<!-- ─── HERO ─── -->
+<section class="hero">
+  <div class="hero-tag">מדריך עבודה / שרטוט ומדידה / GD&T</div>
+  <h1>
+    הדאטום הוא<br>
+    <span class="stroke">נקודת האפס</span><br>
+    של החלק.
+  </h1>
+  <p class="hero-sub">
+    בלי דאטום, כל מודד מקבל תוצאה אחרת.<br>
+    עם דאטום — <strong>אותו חלק נמדד אותו דבר על כל מכונה בעולם</strong>.
+    זה מה שמבדיל בין שרטוט הנדסי לציור.
+  </p>
+
+  <div class="hero-stats">
+    <div>
+      <div class="stat-num">3</div>
+      <div class="stat-label">סוגי דאטום</div>
+    </div>
+    <div>
+      <div class="stat-num">6</div>
+      <div class="stat-label">דרגות חופש לנעול</div>
+    </div>
+    <div>
+      <div class="stat-num">A·B·C</div>
+      <div class="stat-label">סדר היררכי קבוע</div>
+    </div>
+    <div>
+      <div class="stat-num">3-2-1</div>
+      <div class="stat-label">שיטת היישור</div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── ANALOGY: THE CORNER ─── -->
+<section id="analogy">
+  <div class="sec-label">01 — האנלוגיה</div>
+  <h2>חלק לכוד בפינה.</h2>
+
+  <div class="corner-grid">
+    <div class="corner-svg">
+      <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+        <!-- floor (A) -->
+        <polygon points="80,280 360,280 320,320 40,320" class="svg-floor"/>
+        <!-- back wall (B) -->
+        <polygon points="80,80 360,80 360,280 80,280" class="svg-wall"/>
+        <!-- side wall (C) -->
+        <polygon points="40,120 80,80 80,280 40,320" class="svg-front"/>
+
+        <!-- part (cube) -->
+        <g>
+          <polygon points="160,200 280,200 260,220 140,220" fill="#1a1a17" stroke="#f4f1ea" stroke-width="1.5"/>
+          <polygon points="160,140 280,140 280,200 160,200" fill="#2a2a25" stroke="#f4f1ea" stroke-width="1.5"/>
+          <polygon points="140,160 160,140 160,220 140,240" fill="#252521" stroke="#f4f1ea" stroke-width="1.5"/>
+        </g>
+
+        <!-- labels -->
+        <text x="220" y="305" text-anchor="middle" class="svg-text" fill="#0e0e0c">A</text>
+        <text x="220" y="115" text-anchor="middle" class="svg-text">B</text>
+        <text x="55" y="200" text-anchor="middle" class="svg-text">C</text>
+
+        <!-- arrows -->
+        <line x1="220" y1="100" x2="220" y2="135" class="svg-arrow" marker-end="url(#a1)"/>
+        <line x1="105" y1="290" x2="155" y2="225" class="svg-arrow" marker-end="url(#a1)"/>
+        <line x1="60" y1="180" x2="135" y2="180" class="svg-arrow" marker-end="url(#a1)"/>
+
+        <defs>
+          <marker id="a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#a8a39a"/>
+          </marker>
+        </defs>
+      </svg>
+    </div>
+
+    <div class="corner-text">
+      <h3>שלוש דחיפות. שלוש הגדרות.</h3>
+      <ol class="corner-list">
+        <li>
+          <span class="key">A</span>
+          <span class="desc"><strong style="color:var(--ink)">הרצפה.</strong> משטח שעליו החלק יושב. נועל גובה וזוויות.</span>
+        </li>
+        <li>
+          <span class="key">B</span>
+          <span class="desc"><strong style="color:var(--ink)">הקיר.</strong> משטח שאליו החלק נצמד מהצד. נועל סיבוב במישור.</span>
+        </li>
+        <li>
+          <span class="key">C</span>
+          <span class="desc"><strong style="color:var(--ink)">הפינה.</strong> עצירה אחרונה שמונעת זחילה הצידה.</span>
+        </li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- ─── TYPES ─── -->
+<section id="types">
+  <div class="sec-label">02 — שלושה סוגי דאטום</div>
+  <h2>כל סוג נועל אחרת.</h2>
+
+  <div class="types-grid">
+    <div class="type-card">
+      <div class="type-num">01</div>
+      <div class="type-name">Plane / משטח</div>
+      <div class="type-locks">נועל 3 דרגות חופש</div>
+      <p class="type-desc">המשטח הגדול והשטוח ביותר על החלק. נמדד עם מינימום 4 נקודות.</p>
+      <div class="type-analogy">רצפה. החלק יושב עליה ולא יכול לרחף, להטות או להתהפך.</div>
+    </div>
+
+    <div class="type-card">
+      <div class="type-num">02</div>
+      <div class="type-name">Circle / Cylinder</div>
+      <div class="type-locks">נועל 2 דרגות חופש</div>
+      <p class="type-desc">חור או ציר גליל. נמדד כמעגל או צילינדר. הציר עצמו הוא הדאטום.</p>
+      <div class="type-analogy">מסמר בקיר. החלק תלוי עליו — לא מחליק לצדדים, אבל יכול עוד להסתובב.</div>
+    </div>
+
+    <div class="type-card">
+      <div class="type-num">03</div>
+      <div class="type-name">Line / Point</div>
+      <div class="type-locks">נועל 1 דרגת חופש</div>
+      <p class="type-desc">קצה ישר או נקודה בודדת. מינימום 5–7 נקודות לחישוב הקו.</p>
+      <div class="type-analogy">עצירה. מונעת מהחלק את הסיבוב האחרון שעוד נשאר.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── SYMBOLS ─── -->
+<section id="symbols">
+  <div class="sec-label">03 — מילון הסימנים בשרטוט</div>
+  <h2>איך מזהים דאטום על נייר.</h2>
+
+  <div class="symbols">
+    <div class="symbol-row">
+      <div class="symbol-vis">
+        <svg viewBox="0 0 100 100" width="80" height="80">
+          <line x1="20" y1="80" x2="80" y2="80" stroke="#f4f1ea" stroke-width="2"/>
+          <polygon points="50,80 44,90 56,90" fill="#ff6a1f" stroke="#f4f1ea" stroke-width="1"/>
+          <line x1="50" y1="90" x2="50" y2="50" stroke="#f4f1ea" stroke-width="1"/>
+          <rect x="38" y="30" width="24" height="20" fill="none" stroke="#f4f1ea" stroke-width="1.5"/>
+          <text x="50" y="44" text-anchor="middle" fill="#f4f1ea" font-family="JetBrains Mono" font-size="12" font-weight="700">A</text>
+        </svg>
+      </div>
+      <div>
+        <h4>תיבת זיהוי דאטום</h4>
+        <p>ריבוע עם אות מחובר במשולש מלא למשטח. אומר: <span class="mono" style="color:var(--accent)">"זה משטח A"</span>. אם המשולש נוגע בקו מידה של חור — הדאטום הוא הציר.</p>
+      </div>
+    </div>
+
+    <div class="symbol-row">
+      <div class="symbol-vis">
+        <svg viewBox="0 0 160 60" width="140" height="50">
+          <rect x="2" y="10" width="156" height="40" fill="none" stroke="#f4f1ea" stroke-width="1.5"/>
+          <line x1="32" y1="10" x2="32" y2="50" stroke="#f4f1ea" stroke-width="1.5"/>
+          <line x1="78" y1="10" x2="78" y2="50" stroke="#f4f1ea" stroke-width="1.5"/>
+          <line x1="104" y1="10" x2="104" y2="50" stroke="#f4f1ea" stroke-width="1.5"/>
+          <line x1="130" y1="10" x2="130" y2="50" stroke="#f4f1ea" stroke-width="1.5"/>
+          <text x="17" y="36" text-anchor="middle" fill="#ff6a1f" font-family="JetBrains Mono" font-size="16" font-weight="700">⊥</text>
+          <text x="55" y="36" text-anchor="middle" fill="#f4f1ea" font-family="JetBrains Mono" font-size="11">0.05</text>
+          <text x="91" y="36" text-anchor="middle" fill="#ffb347" font-family="JetBrains Mono" font-size="12" font-weight="700">A</text>
+          <text x="117" y="36" text-anchor="middle" fill="#ffb347" font-family="JetBrains Mono" font-size="12" font-weight="700">B</text>
+          <text x="144" y="36" text-anchor="middle" fill="#ffb347" font-family="JetBrains Mono" font-size="12" font-weight="700">C</text>
+        </svg>
+      </div>
+      <div>
+        <h4>תיבת בקרה גאומטרית</h4>
+        <p>מלבן ארוך מחולק לתאים. <strong style="color:var(--accent-2)">סדר התאים = סדר הדאטומים</strong>. קוראים שמאלה לימין: סמל GD&T, סובלנות, ואז A → B → C.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── HIERARCHY ─── -->
+<section id="hierarchy">
+  <div class="sec-label">04 — שיטת 3-2-1</div>
+  <h2>ההיררכיה אינה מוסכמה. היא חוק.</h2>
+
+  <div class="hierarchy">
+    <div class="hier-row">
+      <div class="hier-letter">A</div>
+      <div class="hier-rank">PRIMARY<strong>ראשי</strong></div>
+      <div class="hier-desc">המשטח הגדול והפונקציונלי ביותר. כאן החלק "יושב" בהרכבה. <strong style="color:var(--ink)">תמיד המשטח הראשון לבחור.</strong></div>
+      <div class="hier-bar" style="--w: 100%"></div>
+    </div>
+    <div class="hier-row">
+      <div class="hier-letter">B</div>
+      <div class="hier-rank">SECONDARY<strong>משני</strong></div>
+      <div class="hier-desc">משטח או קו מאונך ל-A. נועל את הסיבוב במישור. בוחרים את האורך הגדול ביותר הזמין.</div>
+      <div class="hier-bar" style="--w: 66%"></div>
+    </div>
+    <div class="hier-row">
+      <div class="hier-letter">C</div>
+      <div class="hier-rank">TERTIARY<strong>שלישוני</strong></div>
+      <div class="hier-desc">נקודה או משטח מאונך לשניים הראשונים. סוגר את דרגת החופש האחרונה.</div>
+      <div class="hier-bar" style="--w: 33%"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── WORKFLOW ─── -->
+<section id="workflow">
+  <div class="sec-label">05 — התהליך במכונת CMM</div>
+  <h2>מהשרטוט לתוצאה.</h2>
+
+  <div class="workflow">
+    <div class="step">
+      <div class="step-num"></div>
+      <div>
+        <div class="step-title">קרא את השרטוט.</div>
+        <p class="step-body">חפש את הריבועים עם האותיות. רשום A, B, C ואיזה סוג גאומטריה — <code>plane</code>, <code>circle</code>, או <code>line</code>.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num"></div>
+      <div>
+        <div class="step-title">הצמד את החלק לפינה הדמיונית.</div>
+        <p class="step-body">דמיין שלוש דחיפות: למטה (A), הצידה (B), קדימה (C). אם החלק עדיין יכול לזוז — חסר דאטום.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num"></div>
+      <div>
+        <div class="step-title">מדוד את הדאטומים בסדר.</div>
+        <p class="step-body">A ראשון, B שני, C שלישי. <code>plane</code> דורש 4+ נקודות, <code>circle</code> 4+, <code>line</code> 5–7. אל תקצר.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num"></div>
+      <div>
+        <div class="step-title">בנה את מערכת הצירים.</div>
+        <p class="step-body">A → ציר Z. B → ציר X (או Y). C → אפס בכיוון הנותר. עכשיו ה-CMM "שכח" את עצמו ועובד במערכת של החלק.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num"></div>
+      <div>
+        <div class="step-title">קרא את תיבת הבקרה לכל מידה.</div>
+        <p class="step-body">לא כל מידה משתמשת בכל הדאטומים. אם התיבה אומרת <code>| ⊕ | A | B |</code> — מודדים רק יחסית ל-A ו-B, גם אם מדדת את C.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── MISTAKES ─── -->
+<section id="mistakes">
+  <div class="sec-label">06 — טעויות נפוצות</div>
+  <h2>מה הולך לא נכון.</h2>
+
+  <div class="mistake-grid">
+    <div class="mistake">
+      <h4>לבחור A קטן וקרוב</h4>
+      <p>בחירת משטח קטן בתור A רק כי קל להגיע אליו. החלק יושב על דאטום צר → מתנדנד → חזרתיות גרועה.</p>
+      <p class="fix">תמיד הגדול והשטוח ביותר, גם אם דורש להפוך את החלק.</p>
+    </div>
+
+    <div class="mistake">
+      <h4>להתעלם מההיררכיה</h4>
+      <p>שלושה משטחים מוצהרים כדאטומים בשרטוט, ואתה לוקח אותם לפי נוחות הגישה ולא לפי A→B→C.</p>
+      <p class="fix">הסדר נקבע בשרטוט. ללא יוצא מן הכלל.</p>
+    </div>
+
+    <div class="mistake">
+      <h4>יישור אחד לכל המידות</h4>
+      <p>מיישרים פעם אחת לפי A-B-C ומודדים הכל מאותה מערכת. אבל מידה ספציפית דורשת A-C-D.</p>
+      <p class="fix">קרא את תיבת הבקרה של כל מידה. יישר מחדש אם צריך.</p>
+    </div>
+
+    <div class="mistake">
+      <h4>שתי נקודות = קו</h4>
+      <p>לוקחים שתי נקודות רחוקות וקוראים לזה Line. הקצה לא באמת ישר — והקו משתנה לפי איפה דגמת.</p>
+      <p class="fix">5–7 נקודות לפחות לאורך הקצה. תן למכונה לחשב Best-Fit.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ─── MENTAL MODEL ─── -->
+<section style="padding: 0;">
+  <div class="mental">
+    <div class="mental-inner">
+      <div class="sec-label">07 — מודל מחשבתי</div>
+      <h2>לפני שאתה נוגע במכונה —</h2>
+      <div class="mental-quote">
+        איזה משטח הוא הרצפה?<br>
+        איזה משטח הוא הקיר?<br>
+        איפה הפינה?<br><br>
+        אם החלק עדיין זז במחשבה שלך, היישור לא שלם.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── QUIZ ─── -->
+<section id="quiz">
+  <div class="sec-label">08 — תרגול</div>
+  <h2>בדוק את עצמך.</h2>
+
+  <div class="quiz" id="quizBox">
+    <div class="quiz-q" id="quizQ"></div>
+    <div class="quiz-options" id="quizOpts"></div>
+    <div class="quiz-feedback" id="quizFb"></div>
+    <div class="quiz-nav">
+      <span class="quiz-counter" id="quizCounter"></span>
+      <button class="quiz-next" id="quizNext" disabled>הבא →</button>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="ascii">┌────────────────────────────────┐
+│   DATUM ≠ EDGE.  DATUM = ZERO. │
+└────────────────────────────────┘</div>
+  <div>מדריך לימוד אישי / שרטוט · CMM · GD&T</div>
+</footer>
+
+<script>
+  const quiz = [
+    {
+      q: 'בשרטוט סימנת ריבועים על ארבעה משטחים. כמה דאטומים תיצור במערכת הצירים של ה-CMM?',
+      opts: [
+        'ארבעה — אחד לכל ריבוע',
+        'שלושה — תמיד A, B, C',
+        'תלוי בתיבת הבקרה של המידה הספציפית',
+        'אחד — רק הראשי'
+      ],
+      correct: 2,
+      fb: 'הריבועים הם רק רשימת מועמדים. תיבת הבקרה של כל מידה קובעת אילו דאטומים משחקים בה.'
+    },
+    {
+      q: 'איזה סוג דאטום נועל הכי הרבה דרגות חופש?',
+      opts: [
+        'Line — כי הוא ארוך',
+        'Circle — כי הוא דו-מימדי',
+        'Plane — נועל 3 דרגות',
+        'Point — כי הוא מדויק'
+      ],
+      correct: 2,
+      fb: 'Plane נועל 3 דרגות (Z + שני סיבובים). לכן הוא תמיד דאטום ראשי A.'
+    },
+    {
+      q: 'החלק עדיין יכול להסתובב סביב ציר אחרי שהצמדת אותו ל-A ול-B. מה חסר?',
+      opts: [
+        'דאטום שלישוני C',
+        'עוד נקודות מדידה ב-A',
+        'יישור מחדש של B',
+        'דבר — זה תקין'
+      ],
+      correct: 0,
+      fb: 'חסר C. שני דאטומים נועלים 5 דרגות חופש, נשארה אחת — והיא תמיד דורשת C.'
+    },
+    {
+      q: 'מה ההבדל בין דאטום על קו מידה של חור לדאטום על המשטח עצמו?',
+      opts: [
+        'אין הבדל',
+        'על קו המידה — הדאטום הוא ציר הסימטריה',
+        'על המשטח — הדאטום הוא הקצה',
+        'תלוי בסוג החור'
+      ],
+      correct: 1,
+      fb: 'משולש שנוגע בקו מידה אומר: הדאטום הוא הציר/המרכז, לא משטח פיזי.'
+    },
+    {
+      q: 'לקחת שתי נקודות ובנית מהן Line כדאטום. מה הבעיה?',
+      opts: [
+        'אין בעיה — שתי נקודות מגדירות קו',
+        'הקו תלוי באיזה שתי נקודות בחרת — הסטיות מזיזות אותו',
+        'צריך תמיד שלוש נקודות',
+        'Line לא יכול להיות דאטום'
+      ],
+      correct: 1,
+      fb: 'הקצה אף פעם לא ישר באמת. דוגמים 5–7 נקודות לאורכו ומחשבים Best-Fit.'
+    }
+  ];
+
+  let idx = 0, answered = false;
+
+  function render() {
+    const Q = quiz[idx];
+    document.getElementById('quizQ').textContent = Q.q;
+    document.getElementById('quizCounter').textContent = `${String(idx+1).padStart(2,'0')} / ${String(quiz.length).padStart(2,'0')}`;
+    const opts = document.getElementById('quizOpts');
+    opts.innerHTML = '';
+    Q.opts.forEach((opt, i) => {
+      const b = document.createElement('button');
+      b.className = 'quiz-opt';
+      b.textContent = opt;
+      b.onclick = () => answer(i);
+      opts.appendChild(b);
+    });
+    document.getElementById('quizFb').classList.remove('show');
+    document.getElementById('quizNext').disabled = true;
+    answered = false;
+  }
+
+  function answer(i) {
+    if (answered) return;
+    answered = true;
+    const Q = quiz[idx];
+    const buttons = document.querySelectorAll('.quiz-opt');
+    buttons.forEach((b, j) => {
+      b.classList.add('disabled');
+      if (j === Q.correct) b.classList.add('correct');
+      else if (j === i) b.classList.add('wrong');
+    });
+    const fb = document.getElementById('quizFb');
+    fb.textContent = Q.fb;
+    fb.classList.add('show');
+    document.getElementById('quizNext').disabled = false;
+  }
+
+  document.getElementById('quizNext').onclick = () => {
+    idx = (idx + 1) % quiz.length;
+    render();
+  };
+
+  render();
+</script>
+
+</body>
+</html>
