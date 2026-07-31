@@ -1,2229 +1,1404 @@
 <!DOCTYPE html>
-
 <html dir="rtl" lang="he">
 <head>
 <meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" name="viewport"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" name="viewport"/>
 <meta content="#07111f" name="theme-color"/>
 <meta content="yes" name="apple-mobile-web-app-capable"/>
 <meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"/>
 <title>BDS Dashboard — Version 1.2.5</title>
 <style>
-:root{
-  --bg:#07111f;
-  --panel:#0f1c2d;
-  --panel2:#0a1625;
-  --line:#29415d;
-  --text:#f7f9fc;
-  --muted:#9eacc0;
-  --blue:#328cff;
-  --blue2:#58adff;
-  --green:#21c779;
-  --yellow:#ffbd45;
-  --red:#ff5d6c;
-  --purple:#9b7cff;
-  --shadow:0 14px 36px rgba(0,0,0,.28);
-  --radius:20px;
-}
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html{background:var(--bg)}
-body{
-  margin:0;
-  min-height:100vh;
-  color:var(--text);
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
-  background:
-    radial-gradient(circle at top right,rgba(50,140,255,.12),transparent 32%),
-    linear-gradient(180deg,#07111f 0%,#091524 100%);
-  padding:calc(env(safe-area-inset-top) + 10px) 0 calc(env(safe-area-inset-bottom) + 108px);
-}
-button,input{font:inherit}
-button{touch-action:manipulation}
-.app{width:min(100%,560px);margin:auto;padding:0 14px}
-.header{
-  display:flex;justify-content:space-between;align-items:flex-start;gap:12px;
-  margin-bottom:14px
-}
-.header h1{margin:0 0 4px;font-size:25px;line-height:1.15}
-.header p{margin:0;color:var(--muted);font-size:13px;line-height:1.4}
-.clock{
-  flex:0 0 auto;background:#0c1a2a;border:1px solid var(--line);
-  border-radius:14px;padding:9px 11px;font-size:14px;font-weight:900
-}
-.panel,.machine{
-  background:linear-gradient(180deg,var(--panel),#0c1828);
-  border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)
-}
-.summary{padding:15px;margin-bottom:12px}
-.summary-head,.section-head,.machine-head{
-  display:flex;align-items:center;justify-content:space-between;gap:10px
-}
-.summary-head{margin-bottom:12px}
-.summary-head strong,.section-head strong{font-size:17px}
-.live{
-  font-size:11px;font-weight:900;color:#a9d4ff;background:rgba(50,140,255,.12);
-  border:1px solid rgba(50,140,255,.32);border-radius:999px;padding:6px 9px
-}
-.metrics{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-.metric{
-  background:rgba(7,17,31,.72);border:1px solid var(--line);
-  border-radius:15px;padding:11px;min-height:73px
-}
-.metric span{display:block;color:var(--muted);font-size:11px;margin-bottom:6px}
-.metric strong{display:block;font-size:19px;line-height:1.2}
-.metric.wide{grid-column:1/-1}
-.machines{display:grid;gap:11px}
-.machine{
-  position:relative;overflow:hidden;padding:14px
-}
-.machine::before{
-  content:"";position:absolute;right:0;top:0;bottom:0;width:5px;background:var(--accent)
-}
-.machine[data-state="running"]{border-color:rgba(33,199,121,.5)}
-.machine[data-state="finished"]{opacity:.86}
-.machine-head{margin-bottom:12px}
-.machine-title{display:flex;align-items:center;gap:10px}
-.machine-icon{
-  width:40px;height:40px;border-radius:13px;display:grid;place-items:center;
-  background:#13263c;border:1px solid #355172;font-weight:900
-}
-.machine-title strong{display:block;font-size:18px}
-.machine-title small{display:block;color:var(--muted);font-size:12px;margin-top:4px}
-.state{
-  flex:0 0 auto;border-radius:999px;padding:7px 10px;
-  background:#081421;border:1px solid var(--line);color:#cbd5e1;
-  font-size:11px;font-weight:900
-}
-.state.running{color:#80e8b4;border-color:rgba(33,199,121,.42);background:rgba(33,199,121,.1)}
-.state.finished{color:#d0d7df}
-.fields{display:grid;grid-template-columns:.72fr 1.28fr;gap:9px}
-.field.full{grid-column:1/-1}
-label{display:block;color:var(--muted);font-size:12px;font-weight:800;margin:0 0 7px}
-input{
-  width:100%;height:52px;border-radius:14px;border:1px solid #314967;
-  background:#081421;color:#fff;padding:0 12px;outline:none;font-size:16px;
-  appearance:none;-webkit-appearance:none
-}
-input:focus{border-color:var(--blue2);box-shadow:0 0 0 3px rgba(50,140,255,.14)}
-input[type="number"]{text-align:center;font-size:21px;font-weight:900}
-.actions{display:grid;grid-template-columns:1.15fr .95fr auto;gap:8px;margin-top:10px}
-.btn{
-  min-height:52px;border:0;border-radius:14px;font-weight:900;
-  display:flex;align-items:center;justify-content:center;gap:7px;
-  cursor:pointer;transition:transform .08s ease,filter .08s ease
-}
-.btn:active{transform:scale(.98);filter:brightness(.95)}
-.btn-primary{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff}
-.btn-success{background:#153825;color:#83e8b6;border:1px solid #2d7653}
-.btn-soft{background:#17263a;color:#e2e9f1;border:1px solid #314967}
-.btn-danger{background:#32181e;color:#ffb1b9;border:1px solid #73323d}
-.btn-whatsapp{background:#20b85a;color:#fff}
-.btn-history{background:#203754;color:#fff;border:1px solid #3c5d82}
-.btn-small{min-height:42px;padding:0 12px;font-size:13px}
-.clear-btn{width:58px}
-.result{
-  display:grid;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid var(--line)
-}
-.result-row{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
-.result-row span{color:var(--muted);font-size:12px}
-.result-row strong{font-size:14px;text-align:left;line-height:1.35}
-.countdown{font-size:19px!important}
-.qc-panel{padding:14px;margin-top:12px}
-.section-head{margin-bottom:12px}
-.qc-grid{display:grid;grid-template-columns:1.2fr .7fr;gap:9px}
-.qc-actions{display:grid;grid-template-columns:1fr auto;gap:8px;margin-top:10px}
-.qc-list{display:grid;gap:8px;margin-top:11px}
-.qc-row{
-  display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;
-  background:#081421;border:1px solid var(--line);border-radius:14px;padding:10px
-}
-.qc-row strong{font-size:15px}
-.qc-meta{font-size:11px;color:var(--muted);margin-top:4px}
-.qc-side{display:flex;align-items:center;gap:8px}
-.qc-qty{font-size:22px;font-weight:900;color:#7de7b1;min-width:32px;text-align:center}
-.qc-delete{
-  min-width:52px;height:39px;border-radius:11px;border:1px solid #71303c;
-  background:#30171d;color:#ffb0b8;font-size:12px;font-weight:900
-}
-.empty{
-  text-align:center;color:var(--muted);font-size:13px;padding:14px;
-  border:1px dashed #334b68;border-radius:14px
-}
-.bottom{
-  position:fixed;z-index:50;right:0;left:0;bottom:0;
-  padding:10px max(12px,env(safe-area-inset-right))
-    calc(10px + env(safe-area-inset-bottom))
-    max(12px,env(safe-area-inset-left));
-  background:rgba(7,17,31,.95);backdrop-filter:blur(18px);
-  -webkit-backdrop-filter:blur(18px);border-top:1px solid rgba(255,255,255,.08)
-}
-.bottom-inner{
-  width:min(100%,560px);margin:auto;display:grid;
-  grid-template-columns:1.15fr .95fr .82fr .68fr;gap:7px
-}
-.bottom .btn{min-height:58px}
-.overlay{
-  display:none;position:fixed;z-index:90;inset:0;background:rgba(0,0,0,.68);
-  padding:calc(env(safe-area-inset-top) + 12px) 12px calc(env(safe-area-inset-bottom) + 12px)
-}
-.overlay.open{display:flex;align-items:flex-end;justify-content:center}
-.sheet{
-  width:min(100%,620px);max-height:92vh;overflow:auto;
-  background:#0e1a2a;border:1px solid #34506f;border-radius:24px;
-  box-shadow:0 24px 60px rgba(0,0,0,.45);padding:16px
-}
-.sheet-head{
-  position:sticky;top:-16px;z-index:4;background:#0e1a2a;
-  display:flex;justify-content:space-between;align-items:center;gap:10px;
-  padding:4px 0 12px;border-bottom:1px solid var(--line);margin-bottom:13px
-}
-.sheet-head h2{margin:0;font-size:21px}
-.close{
-  width:42px;height:42px;border-radius:13px;border:1px solid #34506f;
-  background:#17263a;color:#fff;font-size:22px
-}
-.filters,.history-metrics{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-.filter-actions,.confirm-actions,.history-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}
-.history-section{margin-top:14px}
-.history-section h3{margin:0 0 9px;font-size:15px}
-.history-card{
-  border:1px solid var(--line);background:#081421;border-radius:15px;
-  padding:11px;margin-bottom:8px
-}
-.history-head{display:flex;justify-content:space-between;gap:10px;margin-bottom:7px}
-.history-head strong{font-size:15px}
-.history-head span{font-size:11px;color:var(--muted)}
-.history-line{
-  display:flex;justify-content:space-between;gap:10px;padding:5px 0;
-  border-top:1px solid rgba(255,255,255,.06);font-size:13px
-}
-.history-line:first-of-type{border-top:0}
-.history-line span{color:var(--muted)}
-.toast{
-  position:fixed;z-index:110;left:50%;bottom:calc(96px + env(safe-area-inset-bottom));
-  transform:translate(-50%,20px);opacity:0;pointer-events:none;
-  background:#101d2d;color:#fff;border:1px solid #36506f;border-radius:14px;
-  padding:11px 14px;box-shadow:var(--shadow);font-size:13px;font-weight:900;
-  transition:.2s ease;white-space:nowrap
-}
-.toast.show{opacity:1;transform:translate(-50%,0)}
-.confirm-text{color:var(--muted);font-size:13px;line-height:1.5;margin:0 0 14px}
-@media(max-width:390px){
-  .actions{grid-template-columns:1.1fr .95fr auto}
-  .btn{font-size:14px}
-  h1{font-size:23px}
-}
-@media(max-width:350px){
-  .header{flex-direction:column}
-  .metrics,.filters,.history-metrics,.qc-grid{grid-template-columns:1fr}
-  .metric.wide,.field.full{grid-column:auto}
-  .fields,.actions{grid-template-columns:1fr}
-  .clear-btn{width:100%}
-  .bottom-inner{grid-template-columns:1fr 1fr}
-  .bottom-inner .btn-danger{grid-column:1/-1}
+:root {
+  --bg: #07111f;
+  --panel: #0f1c2d;
+  --panel2: #0a1625;
+  --line: #29415d;
+  --text: #f7f9fc;
+  --muted: #9eacc0;
+  --blue: #328cff;
+  --blue2: #58adff;
+  --green: #21c779;
+  --yellow: #ffbd45;
+  --red: #ff5d6c;
+  --purple: #9b7cff;
+  --shadow: 0 14px 36px rgba(0,0,0,.28);
+  --radius: 20px;
+  --accent: #328cff;
 }
 
-.sim-panel{padding:14px;margin-top:12px}
-.sim-intro{margin:0 0 12px;color:var(--muted);font-size:13px;line-height:1.45}
-.sim-start{margin-bottom:12px}
-.sim-machine{border:1px solid var(--line);background:#081421;border-radius:16px;padding:12px;margin-bottom:9px}
-.sim-machine-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}
-.sim-machine-head strong{font-size:15px}.sim-machine-head span{font-size:11px;color:var(--muted)}
-.sim-fields{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-.sim-actions{display:grid;grid-template-columns:1fr auto;gap:8px;margin-top:10px}
-.sim-results{display:none;margin-top:13px}.sim-results.show{display:block}
-.sim-summary{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:11px}
-.sim-list{display:grid;gap:8px}
-.sim-item{border:1px solid var(--line);background:#081421;border-radius:14px;padding:11px}
-.sim-item-head{display:flex;justify-content:space-between;gap:10px;align-items:center}
-.sim-item-head strong{font-size:14px}.sim-item-head span{font-size:12px;color:var(--muted)}
-.sim-batches{margin-top:8px;display:grid;gap:6px}
-.sim-batch{display:flex;justify-content:space-between;gap:10px;padding-top:6px;border-top:1px solid rgba(255,255,255,.06);font-size:12px}
-.sim-batch span{color:var(--muted)}
-@media(max-width:350px){.sim-fields,.sim-summary{grid-template-columns:1fr}}
-
-
-.machine-family{margin-bottom:16px}.family-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 2px 8px}.family-title{display:flex;align-items:center;gap:8px}.family-title strong{font-size:16px}.family-title span{font-size:11px;color:var(--muted)}.family-add{width:44px;height:40px;border-radius:12px;border:1px solid var(--line);background:var(--blue);color:#fff;font-size:24px;font-weight:800;cursor:pointer}.family-machines{display:grid;gap:11px}.machine-tools{display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end}.machine-tool{height:34px;min-width:36px;padding:0 9px;border-radius:10px;border:1px solid var(--line);background:#111f2d;color:var(--text);font-weight:800;cursor:pointer}.machine-clone{font-size:20px}.machine-remove{color:#ff8b95}@media(max-width:420px){.machine-head{align-items:flex-start}.machine-tools{max-width:150px}.machine-tool{height:32px}}
-
-.machine.is-inactive-hidden{display:none}
-
-.app-page{display:none}
-.app-page.is-active{display:block}
-.page-nav{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0 14px}
-.page-nav .btn.is-active{background:var(--accent);color:#fff;border-color:transparent}
-.sim-page-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}
-.sim-page-head h2{margin:0;font-size:20px}
-
-/* MES flexible upgrade */
-.page-nav{grid-template-columns:repeat(3,1fr)!important;position:sticky;top:0;z-index:20;background:rgba(6,15,24,.94);backdrop-filter:blur(12px);padding:8px 0}
-.inventory-page{display:none}.inventory-page.is-active{display:block}
-.inv-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.inv-grid .wide{grid-column:1/-1}
-.inv-form{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.inv-form .full{grid-column:1/-1}
-textarea{width:100%;min-height:88px;resize:vertical;border:1px solid var(--line);border-radius:12px;background:#081421;color:var(--text);padding:11px;font:inherit}
-.inv-list{display:grid;gap:9px;margin-top:12px}.inv-row{border:1px solid var(--line);background:#081421;border-radius:15px;padding:12px}.inv-row-head,.inv-row-actions{display:flex;align-items:center;justify-content:space-between;gap:8px}.inv-meta{font-size:12px;color:var(--muted);margin-top:6px;line-height:1.5}.inv-note{margin-top:7px;font-size:13px;white-space:pre-wrap}.inv-badge{display:inline-flex;padding:4px 8px;border-radius:999px;background:rgba(50,140,255,.15);font-size:11px;font-weight:800}.mini-actions{display:flex;gap:6px}.mini-btn{border:1px solid var(--line);background:#122131;color:var(--text);border-radius:9px;padding:7px 9px;font-weight:800}.mini-btn.danger{color:#ff8992}
-.edit-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.edit-grid .full{grid-column:1/-1}.modal-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px}.machine-extra{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:9px}.machine-extra .full{grid-column:1/-1}.machine-notes{min-height:62px}
-.qc-row .qc-actions-inline{display:flex;gap:6px;margin-top:7px}.qc-edit{border:1px solid var(--line);background:#122131;color:var(--text);border-radius:9px;padding:6px 9px;font-weight:800}.qc-delete{border-radius:9px!important;padding:6px 9px!important}
-.status-low{color:#ffbd45}.status-ok{color:#21c779}.summary-label{font-size:11px;color:var(--muted);display:block;margin-bottom:3px}
-@media(max-width:420px){.inv-form,.edit-grid,.machine-extra{grid-template-columns:1fr}.inv-form .full,.edit-grid .full,.machine-extra .full{grid-column:auto}.page-nav .btn{padding:10px 6px;font-size:13px}}
-
-
-.legacy-page-nav{display:none!important}
-.btn-menu{display:flex;align-items:center;justify-content:center;gap:5px;background:#17385d;color:#fff;border-color:#315d8e;font-weight:900}.btn-menu span:first-child{font-size:20px;line-height:1}.btn-menu:active{transform:scale(.97)}
-.mode-menu-overlay{z-index:70}
-.mode-sheet{padding-bottom:calc(18px + env(safe-area-inset-bottom))}
-.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.mode-option{min-height:104px;border:1px solid var(--line);border-radius:16px;background:#0a1726;color:var(--text);padding:13px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:4px;text-align:right;cursor:pointer}
-.mode-option span{font-size:25px}.mode-option strong{font-size:16px}.mode-option small{font-size:12px;color:var(--muted)}
-.mode-option.is-current{border-color:var(--blue);background:rgba(50,140,255,.14)}
-.mode-close{width:100%;margin-top:12px}
-#qcPage .qc-panel{margin-top:0}
-#editQcRubric{min-height:42px;padding:8px 12px}
-@media(max-width:360px){.mode-grid{grid-template-columns:1fr}.mode-option{min-height:82px}}
-
-@media(max-width:420px){
-  .bottom-inner{grid-template-columns:1.08fr .92fr .78fr .62fr;gap:6px}
-  .bottom .btn{min-height:55px;padding:8px 5px;font-size:12px}
-  .btn-menu{flex-direction:column;gap:1px}
-  .btn-menu span:first-child{font-size:18px}
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.app-footer{margin:18px 0 86px;text-align:center;color:var(--muted);font-size:12px;font-weight:800;letter-spacing:.15px}.app-footer span{padding:0 5px}
+html {
+  background: var(--bg);
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  min-height: -webkit-fill-available;
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: radial-gradient(circle at top right, rgba(50,140,255,.12), transparent 32%), linear-gradient(180deg, #07111f 0%, #091524 100%);
+  padding: calc(env(safe-area-inset-top) + 10px) 0 calc(env(safe-area-inset-bottom) + 110px);
+}
+
+button, input, select, textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  touch-action: manipulation;
+  cursor: pointer;
+}
+
+.app {
+  width: min(100%, 560px);
+  margin: auto;
+  padding: 0 14px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.header h1 {
+  margin: 0 0 4px;
+  font-size: 24px;
+  line-height: 1.15;
+}
+
+.header p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.clock {
+  flex: 0 0 auto;
+  background: #0c1a2a;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 9px 11px;
+  font-size: 14px;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+}
+
+.panel, .machine {
+  background: linear-gradient(180deg, var(--panel), #0c1828);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.summary {
+  padding: 15px;
+  margin-bottom: 12px;
+}
+
+.summary-head, .section-head, .machine-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.summary-head {
+  margin-bottom: 12px;
+}
+
+.summary-head strong, .section-head strong {
+  font-size: 17px;
+}
+
+.live {
+  font-size: 11px;
+  font-weight: 900;
+  color: #a9d4ff;
+  background: rgba(50,140,255,.12);
+  border: 1px solid rgba(50,140,255,.32);
+  border-radius: 999px;
+  padding: 5px 9px;
+}
+
+.metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px;
+}
+
+.metric {
+  background: rgba(7,17,31,.72);
+  border: 1px solid var(--line);
+  border-radius: 15px;
+  padding: 11px;
+  min-height: 73px;
+}
+
+.metric span {
+  display: block;
+  color: var(--muted);
+  font-size: 11px;
+  margin-bottom: 6px;
+}
+
+.metric strong {
+  display: block;
+  font-size: 19px;
+  line-height: 1.2;
+}
+
+.metric.wide {
+  grid-column: 1/-1;
+}
+
+.machines {
+  display: grid;
+  gap: 11px;
+}
+
+.machine-family {
+  margin-bottom: 16px;
+}
+
+.family-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 0 2px 8px;
+}
+
+.family-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.family-title strong {
+  font-size: 16px;
+}
+
+.family-title span {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.family-add {
+  width: 40px;
+  height: 38px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: var(--blue);
+  color: #fff;
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.family-machines {
+  display: grid;
+  gap: 11px;
+}
+
+.machine {
+  position: relative;
+  overflow: hidden;
+  padding: 0;
+  border-radius: 20px;
+  border-color: #2c4765;
+  background: linear-gradient(180deg, #0d1d30 0%, #091624 100%);
+  box-shadow: 0 14px 34px rgba(0,0,0,.28);
+}
+
+.machine::before {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: var(--accent);
+}
+
+.machine.is-inactive-hidden {
+  display: none !important;
+}
+
+.machine-head {
+  padding: 14px 16px;
+  margin: 0;
+  border-bottom: 1px solid rgba(255,255,255,.07);
+}
+
+.machine-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.machine-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  background: #13263c;
+  border: 1px solid #355172;
+  font-weight: 900;
+  font-size: 18px;
+  color: #fff;
+}
+
+.machine-title strong {
+  display: block;
+  font-size: 18px;
+}
+
+.machine-title small {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+.machine-tools {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.machine-tool {
+  height: 34px;
+  min-width: 36px;
+  padding: 0 9px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: #111f2d;
+  color: var(--text);
+  font-weight: 800;
+}
+
+.machine-clone {
+  font-size: 18px;
+}
+
+.machine-remove {
+  color: #ff8b95;
+}
+
+.state {
+  flex: 0 0 auto;
+  border-radius: 999px;
+  padding: 6px 10px;
+  background: #081421;
+  border: 1px solid var(--line);
+  color: #cbd5e1;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.state.running {
+  color: #80e8b4;
+  border-color: rgba(33,199,121,.42);
+  background: rgba(33,199,121,.1);
+}
+
+.state.finished {
+  color: #d0d7df;
+}
+
+.fields {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
+  gap: 10px;
+  padding: 14px 16px 0;
+}
+
+.field.full {
+  grid-column: 1/-1;
+}
+
+label {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+  margin: 0 0 6px;
+}
+
+input, select, textarea {
+  width: 100%;
+  border-radius: 14px;
+  border: 1px solid #2f4b69;
+  background: #081522;
+  color: #fff;
+  padding: 0 12px;
+  outline: none;
+  font-size: 15px;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+input {
+  height: 48px;
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: var(--blue2);
+  box-shadow: 0 0 0 3px rgba(50,140,255,.14);
+}
+
+input[type="number"] {
+  text-align: center;
+  font-size: 19px;
+  font-weight: 900;
+}
+
+textarea {
+  padding: 10px 12px;
+  min-height: 64px;
+  resize: vertical;
+}
+
+.machine-extra {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding: 10px 16px 0;
+}
+
+.machine-extra .field.full {
+  grid-column: 1/-1;
+}
+
+.machine-lock-banner {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 12px 16px 0;
+  padding: 10px;
+  border: 1px solid rgba(33,199,121,.45);
+  border-radius: 14px;
+  background: rgba(24,105,70,.28);
+  color: #9af0c0;
+  font-weight: 900;
+  font-size: 13px;
+  text-align: center;
+}
+
+.machine.is-run-locked .machine-lock-banner {
+  display: flex;
+}
+
+.machine-summary {
+  display: none;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 12px 16px 0;
+}
+
+.machine.is-run-locked .machine-summary {
+  display: grid;
+}
+
+.machine-summary .summary-box {
+  border: 1px solid #2b4562;
+  background: linear-gradient(180deg, #0b1928, #081522);
+  border-radius: 14px;
+  padding: 12px;
+  min-height: 70px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.machine-summary .summary-box span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.machine-summary .summary-box strong {
+  font-size: 14px;
+  line-height: 1.35;
+  word-break: break-word;
+}
+
+.runtime-panel {
+  margin: 12px 16px 0;
+  padding: 14px;
+  border: 1px solid #2d4967;
+  border-radius: 16px;
+  background: radial-gradient(circle at 80% 10%, rgba(50,140,255,.12), transparent 36%), #081522;
+  display: none;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 14px;
+}
+
+.machine.is-run-locked .runtime-panel {
+  display: grid;
+}
+
+.runtime-caption {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.runtime-value {
+  font-size: 28px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  font-variant-numeric: tabular-nums;
+}
+
+.runtime-end {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255,255,255,.08);
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.runtime-end strong {
+  display: block;
+  color: #62dc9c;
+  font-size: 15px;
+  margin-top: 2px;
+}
+
+.progress-ring {
+  --p: 0;
+  width: 86px;
+  height: 86px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: conic-gradient(#35ce7d calc(var(--p)*1%), #1d3348 0);
+  position: relative;
+}
+
+.progress-ring::before {
+  content: "";
+  position: absolute;
+  inset: 9px;
+  border-radius: 50%;
+  background: #0a1725;
+}
+
+.progress-ring strong {
+  position: relative;
+  font-size: 20px;
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr auto;
+  gap: 8px;
+  padding: 14px 16px;
+}
+
+.machine.is-run-locked .actions {
+  grid-template-columns: 1fr;
+}
+
+.machine.is-run-locked .fields,
+.machine.is-run-locked .machine-extra,
+.machine.is-run-locked .now,
+.machine.is-run-locked .machine-edit,
+.machine.is-run-locked .machine-clone,
+.machine.is-run-locked .machine-remove {
+  display: none !important;
+}
+
+.machine.is-run-finished .actions {
+  grid-template-columns: 1fr 1fr;
+}
+
+.btn {
+  min-height: 48px;
+  border: 0;
+  border-radius: 14px;
+  font-weight: 900;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  transition: transform .08s ease, filter .08s ease;
+  user-select: none;
+}
+
+.btn:active {
+  transform: scale(.97);
+  filter: brightness(.95);
+}
+
+.btn-primary { background: linear-gradient(135deg, var(--blue), var(--blue2)); color: #fff; }
+.btn-success { background: #153825; color: #83e8b6; border: 1px solid #2d7653; }
+.btn-soft { background: #17263a; color: #e2e9f1; border: 1px solid #314967; }
+.btn-danger { background: #32181e; color: #ffb1b9; border: 1px solid #73323d; }
+.btn-whatsapp { background: #20b85a; color: #fff; }
+.btn-history { background: #203754; color: #fff; border: 1px solid #3c5d82; }
+.btn-small { min-height: 40px; padding: 0 12px; font-size: 13px; }
+.clear-btn { width: 52px; }
+
+.finish.is-armed {
+  background: #a26a13 !important;
+  border-color: #ffbd45 !important;
+  color: #fff !important;
+  animation: safePulse .7s ease-in-out infinite alternate;
+}
+
+@keyframes safePulse {
+  from { transform: scale(1); }
+  to { transform: scale(1.02); }
+}
+
+.result {
+  display: grid;
+  gap: 8px;
+  padding: 12px 16px;
+  border-top: 1px solid var(--line);
+}
+
+.machine.is-run-locked .result {
+  display: none;
+}
+
+.result-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.result-row span { color: var(--muted); font-size: 12px; }
+.result-row strong { font-size: 14px; text-align: left; line-height: 1.35; }
+.countdown { font-size: 18px !important; font-variant-numeric: tabular-nums; }
+
+.app-page { display: none; }
+.app-page.is-active { display: block; }
+
+.sim-panel, .qc-panel { padding: 14px; margin-top: 12px; }
+.sim-intro { margin: 0 0 12px; color: var(--muted); font-size: 13px; line-height: 1.45; }
+.sim-start { margin-bottom: 12px; }
+.sim-machine { border: 1px solid var(--line); background: #081421; border-radius: 16px; padding: 12px; margin-bottom: 9px; }
+.sim-machine-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 10px; }
+.sim-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+.sim-actions, .qc-actions { display: grid; grid-template-columns: 1fr auto; gap: 8px; margin-top: 10px; }
+.sim-results { display: none; margin-top: 13px; }
+.sim-results.show { display: block; }
+.sim-summary { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-bottom: 11px; }
+.sim-list { display: grid; gap: 8px; }
+.sim-item { border: 1px solid var(--line); background: #081421; border-radius: 14px; padding: 11px; }
+.sim-item-head { display: flex; justify-content: space-between; gap: 10px; align-items: center; }
+
+.inv-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 9px; }
+.inv-form { display: grid; grid-template-columns: repeat(2,1fr); gap: 9px; }
+.inv-form .full { grid-column: 1/-1; }
+.inv-list { display: grid; gap: 9px; margin-top: 12px; }
+.inv-row { border: 1px solid var(--line); background: #081421; border-radius: 15px; padding: 12px; }
+.inv-row-head, .inv-row-actions { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.inv-meta { font-size: 12px; color: var(--muted); margin-top: 6px; line-height: 1.5; }
+.inv-note { margin-top: 7px; font-size: 13px; white-space: pre-wrap; background: rgba(0,0,0,.2); padding: 6px 10px; border-radius: 8px; }
+.inv-badge { display: inline-flex; padding: 3px 8px; border-radius: 999px; background: rgba(50,140,255,.15); font-size: 11px; font-weight: 800; color: #8ec2ff; }
+.mini-actions { display: flex; gap: 6px; }
+.mini-btn { border: 1px solid var(--line); background: #122131; color: var(--text); border-radius: 9px; padding: 6px 10px; font-weight: 800; font-size: 12px; }
+.mini-btn.danger { color: #ff8992; border-color: #632a32; }
+
+.qc-grid { display: grid; grid-template-columns: 1.2fr .8fr; gap: 9px; }
+.qc-list { display: grid; gap: 8px; margin-top: 11px; }
+.qc-row { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center; background: #081421; border: 1px solid var(--line); border-radius: 14px; padding: 12px; }
+.qc-row strong { font-size: 15px; }
+.qc-meta { font-size: 11px; color: var(--muted); margin-top: 4px; }
+.qc-side { display: flex; align-items: center; gap: 8px; }
+.qc-qty { font-size: 22px; font-weight: 900; color: #7de7b1; min-width: 32px; text-align: center; }
+.qc-delete { min-width: 48px; height: 38px; border-radius: 10px; border: 1px solid #71303c; background: #30171d; color: #ffb0b8; font-size: 12px; font-weight: 900; }
+.qc-actions-inline { display: flex; gap: 6px; margin-top: 8px; }
+
+.empty { text-align: center; color: var(--muted); font-size: 13px; padding: 16px; border: 1px dashed #334b68; border-radius: 14px; }
+
+.bottom {
+  position: fixed;
+  z-index: 50;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  padding: 8px max(12px, env(safe-area-inset-right)) calc(8px + env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
+  background: rgba(7,17,31,.95);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-top: 1px solid rgba(255,255,255,.08);
+}
+
+.bottom-inner {
+  width: min(100%, 560px);
+  margin: auto;
+  display: grid;
+  grid-template-columns: 1.1fr .9fr .8fr .7fr;
+  gap: 7px;
+}
+
+.bottom .btn { min-height: 54px; font-size: 13px; }
+.btn-menu { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; background: #17385d; color: #fff; border: 1px solid #315d8e; }
+.btn-menu span:first-child { font-size: 18px; line-height: 1; }
+
+.overlay {
+  display: none;
+  position: fixed;
+  z-index: 90;
+  inset: 0;
+  background: rgba(0,0,0,.75);
+  padding: calc(env(safe-area-inset-top) + 12px) 12px calc(env(safe-area-inset-bottom) + 12px);
+}
+
+.overlay.open {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.sheet {
+  width: min(100%, 580px);
+  max-height: 88vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  background: #0e1a2a;
+  border: 1px solid #34506f;
+  border-radius: 24px 24px 0 0;
+  box-shadow: 0 -10px 40px rgba(0,0,0,.5);
+  padding: 16px;
+}
+
+.sheet-head {
+  position: sticky;
+  top: -16px;
+  z-index: 4;
+  background: #0e1a2a;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 0 12px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 13px;
+}
+
+.sheet-head h2 { margin: 0; font-size: 20px; }
+.close { width: 40px; height: 40px; border-radius: 12px; border: 1px solid #34506f; background: #17263a; color: #fff; font-size: 22px; }
+
+.edit-grid, .filters, .history-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+.edit-grid .full { grid-column: 1/-1; }
+.modal-actions, .filter-actions, .confirm-actions, .history-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-top: 12px; }
+
+.mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.mode-option {
+  min-height: 90px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: #0a1726;
+  color: var(--text);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 4px;
+  text-align: right;
+}
+
+.mode-option span { font-size: 22px; }
+.mode-option strong { font-size: 15px; }
+.mode-option small { font-size: 11px; color: var(--muted); }
+.mode-option.is-current { border-color: var(--blue); background: rgba(50,140,255,.14); }
+
+.history-section { margin-top: 14px; }
+.history-section h3 { margin: 0 0 9px; font-size: 15px; }
+.history-card { border: 1px solid var(--line); background: #081421; border-radius: 15px; padding: 11px; margin-bottom: 8px; }
+.history-head { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 7px; }
+.history-line { display: flex; justify-content: space-between; gap: 10px; padding: 5px 0; border-top: 1px solid rgba(255,255,255,.06); font-size: 13px; }
+.history-line:first-of-type { border-top: 0; }
+
+.toast {
+  position: fixed;
+  z-index: 110;
+  left: 50%;
+  bottom: calc(80px + env(safe-area-inset-bottom));
+  transform: translate(-50%, 20px);
+  opacity: 0;
+  pointer-events: none;
+  background: #101d2d;
+  color: #fff;
+  border: 1px solid #36506f;
+  border-radius: 14px;
+  padding: 10px 16px;
+  box-shadow: var(--shadow);
+  font-size: 13px;
+  font-weight: 900;
+  transition: .2s ease;
+  white-space: nowrap;
+}
+
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+.confirm-text { color: var(--muted); font-size: 14px; line-height: 1.5; margin: 0 0 14px; }
+.app-footer { margin: 20px 0 20px; text-align: center; color: var(--muted); font-size: 12px; font-weight: 800; }
+
+@media (max-width: 480px) {
+  .actions { grid-template-columns: 1fr 1fr; }
+  .actions .clear-btn { grid-column: 1/-1; width: 100%; }
+  .inv-form, .qc-grid, .edit-grid { grid-template-columns: 1fr; }
+  .inv-form .full, .qc-grid .full, .edit-grid .full { grid-column: auto; }
+}
+
+@media (max-width: 360px) {
+  .metrics, .mode-grid { grid-template-columns: 1fr; }
+  .bottom-inner { grid-template-columns: 1fr 1fr; }
+  .bottom-inner .btn-danger { grid-column: 1/-1; }
+}
 </style>
 </head>
 <body>
 <main class="app">
-<div class="page-nav legacy-page-nav"><button class="btn btn-primary is-active" id="showLivePage" type="button">תפעול</button><button class="btn btn-soft" id="showSimulationPage" type="button">סימולציה</button><button class="btn btn-soft" id="showInventoryPage" type="button">קליטות ומלאי</button></div>
 <div class="app-page is-active" id="livePage">
-<header class="header">
-<div>
-<h1><span id="appNameView">BDS Dashboard</span> <span id="appVersionView" style="font-size:13px;color:var(--muted);font-weight:800;white-space:nowrap">Version 1.2.5</span></h1>
-<p>זמני מכונות, QC והיסטוריה במסך אחד.</p>
+  <header class="header">
+    <div>
+      <h1><span id="appNameView">BDS Dashboard</span> <span id="appVersionView" style="font-size:12px;color:var(--muted);font-weight:800;">v1.2.5</span></h1>
+      <p>זמני מכונות, QC ומלאי במסך אחד.</p>
+    </div>
+    <div class="clock" id="systemClock">--:--:--</div>
+  </header>
+
+  <section class="panel summary">
+    <div class="summary-head">
+      <strong>מצב נוכחי</strong>
+      <span class="live">LIVE</span>
+    </div>
+    <div class="metrics">
+      <div class="metric"><span>סה״כ במכונות</span><strong id="totalQty">0</strong></div>
+      <div class="metric"><span>מכונות פעילות</span><strong id="activeMachines">0</strong></div>
+      <div class="metric"><span>מוכן למשלוח</span><strong id="totalQc">0</strong></div>
+      <div class="metric"><span>ריצות היום</span><strong id="todayRuns">0</strong></div>
+      <div class="metric"><span>יתרה במלאי</span><strong id="liveInventoryTotal">0</strong></div>
+      <div class="metric"><span>ממתינים לשלב הבא</span><strong id="liveWaitingTotal">0</strong></div>
+      <div class="metric wide"><span>סיום אחרון צפוי</span><strong id="latestEnd">--</strong></div>
+    </div>
+  </section>
+
+  <section class="machines" id="machines">
+    <div class="machine-family" data-family="MBF">
+      <div class="family-head">
+        <div class="family-title"><strong>MBF</strong><span>Burn-In</span></div>
+        <button class="family-add" data-add-family="MBF" type="button">+</button>
+      </div>
+      <div class="family-machines">
+        <article class="machine" data-family="MBF" data-hours="12" data-name="MBF Burn-In" style="--accent:#328cff">
+          <div class="machine-head">
+            <div class="machine-title">
+              <div class="machine-icon">M</div>
+              <div><strong class="machine-name-label">MBF Burn-In</strong><small>12 שעות</small></div>
+            </div>
+            <div class="machine-tools">
+              <button class="machine-tool machine-edit" type="button">עריכה</button>
+              <button class="machine-tool machine-clone" type="button">+</button>
+              <button class="machine-tool machine-remove" type="button">×</button>
+              <span class="state">ממתין</span>
+            </div>
+          </div>
+          <div class="fields">
+            <div class="field"><label>כמות</label><input class="qty" inputmode="numeric" min="0" type="number" value="0"/></div>
+            <div class="field"><label>הכנסה</label><input class="start" type="datetime-local"/></div>
+            <div class="field full"><label>סוג כרטיס</label><input class="cardType" list="cardTypes" placeholder="MBF" type="text"/></div>
+          </div>
+          <div class="machine-extra">
+            <div class="field"><label>מספר מנה</label><input class="batchNo" placeholder="לדוגמה 32" type="text"/></div>
+            <div class="field"><label>שלב הבא</label><input class="nextStage" placeholder="Passive / Thermal / QC" type="text"/></div>
+            <div class="field full"><label>הערות</label><textarea class="machine-notes" placeholder="הערות למשמרת"></textarea></div>
+          </div>
+          <div class="actions">
+            <button class="btn btn-primary now" type="button">הכנס עכשיו</button>
+            <button class="btn btn-success finish" type="button">סיים שלב</button>
+            <button class="btn btn-soft clear clear-btn" type="button">נקה</button>
+          </div>
+          <div class="result">
+            <div class="result-row"><span>סיום צפוי</span><strong class="endText">--</strong></div>
+            <div class="result-row"><span>זמן שעבר</span><strong class="elapsedText">--</strong></div>
+            <div class="result-row"><span>זמן שנותר</span><strong class="leftText countdown">--</strong></div>
+          </div>
+        </article>
+      </div>
+    </div>
+
+    <div class="machine-family" data-family="EPS">
+      <div class="family-head">
+        <div class="family-title"><strong>EPS</strong><span>Burn-In</span></div>
+        <button class="family-add" data-add-family="EPS" type="button">+</button>
+      </div>
+      <div class="family-machines">
+        <article class="machine" data-family="EPS" data-hours="8" data-name="EPS Burn-In" style="--accent:#21c779">
+          <div class="machine-head">
+            <div class="machine-title">
+              <div class="machine-icon">E</div>
+              <div><strong class="machine-name-label">EPS Burn-In</strong><small>8 שעות</small></div>
+            </div>
+            <div class="machine-tools">
+              <button class="machine-tool machine-edit" type="button">עריכה</button>
+              <button class="machine-tool machine-clone" type="button">+</button>
+              <button class="machine-tool machine-remove" type="button">×</button>
+              <span class="state">ממתין</span>
+            </div>
+          </div>
+          <div class="fields">
+            <div class="field"><label>כמות</label><input class="qty" inputmode="numeric" min="0" type="number" value="0"/></div>
+            <div class="field"><label>הכנסה</label><input class="start" type="datetime-local"/></div>
+            <div class="field full"><label>סוג כרטיס</label><input class="cardType" list="cardTypes" placeholder="EPS" type="text"/></div>
+          </div>
+          <div class="machine-extra">
+            <div class="field"><label>מספר מנה</label><input class="batchNo" placeholder="לדוגמה 32" type="text"/></div>
+            <div class="field"><label>שלב הבא</label><input class="nextStage" placeholder="Passive / Thermal / QC" type="text"/></div>
+            <div class="field full"><label>הערות</label><textarea class="machine-notes" placeholder="הערות למשמרת"></textarea></div>
+          </div>
+          <div class="actions">
+            <button class="btn btn-primary now" type="button">הכנס עכשיו</button>
+            <button class="btn btn-success finish" type="button">סיים שלב</button>
+            <button class="btn btn-soft clear clear-btn" type="button">נקה</button>
+          </div>
+          <div class="result">
+            <div class="result-row"><span>סיום צפוי</span><strong class="endText">--</strong></div>
+            <div class="result-row"><span>זמן שעבר</span><strong class="elapsedText">--</strong></div>
+            <div class="result-row"><span>זמן שנותר</span><strong class="leftText countdown">--</strong></div>
+          </div>
+        </article>
+      </div>
+    </div>
+
+    <div class="machine-family" data-family="PASSIVE">
+      <div class="family-head">
+        <div class="family-title"><strong>Passive</strong><span>גמיש</span></div>
+        <button class="family-add" data-add-family="PASSIVE" type="button">+</button>
+      </div>
+      <div class="family-machines">
+        <article class="machine" data-family="PASSIVE" data-hours="8" data-name="Passive" style="--accent:#ffbd45">
+          <div class="machine-head">
+            <div class="machine-title">
+              <div class="machine-icon">P</div>
+              <div><strong class="machine-name-label">Passive</strong><small>8 שעות</small></div>
+            </div>
+            <div class="machine-tools">
+              <button class="machine-tool machine-edit" type="button">עריכה</button>
+              <button class="machine-tool machine-clone" type="button">+</button>
+              <button class="machine-tool machine-remove" type="button">×</button>
+              <span class="state">ממתין</span>
+            </div>
+          </div>
+          <div class="fields">
+            <div class="field"><label>כמות</label><input class="qty" inputmode="numeric" min="0" type="number" value="0"/></div>
+            <div class="field"><label>הכנסה</label><input class="start" type="datetime-local"/></div>
+            <div class="field full"><label>סוג כרטיס</label><input class="cardType" list="cardTypes" placeholder="כל סוג" type="text"/></div>
+          </div>
+          <div class="machine-extra">
+            <div class="field"><label>מספר מנה</label><input class="batchNo" placeholder="מנה" type="text"/></div>
+            <div class="field"><label>שלב הבא</label><input class="nextStage" placeholder="Thermal / QC" type="text"/></div>
+            <div class="field full"><label>הערות</label><textarea class="machine-notes" placeholder="הערות למשמרת"></textarea></div>
+          </div>
+          <div class="actions">
+            <button class="btn btn-primary now" type="button">הכנס עכשיו</button>
+            <button class="btn btn-success finish" type="button">סיים שלב</button>
+            <button class="btn btn-soft clear clear-btn" type="button">נקה</button>
+          </div>
+          <div class="result">
+            <div class="result-row"><span>סיום צפוי</span><strong class="endText">--</strong></div>
+            <div class="result-row"><span>זמן שעבר</span><strong class="elapsedText">--</strong></div>
+            <div class="result-row"><span>זמן שנותר</span><strong class="leftText countdown">--</strong></div>
+          </div>
+        </article>
+      </div>
+    </div>
+
+    <div class="machine-family" data-family="THERMAL">
+      <div class="family-head">
+        <div class="family-title"><strong>Thermal</strong><span>גמיש</span></div>
+        <button class="family-add" data-add-family="THERMAL" type="button">+</button>
+      </div>
+      <div class="family-machines">
+        <article class="machine" data-family="THERMAL" data-hours="14" data-name="Thermal" style="--accent:#ff5d6c">
+          <div class="machine-head">
+            <div class="machine-title">
+              <div class="machine-icon">T</div>
+              <div><strong class="machine-name-label">Thermal</strong><small>14 שעות</small></div>
+            </div>
+            <div class="machine-tools">
+              <button class="machine-tool machine-edit" type="button">עריכה</button>
+              <button class="machine-tool machine-clone" type="button">+</button>
+              <button class="machine-tool machine-remove" type="button">×</button>
+              <span class="state">ממתין</span>
+            </div>
+          </div>
+          <div class="fields">
+            <div class="field"><label>כמות</label><input class="qty" inputmode="numeric" min="0" type="number" value="0"/></div>
+            <div class="field"><label>הכנסה</label><input class="start" type="datetime-local"/></div>
+            <div class="field full"><label>סוג כרטיס</label><input class="cardType" list="cardTypes" placeholder="כל סוג" type="text"/></div>
+          </div>
+          <div class="machine-extra">
+            <div class="field"><label>מספר מנה</label><input class="batchNo" placeholder="מנה" type="text"/></div>
+            <div class="field"><label>שלב הבא</label><input class="nextStage" placeholder="QC / משלוח" type="text"/></div>
+            <div class="field full"><label>הערות</label><textarea class="machine-notes" placeholder="הערות למשמרת"></textarea></div>
+          </div>
+          <div class="actions">
+            <button class="btn btn-primary now" type="button">הכנס עכשיו</button>
+            <button class="btn btn-success finish" type="button">סיים שלב</button>
+            <button class="btn btn-soft clear clear-btn" type="button">נקה</button>
+          </div>
+          <div class="result">
+            <div class="result-row"><span>סיום צפוי</span><strong class="endText">--</strong></div>
+            <div class="result-row"><span>זמן שעבר</span><strong class="elapsedText">--</strong></div>
+            <div class="result-row"><span>זמן שנותר</span><strong class="leftText countdown">--</strong></div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
 </div>
-<div class="clock" id="systemClock">--:--:--</div>
-</header>
-<section class="panel summary">
-<div class="summary-head">
-<strong>מצב נוכחי</strong>
-<span class="live">LIVE</span>
-</div>
-<div class="metrics">
-<div class="metric"><span>סה״כ במכונות</span><strong id="totalQty">0</strong></div>
-<div class="metric"><span>מכונות פעילות</span><strong id="activeMachines">0</strong></div>
-<div class="metric"><span>מוכן למשלוח</span><strong id="totalQc">0</strong></div>
-<div class="metric"><span>ריצות היום</span><strong id="todayRuns">0</strong></div>
-<div class="metric"><span>יתרה במלאי</span><strong id="liveInventoryTotal">0</strong></div><div class="metric"><span>ממתינים לשלב הבא</span><strong id="liveWaitingTotal">0</strong></div><div class="metric wide"><span>סיום אחרון צפוי</span><strong id="latestEnd">--</strong></div>
-</div>
-</section>
-<section class="machines" id="machines"><div class="machine-family" data-family="MBF"><div class="family-head"><div class="family-title"><strong>MBF</strong><span>Burn-In</span></div><button class="family-add" data-add-family="MBF" type="button">+</button></div><div class="family-machines"><article class="machine" data-family="MBF" data-hours="12" data-name="MBF Burn-In" style="--accent:#328cff"><div class="machine-head"><div class="machine-title"><div class="machine-icon">M</div><div><strong class="machine-name-label">MBF Burn-In</strong><small>12 שעות</small></div></div><div class="machine-tools"><button class="machine-tool machine-edit" type="button">עריכה</button><button class="machine-tool machine-clone" type="button">+</button><button class="machine-tool machine-remove" type="button">×</button><span class="state">ממתין</span></div></div><div class="fields"><div class="field"><label>כמות</label><input class="qty" inputmode="numeric" min="0" type="number" value="0"/></div><div class="field"><label>מועד הכנסת מנה</label><input class="start" type="datetime-local"/></div><div class="field full"><label>סוג כרטיס</label><input class="cardType" list="cardTypes" placeholder="MBF" type="text"/></div><div class="machine-extra"><div class="field"><label>מספר מנה</label><input class="batchNo" placeholder="לדוגמה 32" type="text"/></div><div class="field"><label>שלב הבא</label><input class="nextStage" placeholder="Passive / Thermal / QC" type="text"/></div><div class="field full"><label>הערות למכונה</label><textarea class="machine-notes" placeholder="הערות, תקלה, הנחיות למשמרת הבאה"></textarea></div></div></div><div class="actions"><button class="btn btn-primary now" type="button">הכנס עכשיו</button><button class="btn btn-success finish" type="button">סיים ושמור</button><button class="btn btn-soft clear clear-btn" type="button">נקה</button></div><div class="result"><div class="result-row"><span>סיום צפוי</span><strong class="endText">--</strong></div><div class="result-row"><span>זמן שעבר</span><strong class="elapsedText">--</strong></div><div class="result-row"><span>זמן שנותר</span><strong class="leftText countdown">--</strong></div></div></article></div></div><div class="machine-family" data-family="EPS"><div class="family-head"><div class="family-title"><strong>EPS</strong><span>Burn-In</span></div><button class="family-add" data-add-family="EPS" type="button">+</button></div><div class="family-machines"><article class="machine" data-family="EPS" data-hours="8" data-name="EPS Burn-In" style="--accent:#21c779"><div class="machine-head"><div class="machine-title"><div class="machine-icon">E</div><div><strong class="machine-name-label">EPS Burn-In</strong><small>8 שעות</small></div></div><div class="machine-tools"><button class="machine-tool machine-edit" type="button">עריכה</button><button class="machine-tool machine-clone" type="button">+</button><button class="machine-tool machine-remove" type="button">×</button><span class="state">ממתין</span></div></div><div class="fields"><div class="field"><label>כמות</label><input class="qty" inputmode="numeric" min="0" type="number" value="0"/></div><div class="field"><label>מועד הכנסת מנה</label><input class="start" type="datetime-local"/></div><div class="field full"><label>סוג כרטיס</label><input class="cardType" list="cardTypes" placeholder="EPS" type="text"/></div><div class="machine-extra"><div class="field"><label>מספר מנה</label><input class="batchNo" placeholder="לדוגמה 32" type="text"/></div><div class="field"><label>שלב הבא</label><input class="nextStage" placeholder="Passive / Thermal / QC" type="text"/></div><div class="field full"><label>הערות למכונה</label><textarea class="machine-notes" placeholder="הערות, תקלה, הנחיות למשמרת הבאה"></textarea></div></div></div><div class="actions"><button class="btn btn-primary now" type="button">הכנס עכשיו</button><button class="btn btn-success finish" type="button">סיים ושמור</button><button class="btn btn-soft clear clear-btn" type="button">נקה</button></div><div class="result"><div class="result-row"><span>סיום צפוי</span><strong class="endText">--</strong></div><div class="result-row"><span>זמן שעבר</span><strong class="elapsedText">--</strong></div><div class="result-row"><span>זמן שנותר</span><strong class="leftText countdown">--</strong></div></div></article></div></div><div class="machine-family" data-family="QFAN"><div class="family-head"><div class="family-title"><strong>Qfan</strong><span>Burn-In</span></div><button class="family-add" data-add-family="QFAN" type="button">+</button></div><div class="family-machines"><article class="machine" data-family="QFAN" data-hours="8" data-name="Qfan Burn-In" style="--accent:#b578ff"><div class="machine-head"><div class="machine-title"><div class="machine-icon">Q</div><div><strong class="machine-name-label">Qfan Burn-In</strong><small>8 שעות</small></div></div><div class="machine-tools"><button class="machine-tool machine-edit" type="button">עריכה</button><button class="machine-tool machine-clone" type="button">+</button><button class="machine-tool machine-remove" type="button">×</button><span class="state">ממתין</span></div></div><div class="fields"><div class="field"><label>כמות</label><input class="qty" inputmode="numeric" min="0" type="number" value="0"/></div><div class="field"><label>מועד הכנסת מנה</label><input class="start" type="datetime-local"/></div><div class="field full"><label>סוג כרטיס</label><input class="cardType" list="cardTypes" placeholder="Qfan" type="text"/></div><div class="machine-extra"><div class="field"><label>מספר מנה</label><input class="batchNo" placeholder="לדוגמה 32" type="text"/></div><div class="field"><label>שלב הבא</label><input class="nextStage" placeholder="Passive / Thermal / QC" type="text"/></div><div class="field full"><label>הערות למכונה</label><textarea class="machine-notes" placeholder="הערות, תקלה, הנחיות למשמרת הבאה"></textarea></div></div></div><div class="actions"><button class="btn btn-primary now" type="button">הכנס עכשיו</button><button class="btn btn-success finish" type="button">סיים ושמור</button><button class="btn btn-soft clear clear-btn" type="button">נקה</button></div><div class="result"><div class="result-row"><span>סיום צפוי</span><strong class="endText">--</strong></div><div class="result-row"><span>זמן שעבר</span><strong class="elapsedText">--</strong></div><div class="result-row"><span>זמן שנותר</span><strong class="leftText countdown">--</strong></div></div></article></div></div><div class="machine-family" data-family="PASSIVE"><div class="family-head"><div class="family-title"><strong>Passive</strong><span>בחירת סוג כרטיס לכל ריצה</span></div><button class="family-add" data-add-family="PASSIVE" type="button">+</button></div><div class="family-machines"><article class="machine" data-color="#ffbd45" data-family="PASSIVE" data-hours="8" data-name="Passive" data-order="1" style="--accent:#ffbd45"><div class="machine-head"><div class="machine-title"><div class="machine-icon">P</div><div><strong class="machine-name-label">Passive</strong><small>8 שעות</small></div></div><div class="machine-tools"><button class="machine-tool machine-edit" type="button">עריכה</button><button class="machine-tool machine-clone" type="button">+</button><button class="machine-tool machine-remove" type="button">×</button><span class="state">ממתין</span></div></div><div class="fields"><div class="field"><label>כמות</label><input class="qty" inputmode="numeric" min="0" type="number" value="0"/></div><div class="field"><label>מועד הכנסת מנה</label><input class="start" type="datetime-local"/></div><div class="field full"><label>סוג כרטיס</label><input class="cardType" list="cardTypes" placeholder="MBF / EPS / Qfan / אחר" type="text"/></div><div class="machine-extra"><div class="field"><label>מספר מנה</label><input class="batchNo" placeholder="לדוגמה 32" type="text"/></div><div class="field"><label>שלב הבא</label><input class="nextStage" placeholder="Thermal / QC / שלב אחר" type="text"/></div><div class="field full"><label>הערות למכונה</label><textarea class="machine-notes" placeholder="הערות, תקלה, הנחיות למשמרת הבאה"></textarea></div></div></div><div class="actions"><button class="btn btn-primary now" type="button">הכנס עכשיו</button><button class="btn btn-success finish" type="button">סיים ושמור</button><button class="btn btn-soft clear clear-btn" type="button">נקה</button></div><div class="result"><div class="result-row"><span>סיום צפוי</span><strong class="endText">--</strong></div><div class="result-row"><span>זמן שעבר</span><strong class="elapsedText">--</strong></div><div class="result-row"><span>זמן שנותר</span><strong class="leftText countdown">--</strong></div></div></article></div></div><div class="machine-family" data-family="THERMAL"><div class="family-head"><div class="family-title"><strong>Thermal</strong><span>בחירת סוג כרטיס לכל ריצה</span></div><button class="family-add" data-add-family="THERMAL" type="button">+</button></div><div class="family-machines"><article class="machine" data-color="#ff5d6c" data-family="THERMAL" data-hours="14" data-name="Thermal" data-order="1" style="--accent:#ff5d6c"><div class="machine-head"><div class="machine-title"><div class="machine-icon">T</div><div><strong class="machine-name-label">Thermal</strong><small>14 שעות</small></div></div><div class="machine-tools"><button class="machine-tool machine-edit" type="button">עריכה</button><button class="machine-tool machine-clone" type="button">+</button><button class="machine-tool machine-remove" type="button">×</button><span class="state">ממתין</span></div></div><div class="fields"><div class="field"><label>כמות</label><input class="qty" inputmode="numeric" min="0" type="number" value="0"/></div><div class="field"><label>מועד הכנסת מנה</label><input class="start" type="datetime-local"/></div><div class="field full"><label>סוג כרטיס</label><input class="cardType" list="cardTypes" placeholder="MBF / EPS / Qfan / אחר" type="text"/></div><div class="machine-extra"><div class="field"><label>מספר מנה</label><input class="batchNo" placeholder="לדוגמה 32" type="text"/></div><div class="field"><label>שלב הבא</label><input class="nextStage" placeholder="QC / שלב אחר" type="text"/></div><div class="field full"><label>הערות למכונה</label><textarea class="machine-notes" placeholder="הערות, תקלה, הנחיות למשמרת הבאה"></textarea></div></div></div><div class="actions"><button class="btn btn-primary now" type="button">הכנס עכשיו</button><button class="btn btn-success finish" type="button">סיים ושמור</button><button class="btn btn-soft clear clear-btn" type="button">נקה</button></div><div class="result"><div class="result-row"><span>סיום צפוי</span><strong class="endText">--</strong></div><div class="result-row"><span>זמן שעבר</span><strong class="elapsedText">--</strong></div><div class="result-row"><span>זמן שנותר</span><strong class="leftText countdown">--</strong></div></div></article></div></div></section>
-</div>
+
 <div class="app-page" id="simulationPage">
-<div class="sim-page-head"><h2>סימולציית תכנון</h2><span class="live">לא בזמן אמת</span></div>
-<section class="panel sim-panel">
-<p class="sim-intro">הזן מספר מנות וכמות בכל מנה. המערכת תציג מתי כל מנה מוכנה ומתי כלל העבודה מסתיימת.</p>
-<div class="field sim-start"><label>תחילת הסימולציה</label><input id="simStart" type="datetime-local"/></div>
-<div id="simMachines">
-<div class="sim-machine" data-sim-hours="12" data-sim-name="FB Burn-In"><div class="sim-machine-head"><strong>FB Burn-In</strong><span>12 שעות למנה</span></div><div class="sim-fields"><div class="field"><label>מספר מנות</label><input class="sim-count" inputmode="numeric" min="0" type="number" value="0"/></div><div class="field"><label>כמות בכל מנה</label><input class="sim-qty" inputmode="numeric" min="0" type="number" value="0"/></div></div></div>
-<div class="sim-machine" data-sim-hours="8" data-sim-name="Passive"><div class="sim-machine-head"><strong>Passive</strong><span>8 שעות למנה</span></div><div class="sim-fields"><div class="field"><label>מספר מנות</label><input class="sim-count" inputmode="numeric" min="0" type="number" value="0"/></div><div class="field"><label>כמות בכל מנה</label><input class="sim-qty" inputmode="numeric" min="0" type="number" value="0"/></div></div></div>
-<div class="sim-machine" data-sim-hours="8" data-sim-name="EPS Burn-In"><div class="sim-machine-head"><strong>EPS Burn-In</strong><span>8 שעות למנה</span></div><div class="sim-fields"><div class="field"><label>מספר מנות</label><input class="sim-count" inputmode="numeric" min="0" type="number" value="0"/></div><div class="field"><label>כמות בכל מנה</label><input class="sim-qty" inputmode="numeric" min="0" type="number" value="0"/></div></div></div>
-<div class="sim-machine" data-sim-hours="14" data-sim-name="Thermal"><div class="sim-machine-head"><strong>Thermal</strong><span>14 שעות למנה</span></div><div class="sim-fields"><div class="field"><label>מספר מנות</label><input class="sim-count" inputmode="numeric" min="0" type="number" value="0"/></div><div class="field"><label>כמות בכל מנה</label><input class="sim-qty" inputmode="numeric" min="0" type="number" value="0"/></div></div></div>
+  <div class="sim-page-head"><h2>סימולציית תכנון</h2><span class="live">תכנון עתידי</span></div>
+  <section class="panel sim-panel">
+    <p class="sim-intro">הזן מנות וכמויות. המערכת תחשב זמני סיום צפויים.</p>
+    <div class="field sim-start"><label>תחילת הסימולציה</label><input id="simStart" type="datetime-local"/></div>
+    <div id="simMachines">
+      <div class="sim-machine" data-sim-hours="12" data-sim-name="MBF Burn-In"><div class="sim-machine-head"><strong>MBF Burn-In</strong><span>12 שעות למנה</span></div><div class="sim-fields"><div class="field"><label>מנות</label><input class="sim-count" min="0" type="number" value="0"/></div><div class="field"><label>כמות למנה</label><input class="sim-qty" min="0" type="number" value="0"/></div></div></div>
+      <div class="sim-machine" data-sim-hours="8" data-sim-name="Passive"><div class="sim-machine-head"><strong>Passive</strong><span>8 שעות למנה</span></div><div class="sim-fields"><div class="field"><label>מנות</label><input class="sim-count" min="0" type="number" value="0"/></div><div class="field"><label>כמות למנה</label><input class="sim-qty" min="0" type="number" value="0"/></div></div></div>
+      <div class="sim-machine" data-sim-hours="14" data-sim-name="Thermal"><div class="sim-machine-head"><strong>Thermal</strong><span>14 שעות למנה</span></div><div class="sim-fields"><div class="field"><label>מנות</label><input class="sim-count" min="0" type="number" value="0"/></div><div class="field"><label>כמות למנה</label><input class="sim-qty" min="0" type="number" value="0"/></div></div></div>
+    </div>
+    <div class="sim-actions"><button class="btn btn-primary" id="runSimulation" type="button">חשב תכנון</button><button class="btn btn-soft clear-btn" id="clearSimulation" type="button">נקה</button></div>
+    <div class="sim-results" id="simResults">
+      <div class="sim-summary">
+        <div class="metric"><span>סה״כ מנות</span><strong id="simTotalBatches">0</strong></div>
+        <div class="metric"><span>סה״כ כרטיסים</span><strong id="simTotalQty">0</strong></div>
+        <div class="metric wide"><span>סיום משוער</span><strong id="simFinalEnd">--</strong></div>
+      </div>
+      <div class="sim-list" id="simList"></div>
+    </div>
+  </section>
 </div>
-<div class="sim-actions"><button class="btn btn-primary" id="runSimulation" type="button">חשב תכנון</button><button class="btn btn-soft clear-btn" id="clearSimulation" type="button">נקה</button></div>
-<div aria-live="polite" class="sim-results" id="simResults"><div class="sim-summary"><div class="metric"><span>סה״כ מנות</span><strong id="simTotalBatches">0</strong></div><div class="metric"><span>סה״כ כרטיסים</span><strong id="simTotalQty">0</strong></div><div class="metric wide"><span>כל העבודה תסתיים</span><strong id="simFinalEnd">--</strong></div></div><div class="sim-list" id="simList"></div></div>
-</section>
+
+<div class="app-page" id="inventoryPage">
+  <div class="sim-page-head"><h2>קליטות ומלאי</h2><span class="live">מעקב</span></div>
+  <section class="panel">
+    <div class="section-head"><strong>תמונת מצב</strong><span class="live">LIVE</span></div>
+    <div class="inv-grid">
+      <div class="metric"><span>סה״כ נקלטו</span><strong id="invReceived">0</strong></div>
+      <div class="metric"><span>יתרה במלאי</span><strong id="invStock">0</strong></div>
+      <div class="metric"><span>בתהליך</span><strong id="invProcess">0</strong></div>
+      <div class="metric"><span>ממתינים</span><strong id="invWaiting">0</strong></div>
+      <div class="metric"><span>ב־QC</span><strong id="invQc">0</strong></div>
+      <div class="metric"><span>מוכנים</span><strong id="invReady">0</strong></div>
+    </div>
+  </section>
+  <section class="panel" style="margin-top:12px">
+    <div class="section-head"><strong>קליטה חדשה</strong></div>
+    <div class="inv-form">
+      <div class="field"><label>סוג כרטיס</label><input id="invCardType" list="cardTypes" placeholder="סוג" type="text"/></div>
+      <div class="field"><label>מנה</label><input id="invBatch" placeholder="מנה" type="text"/></div>
+      <div class="field"><label>כמות</label><input id="invQty" min="0" type="number" value="0"/></div>
+      <div class="field"><label>סטטוס</label><select id="invStatus"><option value="stock">במלאי</option><option value="waiting">ממתין לשלב הבא</option><option value="process">בתהליך</option><option value="qc">ב־QC</option><option value="ready">מוכן למשלוח</option></select></div>
+      <div class="field full"><label>הערות</label><textarea id="invNotes" placeholder="הערות"></textarea></div>
+    </div>
+    <div class="qc-actions"><button class="btn btn-primary" id="saveInventory" type="button">שמור קליטה</button><button class="btn btn-soft" id="clearInventoryForm" type="button">נקה</button></div>
+  </section>
+  <section class="panel" style="margin-top:12px">
+    <div class="section-head"><strong>רשימת מלאי</strong><span class="live" id="invCount">0 רשומות</span></div>
+    <div class="field full" style="margin-bottom:10px;"><input id="invSearch" placeholder="חיפוש לפי סוג או מנה" type="search"/></div>
+    <div class="inv-list" id="inventoryList"></div>
+  </section>
 </div>
-<div class="app-page inventory-page" id="inventoryPage">
-<div class="sim-page-head"><h2>קליטות ומלאי כרטיסים</h2><span class="live">מעקב מלא</span></div>
-<section class="panel">
-<div class="section-head"><strong>תמונת מצב מלאי</strong><span class="live">LIVE</span></div>
-<div class="inv-grid">
-<div class="metric"><span>סה״כ נקלטו</span><strong id="invReceived">0</strong></div>
-<div class="metric"><span>יתרה במלאי</span><strong id="invStock">0</strong></div>
-<div class="metric"><span>בתהליך</span><strong id="invProcess">0</strong></div>
-<div class="metric"><span>ממתינים לשלב הבא</span><strong id="invWaiting">0</strong></div>
-<div class="metric"><span>ב־QC</span><strong id="invQc">0</strong></div>
-<div class="metric"><span>מוכנים למשלוח</span><strong id="invReady">0</strong></div>
+
+<div class="app-page" id="qcPage">
+  <div class="sim-page-head"><h2 id="qcPageTitle">QC</h2><button class="btn btn-soft" id="editQcRubric" type="button">עריכה</button></div>
+  <section class="panel qc-panel">
+    <div class="section-head"><strong id="qcRubricTitleView">QC מוכן למשלוח</strong><span class="live" id="qcRubricSubtitleView">עדכון</span></div>
+    <div class="qc-grid">
+      <div class="field"><label>סוג כרטיס</label><input id="qcCardType" list="cardTypes" placeholder="MBF" type="text"/></div>
+      <div class="field"><label>כמות</label><input id="qcQty" min="0" type="number" value="0"/></div>
+      <div class="field"><label>מספר מנה</label><input id="qcBatchNo" placeholder="מנה" type="text"/></div>
+      <div class="field"><label>סטטוס</label><select id="qcStatus"><option>ב־QC</option><option>מוכן למשלוח</option><option>נדרש תיקון</option><option>מושהה</option></select></div>
+      <div class="field full"><label>הערות QC</label><textarea id="qcNotes" placeholder="הערות"></textarea></div>
+    </div>
+    <div class="qc-actions"><button class="btn btn-primary" id="saveQc" type="button">עדכן QC</button><button class="btn btn-soft clear-btn" id="clearQc" type="button">נקה</button></div>
+    <div class="qc-list" id="qcList"></div>
+  </section>
 </div>
-</section>
-<section class="panel" style="margin-top:12px">
-<div class="section-head"><strong>קליטה חדשה</strong><span class="live">שמירה מקומית</span></div>
-<div class="inv-form">
-<div class="field"><label>סוג כרטיס</label><input id="invCardType" list="cardTypes" placeholder="MBF / EPS / Qfan" type="text"/></div>
-<div class="field"><label>מספר מנה</label><input id="invBatch" placeholder="מספר מנה" type="text"/></div>
-<div class="field"><label>כמות</label><input id="invQty" inputmode="numeric" min="0" type="number" value="0"/></div>
-<div class="field"><label>מצב נוכחי</label><select id="invStatus"><option value="stock">במלאי – ממתין להתחלה</option><option value="waiting">ממתין לשלב הבא</option><option value="process">בתהליך</option><option value="qc">ב־QC</option><option value="ready">מוכן למשלוח</option></select></div>
-<div class="field"><label>מקור / מחלקה</label><input id="invSource" placeholder="מקור הקליטה" type="text"/></div>
-<div class="field"><label>השלב הבא</label><input id="invNext" placeholder="לאיזו מכונה או תהליך" type="text"/></div>
-<div class="field full"><label>הערות שלי</label><textarea id="invNotes" placeholder="הערות חופשיות, תקלות, עדיפויות והנחיות"></textarea></div>
-</div>
-<div class="qc-actions"><button class="btn btn-primary" id="saveInventory" type="button">שמור קליטה</button><button class="btn btn-soft" id="clearInventoryForm" type="button">נקה שדות</button></div>
-</section>
-<section class="panel" style="margin-top:12px">
-<div class="section-head"><strong>כרטיסים לפי מצב</strong><span class="live" id="invCount">0 רשומות</span></div>
-<div class="fields"><div class="field full"><label>חיפוש</label><input id="invSearch" placeholder="חיפוש לפי סוג, מנה, הערה או שלב" type="search"/></div></div>
-<div class="inv-list" id="inventoryList"></div>
-</section>
-</div>
-<div class="app-page" id="qcPage"><div class="sim-page-head"><h2 id="qcPageTitle">QC</h2><button class="btn btn-soft" id="editQcRubric" type="button">עריכת כותרת</button></div><section class="panel qc-panel">
-<div class="section-head">
-<strong id="qcRubricTitleView">QC מוכן למשלוח</strong>
-<span class="live" id="qcRubricSubtitleView">עדכון מהיר</span>
-</div>
-<div class="qc-grid">
-<div class="field">
-<label>סוג כרטיס</label>
-<input id="qcCardType" list="cardTypes" placeholder="MBF" type="text"/>
-</div>
-<div class="field">
-<label>כמות</label>
-<input id="qcQty" inputmode="numeric" min="0" type="number" value="0"/>
-</div>
-<div class="field"><label>מספר מנה</label><input id="qcBatchNo" placeholder="מספר מנה" type="text"/></div>
-<div class="field"><label>סטטוס</label><select id="qcStatus"><option>ב־QC</option><option>מוכן למשלוח</option><option>נדרש תיקון</option><option>מושהה</option></select></div>
-<div class="field full"><label>הערות QC</label><textarea id="qcNotes" placeholder="הערות, פסולים, תיקונים או הנחיות"></textarea></div>
-</div>
-<div class="qc-actions">
-<button class="btn btn-primary" id="saveQc" type="button">עדכן נכון לעכשיו</button>
-<button class="btn btn-soft clear-btn" id="clearQc" type="button">נקה</button>
-</div>
-<div class="qc-list" id="qcList"></div>
-</section></div>
-<footer class="app-footer" id="appFooter" aria-label="פרטי גרסה">BDS Dashboard <span>•</span> Version 1.2.5</footer>
+
+<footer class="app-footer" id="appFooter">BDS Dashboard • Version 1.2.5</footer>
 </main>
+
 <datalist id="cardTypes">
-<option value="MBF"></option>
-<option value="EPS"></option>
-<option value="FB"></option>
-<option value="Qfan"></option><option value="ASIC"></option><option value="RF"></option></datalist>
-<div aria-hidden="true" class="overlay mode-menu-overlay" id="modeMenuOverlay">
-<div class="sheet mode-sheet">
-<div class="sheet-head"><h2>בחר מסך</h2><button class="close" id="closeModeMenu" type="button">×</button></div>
-<div class="mode-grid">
-<button class="mode-option is-current" data-page="live" type="button"><span>🏭</span><strong>תפעול</strong><small>המסך הראשי</small></button>
-<button class="mode-option" data-page="inventory" type="button"><span>📦</span><strong>קליטות ומלאי</strong><small>מלאי ותנועות</small></button>
-<button class="mode-option" data-page="simulation" type="button"><span>📊</span><strong>סימולציה</strong><small>תכנון עתידי</small></button>
-<button class="mode-option" data-page="qc" type="button"><span>✅</span><strong>QC</strong><small>בדיקה ומשלוח</small></button>
+  <option value="MBF"></option>
+  <option value="EPS"></option>
+  <option value="FB"></option>
+  <option value="Qfan"></option>
+  <option value="ASIC"></option>
+  <option value="RF"></option>
+</datalist>
+
+<div class="bottom">
+  <div class="bottom-inner">
+    <button class="btn btn-whatsapp" id="shareBtn" type="button">WhatsApp</button>
+    <button class="btn btn-history" id="historyBtn" type="button">היסטוריה</button>
+    <button class="btn btn-menu" id="modeFab" type="button"><span>☰</span><span>תפריט</span></button>
+    <button class="btn btn-danger" id="resetBtn" type="button">אפס</button>
+  </div>
 </div>
-<button class="btn btn-soft mode-close" id="closeModeMenuBottom" type="button">סגור</button>
+
+<div class="overlay" id="modeMenuOverlay">
+  <div class="sheet">
+    <div class="sheet-head"><h2>בחר מסך</h2><button class="close" id="closeModeMenu" type="button">×</button></div>
+    <div class="mode-grid">
+      <button class="mode-option is-current" data-page="live" type="button"><span>🏭</span><strong>תפעול</strong><small>מכונות ולוח ראשי</small></button>
+      <button class="mode-option" data-page="inventory" type="button"><span>📦</span><strong>מלאי</strong><small>קליטות ותנועות</small></button>
+      <button class="mode-option" data-page="simulation" type="button"><span>📊</span><strong>סימולציה</strong><small>תכנון זמנים</small></button>
+      <button class="mode-option" data-page="qc" type="button"><span>✅</span><strong>QC</strong><small>איכות ומשלוח</small></button>
+    </div>
+  </div>
 </div>
-</div><div aria-hidden="true" class="overlay" id="qcRubricOverlay">
-<div class="sheet">
-<div class="sheet-head"><h2>עריכת אזור QC</h2><button class="close" id="closeQcRubric" type="button">×</button></div>
-<div class="edit-grid">
-<div class="field full"><label>כותרת המסך</label><input id="qcRubricPageTitle" type="text"/></div>
-<div class="field full"><label>כותרת הרובריקה</label><input id="qcRubricTitle" type="text"/></div>
-<div class="field full"><label>כותרת משנה</label><input id="qcRubricSubtitle" type="text"/></div>
+
+<div class="overlay" id="historyOverlay">
+  <div class="sheet">
+    <div class="sheet-head"><h2>היסטוריה</h2><button class="close" id="closeHistory" type="button">×</button></div>
+    <div class="filters">
+      <div class="field"><label>מתאריך</label><input id="fromDate" type="date"/></div>
+      <div class="field"><label>עד תאריך</label><input id="toDate" type="date"/></div>
+    </div>
+    <div class="filter-actions"><button class="btn btn-soft btn-small" id="todayFilter" type="button">היום</button><button class="btn btn-primary btn-small" id="applyFilter" type="button">הצג</button></div>
+    <div class="history-metrics" style="margin-top:10px">
+      <div class="metric"><span>ריצות</span><strong id="histRuns">0</strong></div>
+      <div class="metric"><span>כמות</span><strong id="histQty">0</strong></div>
+    </div>
+    <div class="history-section"><h3>סיכום יומיומי</h3><div id="dailySummary"></div></div>
+    <div class="history-section"><h3>פירוט ריצות</h3><div id="runsList"></div></div>
+    <div class="history-actions"><button class="btn btn-whatsapp btn-small" id="shareHistory" type="button">שתף</button><button class="btn btn-danger btn-small" id="deleteHistory" type="button">מחק היסטוריה</button></div>
+  </div>
 </div>
-<div class="modal-actions"><button class="btn btn-soft" id="cancelQcRubric" type="button">ביטול</button><button class="btn btn-primary" id="saveQcRubric" type="button">שמור</button></div>
+
+<div class="overlay" id="confirmOverlay">
+  <div class="sheet">
+    <div class="sheet-head"><h2 id="confirmTitle">אישור</h2><button class="close" id="closeConfirm" type="button">×</button></div>
+    <p class="confirm-text" id="confirmText"></p>
+    <div class="confirm-actions"><button class="btn btn-soft" id="cancelConfirm" type="button">ביטול</button><button class="btn btn-danger" id="confirmAction" type="button">אישור</button></div>
+  </div>
 </div>
-</div><div class="bottom">
-<div class="bottom-inner">
-<button class="btn btn-whatsapp" id="shareBtn" type="button">WhatsApp</button>
-<button class="btn btn-history" id="historyBtn" type="button">היסטוריה</button>
-<button aria-label="פתח תפריט מסכים" class="btn btn-menu" id="modeFab" type="button"><span aria-hidden="true">☰</span><span>תפריט</span></button>
-<button class="btn btn-danger" id="resetBtn" type="button">אפס</button>
+
+<div class="overlay" id="machineEditOverlay">
+  <div class="sheet">
+    <div class="sheet-head"><h2>עריכת מכונה</h2><button class="close" id="closeMachineEdit" type="button">×</button></div>
+    <div class="edit-grid">
+      <div class="field full"><label>שם המכונה</label><input id="editMachineName" type="text"/></div>
+      <div class="field"><label>משך בשעות</label><input id="editMachineHours" min="0" step="0.5" type="number"/></div>
+      <div class="field"><label>כמות</label><input id="editMachineQty" min="0" type="number"/></div>
+      <div class="field"><label>סוג כרטיס</label><input id="editMachineCard" list="cardTypes" type="text"/></div>
+      <div class="field"><label>מספר מנה</label><input id="editMachineBatch" type="text"/></div>
+      <div class="field full"><label>הערות</label><textarea id="editMachineNotes"></textarea></div>
+    </div>
+    <div class="modal-actions"><button class="btn btn-soft" id="cancelMachineEdit" type="button">ביטול</button><button class="btn btn-primary" id="saveMachineEdit" type="button">שמור</button></div>
+  </div>
 </div>
-</div>
-<div aria-hidden="true" class="overlay" id="historyOverlay">
-<div class="sheet">
-<div class="sheet-head">
-<h2>היסטוריה</h2>
-<button class="close" id="closeHistory" type="button">×</button>
-</div>
-<div class="filters">
-<div class="field"><label>מתאריך</label><input id="fromDate" type="date"/></div>
-<div class="field"><label>עד תאריך</label><input id="toDate" type="date"/></div>
-</div>
-<div class="filter-actions">
-<button class="btn btn-soft btn-small" id="todayFilter" type="button">היום</button>
-<button class="btn btn-primary btn-small" id="applyFilter" type="button">הצג</button>
-</div>
-<div class="history-metrics" style="margin-top:10px">
-<div class="metric"><span>ריצות</span><strong id="histRuns">0</strong></div>
-<div class="metric"><span>כמות כוללת</span><strong id="histQty">0</strong></div>
-</div>
-<div class="history-section">
-<h3>סיכום לפי ימים</h3>
-<div id="dailySummary"></div>
-</div>
-<div class="history-section">
-<h3>פירוט ריצות</h3>
-<div id="runsList"></div>
-</div>
-<div class="history-actions">
-<button class="btn btn-whatsapp btn-small" id="shareHistory" type="button">שתף סיכום</button>
-<button class="btn btn-danger btn-small" id="deleteHistory" type="button">מחק היסטוריה</button>
-</div>
-</div>
-</div>
-<div aria-hidden="true" class="overlay" id="confirmOverlay">
-<div class="sheet">
-<div class="sheet-head">
-<h2 id="confirmTitle">אישור</h2>
-<button class="close" id="closeConfirm" type="button">×</button>
-</div>
-<p class="confirm-text" id="confirmText"></p>
-<div class="confirm-actions">
-<button class="btn btn-soft" id="cancelConfirm" type="button">ביטול</button>
-<button class="btn btn-danger" id="confirmAction" type="button">אישור</button>
-</div>
-</div>
-</div>
-<div aria-hidden="true" class="overlay" id="machineEditOverlay"><div class="sheet"><div class="sheet-head"><h2>עריכת מכונה מלאה</h2><button class="close" id="closeMachineEdit" type="button">×</button></div><div class="edit-grid">
-<div class="field full"><label>שם המכונה</label><input id="editMachineName" type="text"/></div><div class="field"><label>קבוצה / אזור</label><input id="editMachineFamily" type="text"/></div><div class="field"><label>משך עבודה בשעות</label><input id="editMachineHours" min="0" step="0.25" type="number"/></div><div class="field"><label>כמות</label><input id="editMachineQty" min="0" type="number"/></div><div class="field"><label>סוג כרטיס</label><input id="editMachineCard" list="cardTypes" type="text"/></div><div class="field"><label>מספר מנה</label><input id="editMachineBatch" type="text"/></div><div class="field"><label>שלב הבא</label><input id="editMachineNext" type="text"/></div><div class="field full"><label>זמן התחלה</label><input id="editMachineStart" type="datetime-local"/></div><div class="field full"><label>הערות</label><textarea id="editMachineNotes"></textarea></div><div class="field"><label>צבע המכונה</label><input id="editMachineColor" type="color" value="#328cff"/></div><div class="field"><label>סדר תצוגה</label><input id="editMachineOrder" min="1" step="1" type="number" value="1"/></div></div><div class="modal-actions"><button class="btn btn-soft" id="cancelMachineEdit" type="button">ביטול</button><button class="btn btn-primary" id="saveMachineEdit" type="button">שמור שינויים</button></div></div></div>
-<div aria-hidden="true" class="overlay" id="qcEditOverlay"><div class="sheet"><div class="sheet-head"><h2>עריכת QC מלאה</h2><button class="close" id="closeQcEdit" type="button">×</button></div><div class="edit-grid"><div class="field"><label>סוג כרטיס</label><input id="editQcType" type="text"/></div><div class="field"><label>כמות</label><input id="editQcQty" min="0" type="number"/></div><div class="field"><label>מספר מנה</label><input id="editQcBatch" type="text"/></div><div class="field"><label>סטטוס</label><select id="editQcStatus"><option>ב־QC</option><option>מוכן למשלוח</option><option>נדרש תיקון</option><option>מושהה</option></select></div><div class="field full"><label>תאריך ושעה</label><input id="editQcTime" type="datetime-local"/></div><div class="field full"><label>הערות</label><textarea id="editQcNotes"></textarea></div></div><div class="modal-actions"><button class="btn btn-soft" id="cancelQcEdit" type="button">ביטול</button><button class="btn btn-primary" id="saveQcEdit" type="button">שמור שינויים</button></div></div></div>
+
 <div class="toast" id="toast">נשמר</div>
+
 <script>
-const APP_NAME="BDS Dashboard";
-const APP_VERSION="1.2.5";
-const APP_VERSION_LABEL=`Version ${APP_VERSION}`;
 "use strict";
 
-const KEYS={
-  current:"productionFlowCurrentV1",
-  runs:"productionFlowRunsV1",
-  qc:"productionFlowQcV1",
-  machineConfig:"productionFlowMachineConfigV1"
+const APP_NAME = "BDS Dashboard";
+const APP_VERSION = "1.2.5";
+
+const KEYS = {
+  current: "productionFlowCurrentV2",
+  runs: "productionFlowRunsV1",
+  qc: "productionFlowQcV1",
+  inventory: "productionFlowInventoryV2"
 };
 
-let cards=[...document.querySelectorAll(".machine")];
-function refreshCards(){cards=[...document.querySelectorAll(".machine")]}
-const totalQtyEl=document.getElementById("totalQty");
-const activeEl=document.getElementById("activeMachines");
-const totalQcEl=document.getElementById("totalQc");
-const todayRunsEl=document.getElementById("todayRuns");
-const latestEndEl=document.getElementById("latestEnd");
-const clockEl=document.getElementById("systemClock");
-const qcListEl=document.getElementById("qcList");
-const toastEl=document.getElementById("toast");
-const historyOverlay=document.getElementById("historyOverlay");
-const confirmOverlay=document.getElementById("confirmOverlay");
+let runs = loadArray(KEYS.runs);
+let qcHistory = loadArray(KEYS.qc);
+let inventoryRecords = loadArray(KEYS.inventory);
+let confirmCallback = null;
+let editingMachine = null;
 
-let runs=loadArray(KEYS.runs);
-let qcHistory=loadArray(KEYS.qc);
-let confirmCallback=null;
+function pad(n) { return String(n).padStart(2, "0"); }
+function safe(v) { return String(v ?? "").trim(); }
+function qty(v) { const n = Number(v); return Number.isFinite(n) && n >= 0 ? Math.floor(n) : 0; }
 
-function pad(n){return String(n).padStart(2,"0")}
-function safe(v){return String(v??"").trim()}
-function qty(v){
-  const n=Number(v);
-  return Number.isFinite(n)&&n>=0?Math.floor(n):0;
-}
-function toInputDateTime(d){
+function toInputDateTime(d) {
   return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
-function toDateInput(d){
-  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+
+function parseLocal(v) {
+  if (!v) return null;
+  const d = new Date(v);
+  return Number.isNaN(d.getTime()) ? null : d;
 }
-function parseLocal(v){
-  const m=String(v||"").match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})$/);
-  if(!m)return null;
-  const d=new Date(+m[1],+m[2]-1,+m[3],+m[4],+m[5],0,0);
-  return Number.isNaN(d.getTime())?null:d;
+
+function formatDateTime(d) {
+  if (!d) return "--";
+  return `${pad(d.getDate())}/${pad(d.getMonth()+1)} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
-function formatDateTime(d){
-  return `${pad(d.getDate())}/${pad(d.getMonth()+1)}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
-}
-function formatDateOnly(d){
-  return `${pad(d.getDate())}/${pad(d.getMonth()+1)}/${d.getFullYear()}`;
-}
-function formatClock(d){
-  return `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
-}
-function formatDuration(ms,ceilMode=false){
-  if(ms<=0)return "00:00:00";
-  const s=ceilMode?Math.ceil(ms/1000):Math.floor(ms/1000);
-  const h=Math.floor(s/3600);
-  const m=Math.floor((s%3600)/60);
-  const sec=s%60;
+
+function formatDuration(ms) {
+  if (ms <= 0) return "00:00:00";
+  const s = Math.floor(ms / 1000);
+  const h = Math.floor(s / 3600);
+  const m = Math.floor((s % 3600) / 60);
+  const sec = s % 60;
   return `${pad(h)}:${pad(m)}:${pad(sec)}`;
 }
-function loadArray(key){
-  try{
-    const x=JSON.parse(localStorage.getItem(key)||"[]");
-    return Array.isArray(x)?x:[];
-  }catch{return []}
-}
-function saveHistories(){
-  localStorage.setItem(KEYS.runs,JSON.stringify(runs));
-  localStorage.setItem(KEYS.qc,JSON.stringify(qcHistory));
-}
-function haptic(){
-  if(navigator.vibrate) navigator.vibrate(12);
-}
-function showToast(msg){
-  toastEl.textContent=msg;
-  toastEl.classList.add("show");
-  clearTimeout(showToast.timer);
-  showToast.timer=setTimeout(()=>toastEl.classList.remove("show"),1500);
-}
-function cardData(card){
-  return{
-    machine:card.dataset.name,
-    hours:Number(card.dataset.hours),
-    qty:qty(card.querySelector(".qty").value),
-    startValue:card.querySelector(".start").value,
-    cardType:safe(card.querySelector(".cardType").value)||card.dataset.name
-  };
-}
-function updateCard(card,now){
-  const data=cardData(card);
-  const start=parseLocal(data.startValue);
-  const state=card.querySelector(".state");
-  const endEl=card.querySelector(".endText");
-  const elapsedEl=card.querySelector(".elapsedText");
-  const leftEl=card.querySelector(".leftText");
-  let nextEl=card.querySelector(".nextStep");
-  if(!nextEl){const d=document.createElement("div");d.className="result-row nextStep";d.innerHTML="<span>השלב הבא</span><strong>--</strong>";card.querySelector(".result").appendChild(d);nextEl=d.querySelector("strong");}
 
-  if(!start){
-    card.dataset.state="waiting";
-    state.className="state";
-    state.textContent="ממתין";
-    endEl.textContent="--";
-    elapsedEl.textContent="--";
-    leftEl.textContent="--";
-    nextEl.textContent="--";
+function loadArray(key) {
+  try {
+    const x = JSON.parse(localStorage.getItem(key) || "[]");
+    return Array.isArray(x) ? x : [];
+  } catch { return []; }
+}
+
+function saveHistories() {
+  localStorage.setItem(KEYS.runs, JSON.stringify(runs));
+  localStorage.setItem(KEYS.qc, JSON.stringify(qcHistory));
+  localStorage.setItem(KEYS.inventory, JSON.stringify(inventoryRecords));
+}
+
+function showToast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(showToast.timer);
+  showToast.timer = setTimeout(() => t.classList.remove("show"), 1600);
+}
+
+function updateCard(card, now) {
+  const hours = Number(card.dataset.hours) || 0;
+  const startVal = card.querySelector(".start").value;
+  const start = parseLocal(startVal);
+  const state = card.querySelector(".state");
+  const endEl = card.querySelector(".endText");
+  const elapsedEl = card.querySelector(".elapsedText");
+  const leftEl = card.querySelector(".leftText");
+
+  if (!start) {
+    state.className = "state";
+    state.textContent = "ממתין";
+    endEl.textContent = "--";
+    elapsedEl.textContent = "--";
+    leftEl.textContent = "--";
+    card.classList.remove("is-run-locked");
     return null;
   }
 
-  const end=new Date(start.getTime()+data.hours*3600000);
-  const elapsed=Math.max(0,Math.min(now-start,data.hours*3600000));
-  endEl.textContent=formatDateTime(end);
-  elapsedEl.textContent=formatDuration(elapsed);
+  const end = new Date(start.getTime() + hours * 3600000);
+  const elapsed = Math.max(0, now - start);
+  const remaining = end - now;
 
-  if(now>=end){
-    card.dataset.state="finished";
-    state.className="state finished";
-    state.textContent="הסתיים";
-    leftEl.textContent="00:00:00";
-    const nextMap={
-      "FB Burn-In":"✅ הסתיים – העבר ל‑Passive",
-      "Passive":"✅ הסתיים – העבר ל‑Thermal",
-      "EPS Burn-In":"✅ הסתיים – העבר ל‑Thermal",
-      "Thermal":"✅ הסתיים – מוכן ל‑QC"
-    };
-    nextEl.textContent=nextMap[data.machine]||"✅ הסתיים";
-  }else{
-    card.dataset.state="running";
-    state.className="state running";
-    state.textContent="פעיל";
-    leftEl.textContent=formatDuration(end-now,true);
-    nextEl.textContent="ממתין לסיום התהליך";
-  }
-  return {...data,start,end};
-}
-function currentQcMap(source=qcHistory){
-  const map=new Map();
-  [...source].sort((a,b)=>new Date(b.updatedAt)-new Date(a.updatedAt)).forEach(item=>{
-    const key=safe(item.cardType).toLowerCase();
-    if(key&&!map.has(key))map.set(key,item);
-  });
-  return map;
-}
-function currentQcTotal(){
-  return [...currentQcMap().values()].reduce((s,x)=>s+qty(x.qty),0);
-}
-function calculate(save=true){
-  const now=new Date();
-  let total=0,active=0,latest=null;
-  cards.forEach(card=>{
-    const data=cardData(card);
-    total+=data.qty;
-    const r=updateCard(card,now);
-    if(r){
-      if(r.end>now)active++;
-      if(!latest||r.end>latest)latest=r.end;
-    }
-  });
-  totalQtyEl.textContent=String(total);
-  activeEl.textContent=String(active);
-  totalQcEl.textContent=String(currentQcTotal());
-  latestEndEl.textContent=latest?formatDateTime(latest):"--";
-  clockEl.textContent=formatClock(now);
+  endEl.textContent = formatDateTime(end);
+  elapsedEl.textContent = formatDuration(elapsed);
 
-  const today=toDateInput(now);
-  todayRunsEl.textContent=String(runs.filter(r=>toDateInput(new Date(r.completedAt))===today).length);
-
-  if(save)saveCurrent();
-}
-function saveCurrent(){
-  const data=cards.map(card=>({
-    qty:card.querySelector(".qty").value||"0",
-    start:card.querySelector(".start").value||"",
-    cardType:card.querySelector(".cardType").value||""
-  }));
-  localStorage.setItem(KEYS.current,JSON.stringify(data));
-  saveMachineConfig();
-}
-function loadCurrent(){
-  try{
-    const data=JSON.parse(localStorage.getItem(KEYS.current)||"[]");
-    cards.forEach((card,i)=>{
-      if(!data[i])return;
-      card.querySelector(".qty").value=data[i].qty??"0";
-      card.querySelector(".start").value=data[i].start??"";
-      card.querySelector(".cardType").value=data[i].cardType??"";
-    });
-  }catch{}
-}
-function clearCard(card,toast=true){
-  card.querySelector(".qty").value="0";
-  card.querySelector(".start").value="";
-  card.querySelector(".cardType").value="";
-  calculate(true);
-  if(toast)showToast(`${card.dataset.name}: נוקה`);
-}
-function setNow(card){
-  card.querySelector(".start").value=toInputDateTime(new Date());
-  calculate(true);
-  haptic();
-  showToast(`${card.dataset.name}: התחלה עודכנה`);
-}
-function finishRun(card){
-  const d=cardData(card);
-  const start=parseLocal(d.startValue);
-  if(!start){showToast("חסר מועד התחלה");return}
-  if(d.qty<=0){showToast("חסרה כמות");return}
-
-  const completedAt=new Date();
-  const plannedEnd=new Date(start.getTime()+d.hours*3600000);
-  runs.unshift({
-    id:`run_${Date.now()}_${Math.random().toString(36).slice(2,7)}`,
-    machine:d.machine,
-    cardType:d.cardType,
-    qty:d.qty,
-    hours:d.hours,
-    startedAt:start.toISOString(),
-    plannedEnd:plannedEnd.toISOString(),
-    completedAt:completedAt.toISOString()
-  });
-  saveHistories();
-  clearCard(card,false);
-  renderHistory();
-  haptic();
-  showToast(`${d.machine}: נשמר בהיסטוריה`);
-}
-function escapeHtml(v){
-  return String(v)
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
-}
-function renderQc(){
-  const list=[...currentQcMap().values()].sort((a,b)=>a.cardType.localeCompare(b.cardType,"he"));
-  if(!list.length){
-    qcListEl.innerHTML='<div class="empty">אין עדיין נתוני QC</div>';
-    return;
-  }
-  qcListEl.innerHTML=list.map(item=>{
-    const t=new Date(item.updatedAt);
-    return `<div class="qc-row">
-      <div>
-        <strong>${escapeHtml(item.cardType)}</strong>
-        <div class="qc-meta">נכון ל־${escapeHtml(formatDateTime(t))}</div>
-      </div>
-      <div class="qc-side">
-        <div class="qc-qty">${qty(item.qty)}</div>
-        <button class="qc-delete" type="button" data-card="${escapeHtml(item.cardType)}">מחק</button>
-      </div>
-    </div>`;
-  }).join("");
-
-  qcListEl.querySelectorAll(".qc-delete").forEach(btn=>{
-    btn.addEventListener("click",()=>{
-      const type=btn.dataset.card||"";
-      openConfirm(
-        "מחיקת QC",
-        `למחוק את נתוני ה-QC של ${type}?`,
-        ()=>deleteQc(type)
-      );
-    });
-  });
-}
-function saveQc(){
-  const type=safe(document.getElementById("qcCardType").value);
-  const amount=qty(document.getElementById("qcQty").value);
-  if(!type){showToast("חסר סוג כרטיס");return}
-  qcHistory.unshift({
-    id:`qc_${Date.now()}_${Math.random().toString(36).slice(2,7)}`,
-    cardType:type,
-    qty:amount,
-    updatedAt:new Date().toISOString()
-  });
-  saveHistories();
-  renderQc();
-  calculate(false);
-  document.getElementById("qcQty").value="0";
-  haptic();
-  showToast(`QC עודכן: ${type}`);
-}
-function deleteQc(type){
-  const key=safe(type).toLowerCase();
-  qcHistory=qcHistory.filter(x=>safe(x.cardType).toLowerCase()!==key);
-  saveHistories();
-  renderQc();
-  calculate(false);
-  renderHistory();
-  showToast(`QC נמחק: ${type}`);
-}
-function openHistory(){
-  historyOverlay.classList.add("open");
-  historyOverlay.setAttribute("aria-hidden","false");
-  renderHistory();
-}
-function closeHistory(){
-  historyOverlay.classList.remove("open");
-  historyOverlay.setAttribute("aria-hidden","true");
-}
-function selectedRange(){
-  const f=document.getElementById("fromDate").value;
-  const t=document.getElementById("toDate").value;
-  return{
-    from:f?new Date(`${f}T00:00:00`):new Date(0),
-    to:t?new Date(`${t}T23:59:59`):new Date(8640000000000000),
-    fromValue:f,toValue:t
-  };
-}
-function inRange(iso,range){
-  const x=new Date(iso);
-  return x>=range.from&&x<=range.to;
-}
-function group(items,keyFn,valueFn){
-  const m=new Map();
-  items.forEach(item=>{
-    const k=safe(keyFn(item))||"ללא סוג";
-    m.set(k,(m.get(k)||0)+qty(valueFn(item)));
-  });
-  return m;
-}
-function groupsText(map){
-  return [...map.entries()].map(([k,v])=>`${k}: ${v}`).join(" | ")||"--";
-}
-function renderHistory(){
-  const range=selectedRange();
-  const filtered=runs.filter(r=>inRange(r.completedAt,range)).sort((a,b)=>new Date(b.completedAt)-new Date(a.completedAt));
-  document.getElementById("histRuns").textContent=String(filtered.length);
-  document.getElementById("histQty").textContent=String(filtered.reduce((s,x)=>s+qty(x.qty),0));
-
-  const days=new Map();
-  filtered.forEach(item=>{
-    const key=toDateInput(new Date(item.completedAt));
-    if(!days.has(key))days.set(key,[]);
-    days.get(key).push(item);
-  });
-
-  const daily=document.getElementById("dailySummary");
-  if(!days.size){
-    daily.innerHTML='<div class="empty">אין נתונים בטווח</div>';
-  }else{
-    daily.innerHTML=[...days.entries()].sort((a,b)=>b[0].localeCompare(a[0])).map(([key,items])=>{
-      const date=new Date(`${key}T12:00:00`);
-      const total=items.reduce((s,x)=>s+qty(x.qty),0);
-      const byMachine=group(items,x=>x.machine,x=>x.qty);
-      const byCard=group(items,x=>x.cardType,x=>x.qty);
-      return `<div class="history-card">
-        <div class="history-head"><strong>${formatDateOnly(date)}</strong><span>${items.length} ריצות</span></div>
-        <div class="history-line"><span>כמות</span><strong>${total}</strong></div>
-        <div class="history-line"><span>לפי מכונה</span><strong>${escapeHtml(groupsText(byMachine))}</strong></div>
-        <div class="history-line"><span>לפי כרטיס</span><strong>${escapeHtml(groupsText(byCard))}</strong></div>
-      </div>`;
-    }).join("");
+  if (now >= end) {
+    state.className = "state finished";
+    state.textContent = "הסתיים";
+    leftEl.textContent = "00:00:00";
+  } else {
+    state.className = "state running";
+    state.textContent = "פעיל";
+    leftEl.textContent = formatDuration(remaining);
   }
 
-  const runsList=document.getElementById("runsList");
-  if(!filtered.length){
-    runsList.innerHTML='<div class="empty">אין ריצות שמורות</div>';
-  }else{
-    runsList.innerHTML=filtered.map(item=>`
-      <div class="history-card">
-        <div class="history-head"><strong>${escapeHtml(item.machine)}</strong><span>${escapeHtml(item.cardType)}</span></div>
-        <div class="history-line"><span>כמות</span><strong>${qty(item.qty)}</strong></div>
-        <div class="history-line"><span>התחלה</span><strong>${formatDateTime(new Date(item.startedAt))}</strong></div>
-        <div class="history-line"><span>סיום מתוכנן</span><strong>${formatDateTime(new Date(item.plannedEnd))}</strong></div>
-        <div class="history-line"><span>נשמר</span><strong>${formatDateTime(new Date(item.completedAt))}</strong></div>
-      </div>`).join("");
-  }
-}
-function shareText(){
-  const now=new Date();
-  const lines=[
-    `*${APP_NAME}*`,
-    `*${APP_VERSION_LABEL}*`,
-    `נכון ל־${formatDateTime(now)}`,
-    "────────────"
-  ];
-  let any=false;
-  cards.forEach(card=>{
-    const d=cardData(card);
-    const start=parseLocal(d.startValue);
-    if(d.qty===0&&!start)return;
-    any=true;
-    lines.push(`*${d.machine}*`);
-    if(d.cardType!==d.machine)lines.push(`סוג כרטיס: ${d.cardType}`);
-    lines.push(`כמות: *${d.qty}*`);
-    if(start){
-      const end=new Date(start.getTime()+d.hours*3600000);
-      lines.push(`התחלה: ${formatDateTime(start)}`);
-      lines.push(`סיום צפוי: ${formatDateTime(end)}`);
-      lines.push(`מצב: ${end<=now?"✅ הסתיים":"🟢 פעיל"}`);
-      if(end>now)lines.push(`זמן שנותר: ${formatDuration(end-now,true)}`);
-    }else{
-      lines.push("מצב: ⚪ טרם התחיל");
-    }
-    lines.push("");
-  });
-  if(!any)lines.push("אין כרגע מנות פעילות.","");
-  lines.push("*QC מוכן למשלוח*");
-  const q=[...currentQcMap().values()].sort((a,b)=>a.cardType.localeCompare(b.cardType,"he"));
-  if(!q.length)lines.push("לא הוזנו נתוני QC.");
-  else{
-    q.forEach(item=>lines.push(`• ${item.cardType}: *${qty(item.qty)}* | ${formatDateTime(new Date(item.updatedAt))}`));
-    lines.push(`סה״כ: *${currentQcTotal()}*`);
-  }
-  return lines.join("\n");
-}
-function historyShareText(){
-  const range=selectedRange();
-  const filtered=runs.filter(r=>inRange(r.completedAt,range));
-  const total=filtered.reduce((s,x)=>s+qty(x.qty),0);
-  const byMachine=group(filtered,x=>x.machine,x=>x.qty);
-  const byCard=group(filtered,x=>x.cardType,x=>x.qty);
-  const lines=[
-    `*${APP_NAME} — סיכום היסטוריית ייצור*`,
-    `*${APP_VERSION_LABEL}*`,
-    `טווח: ${range.fromValue||"התחלה"} עד ${range.toValue||"היום"}`,
-    `ריצות: *${filtered.length}*`,
-    `כמות כוללת: *${total}*`,
-    "",
-    "*לפי מכונה*"
-  ];
-  [...byMachine.entries()].forEach(([k,v])=>lines.push(`• ${k}: *${v}*`));
-  lines.push("","*לפי סוג כרטיס*");
-  [...byCard.entries()].forEach(([k,v])=>lines.push(`• ${k}: *${v}*`));
-  return lines.join("\n");
-}
-function shareWhatsApp(text){
-  const url=`https://wa.me/?text=${encodeURIComponent(text)}`;
-  const a=document.createElement("a");
-  a.href=url;a.target="_blank";a.rel="noopener noreferrer";
-  document.body.appendChild(a);a.click();a.remove();
-}
-function openConfirm(title,text,callback){
-  document.getElementById("confirmTitle").textContent=title;
-  document.getElementById("confirmText").textContent=text;
-  confirmCallback=callback;
-  confirmOverlay.classList.add("open");
-  confirmOverlay.setAttribute("aria-hidden","false");
-}
-function closeConfirm(){
-  confirmCallback=null;
-  confirmOverlay.classList.remove("open");
-  confirmOverlay.setAttribute("aria-hidden","true");
-}
-function resetCurrent(){
-  cards.forEach(card=>clearCard(card,false));
-  localStorage.removeItem(KEYS.current);
-  calculate(false);
-  showToast("המסך אופס");
-}
-function clearHistory(){
-  runs=[];
-  qcHistory=[];
-  saveHistories();
-  renderQc();
-  renderHistory();
-  calculate(false);
-  showToast("ההיסטוריה נמחקה");
+  card.classList.add("is-run-locked");
+  return { start, end };
 }
 
-function bindMachineCard(card){
-  if(card.dataset.bound==="1")return;card.dataset.bound="1";
-  const q=card.querySelector(".qty"),s=card.querySelector(".start"),t=card.querySelector(".cardType");
-  q.addEventListener("input",()=>{card.dataset.manualVisible="1";calculate(true)});q.addEventListener("blur",()=>{q.value=String(qty(q.value));calculate(true)});
-  s.addEventListener("input",()=>{card.dataset.manualVisible="1";calculate(true)});s.addEventListener("change",()=>calculate(true));t.addEventListener("input",saveCurrent);
-  card.querySelector(".now").addEventListener("click",()=>openConfirm(
-    "אישור הכנסת מנה",
-    `האם אתה בטוח שברצונך להכניס עכשיו מנה ל־${card.dataset.name}? זמן ההתחלה יוגדר לשעה הנוכחית.`,
-    ()=>setNow(card)
-  ));
-  card.querySelector(".finish").addEventListener("click",()=>{
-    const d=cardData(card);
-    const start=parseLocal(d.startValue);
-    if(!start){showToast("חסר מועד התחלה");return}
-    if(d.qty<=0){showToast("חסרה כמות");return}
-    openConfirm(
-      "אישור סיום ושמירה",
-      `האם אתה בטוח שברצונך לסיים ולשמור את ${d.machine}? הכמות ${d.qty} תישמר בהיסטוריה והכרטיס ינוקה.`,
-      ()=>finishRun(card)
-    );
-  });
-  card.querySelector(".clear").addEventListener("click",()=>openConfirm(
-    "אישור ניקוי מכונה",
-    `האם אתה בטוח שברצונך לנקות את ${card.dataset.name}? הכמות, סוג הכרטיס וזמן ההתחלה הנוכחיים יימחקו.`,
-    ()=>{card.dataset.manualVisible="0";clearCard(card);refreshInactiveVisibility();saveMachineConfig()}
-  ));
-  card.querySelector(".machine-edit").addEventListener("click",()=>editMachineName(card));card.querySelector(".machine-clone").addEventListener("click",()=>cloneMachine(card));card.querySelector(".machine-remove").addEventListener("click",()=>removeMachine(card));
-}
-function saveMachineConfig(){localStorage.setItem(KEYS.machineConfig,JSON.stringify(cards.map(card=>({family:card.dataset.family,html:card.outerHTML}))));}
-function editMachineName(card){const name=prompt("שם המכונה",card.dataset.name);if(name===null)return;const clean=safe(name);if(!clean){showToast("שם המכונה לא יכול להיות ריק");return}card.dataset.name=clean;card.querySelector(".machine-name-label").textContent=clean;saveMachineConfig();saveCurrent();calculate(false);showToast("שם המכונה עודכן");}
-function cloneMachine(card){const clone=card.cloneNode(true);clone.classList.remove("is-inactive-hidden");clone.dataset.manualVisible="1";clone.removeAttribute("data-bound");clone.querySelector(".qty").value="0";clone.querySelector(".start").value="";clone.querySelector(".cardType").value="";const n=card.parentElement.querySelectorAll(".machine").length+1;const base=card.dataset.name.replace(/\s+\d+$/,'');clone.dataset.name=`${base} ${n}`;clone.querySelector(".machine-name-label").textContent=clone.dataset.name;card.parentElement.appendChild(clone);refreshCards();bindMachineCard(clone);saveMachineConfig();saveCurrent();calculate(false);showToast(`${clone.dataset.name}: נוספה מכונה`);}
-function removeMachine(card){
-  const machineName=card.dataset.name||"המכונה";
-  openConfirm(
-    "מחיקת מכונה",
-    `האם אתה בטוח שברצונך למחוק את ${machineName}? כל הכמות, זמני ההפעלה והנתונים הנוכחיים של מכונה זו יימחקו.`,
-    ()=>{
-      const family=card.closest(".family-machines");
-      const count=family?family.querySelectorAll(".machine").length:0;
-      if(count<=1){
-        clearCard(card,false);
-        card.dataset.manualVisible="0";
-        card.classList.add("is-inactive-hidden");
-      }else{
-        card.remove();
-      }
-      refreshCards();
-      saveMachineConfig();
-      saveCurrent();
-      calculate(false);
-      showToast(`${machineName}: המכונה נמחקה`);
-    }
-  );
-}
-function addFamilyMachine(family){
-  const group=document.querySelector(`.machine-family[data-family="${family}"] .family-machines`);
-  if(!group)return;
-  const hidden=[...group.querySelectorAll(".machine.is-inactive-hidden")][0];
-  if(hidden){hidden.classList.remove("is-inactive-hidden");hidden.dataset.manualVisible="1";hidden.querySelector(".qty").focus();saveMachineConfig();showToast(`${hidden.dataset.name}: המכונה הוצגה`);return;}
-  const source=group.querySelector(".machine");if(source)cloneMachine(source);
-}
-function refreshInactiveVisibility(){
-  cards.forEach(card=>{
-    const hasStart=!!card.querySelector(".start").value;
-    const hasQty=qty(card.querySelector(".qty").value)>0;
-    const active=hasStart||hasQty||card.dataset.manualVisible==="1";
-    card.classList.toggle("is-inactive-hidden",!active);
-  });
-}
-function loadMachineConfig(){try{const config=JSON.parse(localStorage.getItem(KEYS.machineConfig)||"[]");if(!Array.isArray(config)||!config.length)return;document.querySelectorAll(".family-machines").forEach(x=>x.innerHTML="");config.forEach(item=>{let fam=String(item.family||"OTHER").toUpperCase();if(fam==="OTHER")fam=/thermal/i.test(item.html||"")?"THERMAL":"PASSIVE";const group=document.querySelector(`.machine-family[data-family="${fam}"] .family-machines`);if(!group)return;const box=document.createElement("div");box.innerHTML=String(item.html||"").replace(/data-family="OTHER"/g,`data-family="${fam}"`);const card=box.firstElementChild;if(card){card.dataset.family=fam;card.removeAttribute("data-bound");group.appendChild(card)}});refreshCards()}catch{}}
-loadMachineConfig();refreshCards();cards.forEach(bindMachineCard);refreshInactiveVisibility();document.querySelectorAll("[data-add-family]").forEach(btn=>btn.addEventListener("click",()=>addFamilyMachine(btn.dataset.addFamily)));
+function calculate() {
+  const now = new Date();
+  let total = 0, active = 0, latest = null;
 
-function switchAppPage(page){
-  const live=page==="live";
-  document.getElementById("livePage").classList.toggle("is-active",live);
-  document.getElementById("simulationPage").classList.toggle("is-active",!live);
-  document.getElementById("showLivePage").classList.toggle("is-active",live);
-  document.getElementById("showSimulationPage").classList.toggle("is-active",!live);
-  document.getElementById("showLivePage").classList.toggle("btn-primary",live);
-  document.getElementById("showLivePage").classList.toggle("btn-soft",!live);
-  document.getElementById("showSimulationPage").classList.toggle("btn-primary",!live);
-  document.getElementById("showSimulationPage").classList.toggle("btn-soft",live);
-  window.scrollTo({top:0,behavior:"smooth"});
-}
-document.getElementById("showLivePage").addEventListener("click",()=>switchAppPage("live"));
-document.getElementById("showSimulationPage").addEventListener("click",()=>switchAppPage("simulation"));
-
-document.getElementById("saveQc").addEventListener("click",saveQc);
-document.getElementById("clearQc").addEventListener("click",()=>openConfirm(
-  "אישור ניקוי שדות QC",
-  "האם אתה בטוח שברצונך לנקות את סוג הכרטיס והכמות שהוזנו בשדות QC? נתוני QC שכבר נשמרו לא יימחקו.",
-  ()=>{
-    document.getElementById("qcCardType").value="";
-    document.getElementById("qcQty").value="0";
-    showToast("שדות QC נוקו");
-  }
-));
-document.getElementById("shareBtn").addEventListener("click",()=>shareWhatsApp(shareText()));
-document.getElementById("historyBtn").addEventListener("click",openHistory);
-document.getElementById("closeHistory").addEventListener("click",closeHistory);
-document.getElementById("todayFilter").addEventListener("click",()=>{
-  const today=toDateInput(new Date());
-  document.getElementById("fromDate").value=today;
-  document.getElementById("toDate").value=today;
-  renderHistory();
-});
-document.getElementById("applyFilter").addEventListener("click",renderHistory);
-document.getElementById("shareHistory").addEventListener("click",()=>shareWhatsApp(historyShareText()));
-document.getElementById("deleteHistory").addEventListener("click",()=>openConfirm(
-  "מחיקת היסטוריה",
-  "כל הריצות ונתוני ה-QC יימחקו לצמיתות.",
-  clearHistory
-));
-document.getElementById("resetBtn").addEventListener("click",()=>openConfirm(
-  "איפוס המסך",
-  "הכמויות וזמני ההתחלה הנוכחיים יימחקו. ההיסטוריה תישמר.",
-  resetCurrent
-));
-document.getElementById("closeConfirm").addEventListener("click",closeConfirm);
-document.getElementById("cancelConfirm").addEventListener("click",closeConfirm);
-document.getElementById("confirmAction").addEventListener("click",()=>{
-  const cb=confirmCallback;
-  closeConfirm();
-  if(cb)cb();
-});
-historyOverlay.addEventListener("click",e=>{if(e.target===historyOverlay)closeHistory()});
-confirmOverlay.addEventListener("click",e=>{if(e.target===confirmOverlay)closeConfirm()});
-
-const today=toDateInput(new Date());
-document.getElementById("fromDate").value=today;
-document.getElementById("toDate").value=today;
-
-loadCurrent();
-renderQc();
-calculate(false);
-renderHistory();
-setInterval(()=>calculate(false),1000);
-
-const simStartEl=document.getElementById("simStart");
-const simRows=[...document.querySelectorAll(".sim-machine")];
-const simResultsEl=document.getElementById("simResults");
-const simListEl=document.getElementById("simList");
-function runSimulation(){
-  const start=parseLocal(simStartEl.value);if(!start){showToast("בחר מועד התחלה לסימולציה");return}
-  let totalBatches=0,totalQuantity=0,finalEnd=null;const result=[];
-  simRows.forEach(row=>{const name=row.dataset.simName;const hours=Number(row.dataset.simHours);const count=qty(row.querySelector(".sim-count").value);const perBatch=qty(row.querySelector(".sim-qty").value);if(count<=0)return;const batches=[];for(let i=1;i<=count;i++){const batchStart=new Date(start.getTime()+(i-1)*hours*3600000);const batchEnd=new Date(batchStart.getTime()+hours*3600000);batches.push({number:i,start:batchStart,end:batchEnd,quantity:perBatch});if(!finalEnd||batchEnd>finalEnd)finalEnd=batchEnd}totalBatches+=count;totalQuantity+=count*perBatch;result.push({name,hours,count,perBatch,batches,machineEnd:batches[batches.length-1].end})});
-  if(!result.length){simResultsEl.classList.remove("show");showToast("הזן לפחות מנה אחת");return}
-  result.sort((a,b)=>a.machineEnd-b.machineEnd);document.getElementById("simTotalBatches").textContent=String(totalBatches);document.getElementById("simTotalQty").textContent=String(totalQuantity);document.getElementById("simFinalEnd").textContent=finalEnd?formatDateTime(finalEnd):"--";
-  simListEl.innerHTML=result.map(machine=>`<div class="sim-item"><div class="sim-item-head"><strong>${escapeHtml(machine.name)}</strong><span>סיום המכונה: ${formatDateTime(machine.machineEnd)}</span></div><div class="sim-batches">${machine.batches.map(batch=>`<div class="sim-batch"><span>מנה ${batch.number} · ${batch.quantity} כרטיסים</span><strong>מוכנה: ${formatDateTime(batch.end)}</strong></div>`).join("")}</div></div>`).join("");
-  simResultsEl.classList.add("show");haptic();showToast("הסימולציה חושבה")
-}
-function clearSimulation(){simRows.forEach(row=>{row.querySelector(".sim-count").value="0";row.querySelector(".sim-qty").value="0"});simStartEl.value=toInputDateTime(new Date());simResultsEl.classList.remove("show");simListEl.innerHTML="";document.getElementById("simTotalBatches").textContent="0";document.getElementById("simTotalQty").textContent="0";document.getElementById("simFinalEnd").textContent="--";showToast("הסימולציה נוקתה")}
-simStartEl.value=toInputDateTime(new Date());
-document.getElementById("runSimulation").addEventListener("click",runSimulation);
-document.getElementById("clearSimulation").addEventListener("click",()=>openConfirm(
-  "אישור ניקוי סימולציה",
-  "האם אתה בטוח שברצונך לנקות את כל הכמויות, מספרי המנות ותוצאות הסימולציה?",
-  clearSimulation
-));
-simRows.forEach(row=>{row.querySelectorAll("input").forEach(input=>{input.addEventListener("keydown",e=>{if(e.key==="Enter")runSimulation()})})});
-
-
-/* Complete flexible MES upgrade */
-const INVENTORY_KEY="productionFlowInventoryV2";
-let inventoryRecords=[];let editingMachine=null;let editingQcId=null;
-try{inventoryRecords=JSON.parse(localStorage.getItem(INVENTORY_KEY)||"[]");if(!Array.isArray(inventoryRecords))inventoryRecords=[]}catch{inventoryRecords=[]}
-function saveInventoryData(){localStorage.setItem(INVENTORY_KEY,JSON.stringify(inventoryRecords));renderInventory();updateInventoryMetrics()}
-function statusLabel(s){return({stock:"במלאי – ממתין להתחלה",waiting:"ממתין לשלב הבא",process:"בתהליך",qc:"ב־QC",ready:"מוכן למשלוח"})[s]||s}
-function inventoryTotals(){const t={received:0,stock:0,waiting:0,process:0,qc:0,ready:0};inventoryRecords.forEach(r=>{const q=qty(r.qty);if(r.kind!=="movement")t.received+=q;if(t[r.status]!==undefined)t[r.status]+=q});return t}
-function updateInventoryMetrics(){const t=inventoryTotals();["Received","Stock","Waiting","Process","Qc","Ready"].forEach(k=>{const el=document.getElementById("inv"+k);if(el)el.textContent=t[k.toLowerCase()]||0});const a=document.getElementById("liveInventoryTotal"),b=document.getElementById("liveWaitingTotal");if(a)a.textContent=t.stock;if(b)b.textContent=t.waiting}
-function clearInventoryFields(){["invCardType","invBatch","invSource","invNext","invNotes"].forEach(id=>document.getElementById(id).value="");document.getElementById("invQty").value="0";document.getElementById("invStatus").value="stock"}
-function saveInventoryRecord(){const type=safe(document.getElementById("invCardType").value),amount=qty(document.getElementById("invQty").value);if(!type){showToast("חסר סוג כרטיס");return}if(amount<=0){showToast("חסרה כמות");return}const rec={id:"inv_"+Date.now()+Math.random().toString(36).slice(2,6),cardType:type,batch:safe(document.getElementById("invBatch").value),qty:amount,status:document.getElementById("invStatus").value,source:safe(document.getElementById("invSource").value),nextStage:safe(document.getElementById("invNext").value),notes:safe(document.getElementById("invNotes").value),createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()};inventoryRecords.unshift(rec);saveInventoryData();clearInventoryFields();showToast("הקליטה נשמרה")}
-function renderInventory(){
-  const box=document.getElementById("inventoryList");
-  if(!box)return;
-  const searchEl=document.getElementById("invSearch");
-  const term=safe(searchEl?searchEl.value:"").toLowerCase();
-  const list=inventoryRecords.filter(r=>{
-    const hay=[r.cardType,r.batch,r.source,r.nextStage,r.notes,statusLabel(r.status)].join(" ").toLowerCase();
-    return !term||hay.includes(term);
-  });
-  document.getElementById("invCount").textContent=`${list.length} רשומות`;
-  if(!list.length){box.innerHTML='<div class="empty">אין רשומות להצגה</div>';return;}
-  box.innerHTML=list.map(r=>{
-    const source=r.source?` · מקור: ${escapeHtml(r.source)}`:"";
-    const next=r.nextStage?`<br>שלב הבא: ${escapeHtml(r.nextStage)}`:"";
-    const note=r.notes?`<div class="inv-note">${escapeHtml(r.notes)}</div>`:"";
-    return `<div class="inv-row">
-      <div class="inv-row-head"><div><strong>${escapeHtml(r.cardType)}</strong> <span class="inv-badge">${escapeHtml(statusLabel(r.status))}</span></div><strong>${qty(r.qty)}</strong></div>
-      <div class="inv-meta">מנה: ${escapeHtml(r.batch||"—")} · נקלט: ${escapeHtml(formatDateTime(new Date(r.createdAt)))}${source}${next}</div>
-      ${note}
-      <div class="inv-row-actions"><span></span><div class="mini-actions"><button class="mini-btn inv-edit" data-id="${r.id}" type="button">ערוך</button><button class="mini-btn danger inv-delete" data-id="${r.id}" type="button">מחק</button></div></div>
-    </div>`;
-  }).join("");
-  box.querySelectorAll(".inv-edit").forEach(b=>b.addEventListener("click",()=>editInventoryRecord(b.dataset.id)));
-  box.querySelectorAll(".inv-delete").forEach(b=>b.addEventListener("click",()=>{
-    openConfirm("מחיקת קליטה","האם אתה בטוח שברצונך למחוק את הרשומה?",()=>{
-      inventoryRecords=inventoryRecords.filter(r=>r.id!==b.dataset.id);
-      saveInventoryData();
-      showToast("הרשומה נמחקה");
-    });
-  }));
-}
-function editInventoryRecord(id){const r=inventoryRecords.find(x=>x.id===id);if(!r)return;document.getElementById("invCardType").value=r.cardType;document.getElementById("invBatch").value=r.batch||"";document.getElementById("invQty").value=r.qty;document.getElementById("invStatus").value=r.status;document.getElementById("invSource").value=r.source||"";document.getElementById("invNext").value=r.nextStage||"";document.getElementById("invNotes").value=r.notes||"";inventoryRecords=inventoryRecords.filter(x=>x.id!==id);saveInventoryData();document.getElementById("inventoryPage").scrollIntoView({behavior:"smooth"});showToast("ערוך את הנתונים ושמור מחדש")}
-function allocateInventory(type,amount,status="process",batch="",nextStage="",notes=""){let remaining=amount;const key=safe(type).toLowerCase();for(const r of inventoryRecords){if(remaining<=0)break;if(r.status==="stock"&&safe(r.cardType).toLowerCase()===key&&r.qty>0){const take=Math.min(r.qty,remaining);r.qty-=take;remaining-=take}}inventoryRecords=inventoryRecords.filter(r=>r.qty>0);inventoryRecords.unshift({id:"mov_"+Date.now()+Math.random().toString(36).slice(2,5),kind:"movement",cardType:type,batch,qty:amount-remaining,status,nextStage,notes,source:"העברה אוטומטית מהמכונה",createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()});saveInventoryData();if(remaining>0)showToast(`אזהרה: חסרים ${remaining} כרטיסים במלאי ${type}`)}
-// Full machine editor
-document.querySelectorAll(".machine").forEach(card=>{if(!card.querySelector(".batchNo")){const extra=document.createElement("div");extra.className="machine-extra";extra.innerHTML='<div class="field"><label>מספר מנה</label><input class="batchNo" type="text"></div><div class="field"><label>שלב הבא</label><input class="nextStage" type="text"></div><div class="field full"><label>הערות למכונה</label><textarea class="machine-notes"></textarea></div>';card.querySelector(".fields").after(extra)}});
-editMachineName=function(card){editingMachine=card;document.getElementById("editMachineName").value=card.dataset.name||"";document.getElementById("editMachineFamily").value=card.dataset.family||"";document.getElementById("editMachineHours").value=card.dataset.hours||0;document.getElementById("editMachineQty").value=card.querySelector(".qty").value;document.getElementById("editMachineCard").value=card.querySelector(".cardType").value;document.getElementById("editMachineBatch").value=card.querySelector(".batchNo")?.value||"";document.getElementById("editMachineNext").value=card.querySelector(".nextStage")?.value||"";document.getElementById("editMachineStart").value=card.querySelector(".start").value;document.getElementById("editMachineNotes").value=card.querySelector(".machine-notes")?.value||"";machineEditOverlay.classList.add("open")}
-function closeMachineEditor(){machineEditOverlay.classList.remove("open");editingMachine=null}
-document.getElementById("saveMachineEdit").addEventListener("click",()=>{if(!editingMachine)return;const name=safe(document.getElementById("editMachineName").value),hours=Number(document.getElementById("editMachineHours").value);if(!name||!Number.isFinite(hours)||hours<0){showToast("בדוק שם וזמן מכונה");return}editingMachine.dataset.name=name;editingMachine.dataset.family=safe(document.getElementById("editMachineFamily").value)||"OTHER";editingMachine.dataset.hours=String(hours);editingMachine.querySelector(".machine-name-label").textContent=name;editingMachine.querySelector(".machine-title small").textContent=`${hours} שעות`;editingMachine.querySelector(".machine-icon").textContent=name.charAt(0).toUpperCase();editingMachine.querySelector(".qty").value=String(qty(document.getElementById("editMachineQty").value));editingMachine.querySelector(".cardType").value=safe(document.getElementById("editMachineCard").value);editingMachine.querySelector(".batchNo").value=safe(document.getElementById("editMachineBatch").value);editingMachine.querySelector(".nextStage").value=safe(document.getElementById("editMachineNext").value);editingMachine.querySelector(".start").value=document.getElementById("editMachineStart").value;editingMachine.querySelector(".machine-notes").value=safe(document.getElementById("editMachineNotes").value);editingMachine.dataset.manualVisible="1";saveMachineConfig();saveCurrent();calculate(false);closeMachineEditor();showToast("כל נתוני המכונה עודכנו")});["closeMachineEdit","cancelMachineEdit"].forEach(id=>document.getElementById(id).addEventListener("click",closeMachineEditor));
-// Extend machine inventory behavior
-const originalSetNow=setNow;setNow=function(card){const already=card.dataset.inventoryAllocated==="1";originalSetNow(card);if(!already){const d=cardData(card),batch=card.querySelector(".batchNo")?.value||"",next=card.querySelector(".nextStage")?.value||"";if(d.qty>0&&d.cardType){allocateInventory(d.cardType,d.qty,"process",batch,next,`הוכנס ל-${d.machine}`);card.dataset.inventoryAllocated="1";saveMachineConfig()}}};
-const originalFinishRun=finishRun;finishRun=function(card){const d=cardData(card),batch=card.querySelector(".batchNo")?.value||"",next=card.querySelector(".nextStage")?.value||"",notes=card.querySelector(".machine-notes")?.value||"";originalFinishRun(card);inventoryRecords=inventoryRecords.filter(r=>!(r.kind==="movement"&&r.status==="process"&&safe(r.cardType).toLowerCase()===safe(d.cardType).toLowerCase()&&qty(r.qty)===qty(d.qty)));inventoryRecords.unshift({id:"wait_"+Date.now(),kind:"movement",cardType:d.cardType,batch,qty:d.qty,status:next.toLowerCase().includes("qc")?"qc":"waiting",nextStage:next,notes:notes||`הסתיים ב-${d.machine}`,source:d.machine,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()});card.dataset.inventoryAllocated="0";saveInventoryData();saveMachineConfig()}
-// QC complete editor
-saveQc=function(){const type=safe(document.getElementById("qcCardType").value),amount=qty(document.getElementById("qcQty").value);if(!type){showToast("חסר סוג כרטיס");return}if(amount<=0){showToast("חסרה כמות");return}qcHistory.unshift({id:`qc_${Date.now()}_${Math.random().toString(36).slice(2,7)}`,cardType:type,qty:amount,batch:safe(document.getElementById("qcBatchNo").value),status:document.getElementById("qcStatus").value,notes:safe(document.getElementById("qcNotes").value),updatedAt:new Date().toISOString()});saveHistories();renderQc();calculate(false);document.getElementById("qcQty").value="0";document.getElementById("qcBatchNo").value="";document.getElementById("qcNotes").value="";showToast(`QC עודכן: ${type}`)}
-renderQc=function(){const list=[...currentQcMap().values()].sort((a,b)=>a.cardType.localeCompare(b.cardType,"he"));if(!list.length){qcListEl.innerHTML='<div class="empty">אין עדיין נתוני QC</div>';return}qcListEl.innerHTML=list.map(item=>`<div class="qc-row"><div><strong>${escapeHtml(item.cardType)}</strong><div class="qc-meta">מנה: ${escapeHtml(item.batch||"—")} · ${escapeHtml(item.status||"מוכן למשלוח")}<br>נכון ל־${escapeHtml(formatDateTime(new Date(item.updatedAt)))}</div>${item.notes?`<div class="inv-note">${escapeHtml(item.notes)}</div>`:""}<div class="qc-actions-inline"><button class="qc-edit" data-id="${item.id}" type="button">ערוך הכל</button><button class="qc-delete" data-card="${escapeHtml(item.cardType)}" type="button">מחק</button></div></div><div class="qc-qty">${qty(item.qty)}</div></div>`).join("");qcListEl.querySelectorAll(".qc-edit").forEach(b=>b.addEventListener("click",()=>openQcEditor(b.dataset.id)));qcListEl.querySelectorAll(".qc-delete").forEach(btn=>btn.addEventListener("click",()=>openConfirm("מחיקת QC",`למחוק את נתוני ה-QC של ${btn.dataset.card}?`,()=>deleteQc(btn.dataset.card))))}
-function openQcEditor(id){const item=qcHistory.find(x=>x.id===id);if(!item)return;editingQcId=id;document.getElementById("editQcType").value=item.cardType||"";document.getElementById("editQcQty").value=item.qty||0;document.getElementById("editQcBatch").value=item.batch||"";document.getElementById("editQcStatus").value=item.status||"ב־QC";document.getElementById("editQcTime").value=toInputDateTime(new Date(item.updatedAt));document.getElementById("editQcNotes").value=item.notes||"";qcEditOverlay.classList.add("open")}
-function closeQcEditor(){qcEditOverlay.classList.remove("open");editingQcId=null}["closeQcEdit","cancelQcEdit"].forEach(id=>document.getElementById(id).addEventListener("click",closeQcEditor));document.getElementById("saveQcEdit").addEventListener("click",()=>{const item=qcHistory.find(x=>x.id===editingQcId);if(!item)return;item.cardType=safe(document.getElementById("editQcType").value);item.qty=qty(document.getElementById("editQcQty").value);item.batch=safe(document.getElementById("editQcBatch").value);item.status=document.getElementById("editQcStatus").value;item.updatedAt=parseLocal(document.getElementById("editQcTime").value)?.toISOString()||new Date().toISOString();item.notes=safe(document.getElementById("editQcNotes").value);saveHistories();renderQc();calculate(false);closeQcEditor();showToast("נתוני QC עודכנו")});
-// Three-page navigation
-switchAppPage=function(page){["live","simulation","inventory"].forEach(p=>{const pageEl=document.getElementById(p==="live"?"livePage":p==="simulation"?"simulationPage":"inventoryPage");const btn=document.getElementById(p==="live"?"showLivePage":p==="simulation"?"showSimulationPage":"showInventoryPage");const on=p===page;pageEl.classList.toggle("is-active",on);btn.classList.toggle("is-active",on);btn.classList.toggle("btn-primary",on);btn.classList.toggle("btn-soft",!on)});window.scrollTo({top:0,behavior:"smooth"})};document.getElementById("showInventoryPage").addEventListener("click",()=>switchAppPage("inventory"));
-// Events
-document.getElementById("saveInventory").addEventListener("click",()=>openConfirm("שמירת קליטה","האם אתה בטוח שברצונך לשמור את הקליטה במלאי?",saveInventoryRecord));document.getElementById("clearInventoryForm").addEventListener("click",()=>openConfirm("ניקוי שדות","לנקות את כל שדות הקליטה שלא נשמרו?",()=>{clearInventoryFields();showToast("שדות הקליטה נוקו")}));document.getElementById("invSearch").addEventListener("input",renderInventory);
-// Ensure extra fields persist on input
-refreshCards();cards.forEach(card=>card.querySelectorAll(".batchNo,.nextStage,.machine-notes").forEach(el=>el.addEventListener("input",()=>{saveMachineConfig();saveCurrent()})));
-renderInventory();updateInventoryMetrics();renderQc();
-
-
-// Bottom mode menu and dedicated QC screen
-const modeFab=document.getElementById("modeFab");
-const modeMenuOverlay=document.getElementById("modeMenuOverlay");
-function openModeMenu(){modeMenuOverlay.classList.add("open");modeMenuOverlay.setAttribute("aria-hidden","false")}
-function closeModeMenu(){modeMenuOverlay.classList.remove("open");modeMenuOverlay.setAttribute("aria-hidden","true")}
-modeFab.addEventListener("click",openModeMenu);
-["closeModeMenu","closeModeMenuBottom"].forEach(id=>document.getElementById(id).addEventListener("click",closeModeMenu));
-modeMenuOverlay.addEventListener("click",e=>{if(e.target===modeMenuOverlay)closeModeMenu()});
-
-switchAppPage=function(page){
-  const map={live:"livePage",simulation:"simulationPage",inventory:"inventoryPage",qc:"qcPage"};
-  Object.entries(map).forEach(([key,id])=>{const el=document.getElementById(id);if(el)el.classList.toggle("is-active",key===page)});
-  document.querySelectorAll(".mode-option").forEach(btn=>btn.classList.toggle("is-current",btn.dataset.page===page));
-  closeModeMenu();window.scrollTo({top:0,behavior:"smooth"});
-};
-document.querySelectorAll(".mode-option").forEach(btn=>btn.addEventListener("click",()=>switchAppPage(btn.dataset.page)));
-// Always open on operations screen
-switchAppPage("live");
-
-// Editable QC rubric
-const qcRubricOverlay=document.getElementById("qcRubricOverlay");
-const QC_RUBRIC_KEY="productionFlowQcRubricV1";
-function getQcRubric(){try{return JSON.parse(localStorage.getItem(QC_RUBRIC_KEY)||"{}")||{}}catch(e){return{}}}
-function applyQcRubric(){const s=getQcRubric();document.getElementById("qcPageTitle").textContent=s.pageTitle||"QC";document.getElementById("qcRubricTitleView").textContent=s.title||"QC מוכן למשלוח";document.getElementById("qcRubricSubtitleView").textContent=s.subtitle||"עדכון מהיר"}
-function openQcRubric(){const s=getQcRubric();document.getElementById("qcRubricPageTitle").value=s.pageTitle||"QC";document.getElementById("qcRubricTitle").value=s.title||"QC מוכן למשלוח";document.getElementById("qcRubricSubtitle").value=s.subtitle||"עדכון מהיר";qcRubricOverlay.classList.add("open")}
-function closeQcRubric(){qcRubricOverlay.classList.remove("open")}
-document.getElementById("editQcRubric").addEventListener("click",openQcRubric);
-["closeQcRubric","cancelQcRubric"].forEach(id=>document.getElementById(id).addEventListener("click",closeQcRubric));
-document.getElementById("saveQcRubric").addEventListener("click",()=>openConfirm("שמירת הגדרות QC","האם אתה בטוח שברצונך לשמור את כותרות אזור ה-QC?",()=>{localStorage.setItem(QC_RUBRIC_KEY,JSON.stringify({pageTitle:safe(document.getElementById("qcRubricPageTitle").value)||"QC",title:safe(document.getElementById("qcRubricTitle").value)||"QC מוכן למשלוח",subtitle:safe(document.getElementById("qcRubricSubtitle").value)||"עדכון מהיר"}));applyQcRubric();closeQcRubric();showToast("אזור QC עודכן")}));
-applyQcRubric();
-</script>
-<script>
-/* Reliability audit patch v3 */
-(function(){
-  const CURRENT_V2='productionFlowCurrentV2';
-  const INVENTORY_EDIT_KEY='productionFlowInventoryEditDraftV1';
-  let editingInventoryId=null;
-
-  function ensureMachineIds(){
-    refreshCards();
-    cards.forEach((card,i)=>{
-      if(!card.dataset.machineId){
-        card.dataset.machineId='machine_'+Date.now().toString(36)+'_'+i+'_'+Math.random().toString(36).slice(2,7);
-      }
-    });
-  }
-
-  function machineSnapshot(card){
-    return {
-      id:card.dataset.machineId,
-      name:card.dataset.name||'',
-      family:card.dataset.family||'OTHER',
-      hours:Number(card.dataset.hours)||0,
-      qty:card.querySelector('.qty')?.value||'0',
-      start:card.querySelector('.start')?.value||'',
-      cardType:card.querySelector('.cardType')?.value||'',
-      batch:card.querySelector('.batchNo')?.value||'',
-      nextStage:card.querySelector('.nextStage')?.value||'',
-      notes:card.querySelector('.machine-notes')?.value||'',
-      manualVisible:card.dataset.manualVisible||'0',
-      inventoryAllocated:card.dataset.inventoryAllocated||'0',
-      inventoryMovementId:card.dataset.inventoryMovementId||''
-    };
-  }
-
-  const oldSaveMachineConfig=saveMachineConfig;
-  saveCurrent=function(){
-    ensureMachineIds();
-    localStorage.setItem(CURRENT_V2,JSON.stringify(cards.map(machineSnapshot)));
-    oldSaveMachineConfig();
-  };
-
-  function loadCurrentV2(){
-    let data=[];
-    try{data=JSON.parse(localStorage.getItem(CURRENT_V2)||'[]')}catch{}
-    if(!Array.isArray(data)||!data.length){ saveCurrent(); return; }
-    const byId=new Map(data.map(x=>[x.id,x]));
-    cards.forEach((card,i)=>{
-      const x=byId.get(card.dataset.machineId)||data[i];
-      if(!x)return;
-      card.dataset.machineId=x.id||card.dataset.machineId;
-      card.dataset.name=x.name||card.dataset.name;
-      card.dataset.family=x.family||card.dataset.family;
-      card.dataset.hours=String(Number(x.hours)||Number(card.dataset.hours)||0);
-      card.dataset.manualVisible=x.manualVisible||'0';
-      card.dataset.inventoryAllocated=x.inventoryAllocated||'0';
-      card.dataset.inventoryMovementId=x.inventoryMovementId||'';
-      card.querySelector('.machine-name-label').textContent=card.dataset.name;
-      card.querySelector('.machine-title small').textContent=`${card.dataset.hours} שעות`;
-      card.querySelector('.qty').value=x.qty??'0';
-      card.querySelector('.start').value=x.start??'';
-      card.querySelector('.cardType').value=x.cardType??'';
-      if(card.querySelector('.batchNo'))card.querySelector('.batchNo').value=x.batch??'';
-      if(card.querySelector('.nextStage'))card.querySelector('.nextStage').value=x.nextStage??'';
-      if(card.querySelector('.machine-notes'))card.querySelector('.machine-notes').value=x.notes??'';
-    });
-  }
-
-  const oldCloneMachine=cloneMachine;
-  cloneMachine=function(card){
-    oldCloneMachine(card);
-    ensureMachineIds();
-    saveCurrent();
-  };
-
-  // Preserve intake history while keeping available stock mutable.
-  inventoryRecords.forEach(r=>{
-    if(r.kind!=='movement' && r.originalQty==null) r.originalQty=qty(r.qty);
-  });
-
-  inventoryTotals=function(){
-    const t={received:0,stock:0,waiting:0,process:0,qc:0,ready:0};
-    inventoryRecords.forEach(r=>{
-      const current=qty(r.qty);
-      if(r.kind!=='movement')t.received+=qty(r.originalQty==null?r.qty:r.originalQty);
-      if(Object.prototype.hasOwnProperty.call(t,r.status))t[r.status]+=current;
-    });
-    return t;
-  };
-
-  function inventoryAvailable(type){
-    const key=safe(type).toLowerCase();
-    return inventoryRecords.reduce((sum,r)=>sum+(r.status==='stock'&&safe(r.cardType).toLowerCase()===key?qty(r.qty):0),0);
-  }
-
-  allocateInventory=function(type,amount,status='process',batch='',nextStage='',notes='',machineId=''){
-    let remaining=qty(amount);
-    const requested=remaining;
-    const key=safe(type).toLowerCase();
-    for(const r of inventoryRecords){
-      if(remaining<=0)break;
-      if(r.status==='stock'&&safe(r.cardType).toLowerCase()===key&&qty(r.qty)>0){
-        const take=Math.min(qty(r.qty),remaining);
-        r.qty=qty(r.qty)-take;
-        remaining-=take;
-        r.updatedAt=new Date().toISOString();
-      }
-    }
-    const allocated=requested-remaining;
-    let movementId='';
-    if(allocated>0){
-      movementId='mov_'+Date.now()+'_'+Math.random().toString(36).slice(2,7);
-      inventoryRecords.unshift({id:movementId,kind:'movement',machineId,cardType:type,batch,qty:allocated,status,nextStage,notes,source:'העברה אוטומטית מהמכונה',createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()});
-    }
-    saveInventoryData();
-    return {allocated,missing:remaining,movementId};
-  };
-
-  setNow=function(card){
-    const d=cardData(card);
-    if(d.qty<=0){showToast('חסרה כמות');return false;}
-    if(!safe(d.cardType)){showToast('חסר סוג כרטיס');return false;}
-    if(card.dataset.inventoryAllocated!=='1'){
-      const available=inventoryAvailable(d.cardType);
-      if(available<d.qty){showToast(`אין מספיק מלאי: קיימים ${available} מתוך ${d.qty}`);return false;}
-      const batch=card.querySelector('.batchNo')?.value||'';
-      const next=card.querySelector('.nextStage')?.value||'';
-      const a=allocateInventory(d.cardType,d.qty,'process',batch,next,`הוכנס ל-${d.machine}`,card.dataset.machineId||'');
-      if(a.allocated!==d.qty)return false;
-      card.dataset.inventoryAllocated='1';
-      card.dataset.inventoryMovementId=a.movementId;
-    }
-    card.querySelector('.start').value=toInputDateTime(new Date());
-    calculate(true);haptic();showToast(`${card.dataset.name}: התחלה עודכנה`);
-    return true;
-  };
-
-  finishRun=function(card){
-    const d=cardData(card);
-    const start=parseLocal(d.startValue);
-    if(!start){showToast('חסר מועד התחלה');return false;}
-    if(d.qty<=0){showToast('חסרה כמות');return false;}
-    const completedAt=new Date();
-    const plannedEnd=new Date(start.getTime()+d.hours*3600000);
-    const batch=card.querySelector('.batchNo')?.value||'';
-    const next=card.querySelector('.nextStage')?.value||'';
-    const notes=card.querySelector('.machine-notes')?.value||'';
-    runs.unshift({
-      id:`run_${Date.now()}_${Math.random().toString(36).slice(2,7)}`,
-      machineId:card.dataset.machineId||'',machine:d.machine,cardType:d.cardType,qty:d.qty,hours:d.hours,
-      batch,nextStage:next,notes,startedAt:start.toISOString(),plannedEnd:plannedEnd.toISOString(),
-      completedAt:completedAt.toISOString(),actualDurationMs:completedAt-start,
-      finishedOnTime:completedAt<=plannedEnd
-    });
-    const movementId=card.dataset.inventoryMovementId||'';
-    if(movementId)inventoryRecords=inventoryRecords.filter(r=>r.id!==movementId);
-    inventoryRecords.unshift({id:'wait_'+Date.now()+'_'+Math.random().toString(36).slice(2,6),kind:'movement',machineId:card.dataset.machineId||'',cardType:d.cardType,batch,qty:d.qty,status:safe(next).toLowerCase().includes('qc')?'qc':'waiting',nextStage:next,notes:notes||`הסתיים ב-${d.machine}`,source:d.machine,createdAt:completedAt.toISOString(),updatedAt:completedAt.toISOString()});
-    saveHistories();saveInventoryData();
-    card.dataset.inventoryAllocated='0';card.dataset.inventoryMovementId='';
-    clearCard(card,false);renderHistory();saveCurrent();haptic();showToast(`${d.machine}: נשמר בהיסטוריה`);
-    return true;
-  };
-
-  // Inventory editing is transactional: cancel no longer deletes the original row.
-  editInventoryRecord=function(id){
-    const r=inventoryRecords.find(x=>x.id===id);if(!r)return;
-    editingInventoryId=id;
-    document.getElementById('invCardType').value=r.cardType||'';
-    document.getElementById('invBatch').value=r.batch||'';
-    document.getElementById('invQty').value=qty(r.qty);
-    document.getElementById('invStatus').value=r.status||'stock';
-    document.getElementById('invSource').value=r.source||'';
-    document.getElementById('invNext').value=r.nextStage||'';
-    document.getElementById('invNotes').value=r.notes||'';
-    document.getElementById('inventoryPage').scrollIntoView({behavior:'smooth'});
-    showToast('מצב עריכת קליטה');
-  };
-
-  saveInventoryRecord=function(){
-    const type=safe(document.getElementById('invCardType').value),amount=qty(document.getElementById('invQty').value);
-    if(!type){showToast('חסר סוג כרטיס');return;}
-    if(amount<=0){showToast('חסרה כמות');return;}
-    const now=new Date().toISOString();
-    if(editingInventoryId){
-      const rec=inventoryRecords.find(x=>x.id===editingInventoryId);
-      if(!rec){editingInventoryId=null;showToast('הרשומה לא נמצאה');return;}
-      rec.cardType=type;rec.batch=safe(document.getElementById('invBatch').value);rec.qty=amount;
-      if(rec.kind!=='movement')rec.originalQty=Math.max(qty(rec.originalQty),amount);
-      rec.status=document.getElementById('invStatus').value;rec.source=safe(document.getElementById('invSource').value);
-      rec.nextStage=safe(document.getElementById('invNext').value);rec.notes=safe(document.getElementById('invNotes').value);rec.updatedAt=now;
-      editingInventoryId=null;
-    }else{
-      inventoryRecords.unshift({id:'inv_'+Date.now()+Math.random().toString(36).slice(2,6),cardType:type,batch:safe(document.getElementById('invBatch').value),qty:amount,originalQty:amount,status:document.getElementById('invStatus').value,source:safe(document.getElementById('invSource').value),nextStage:safe(document.getElementById('invNext').value),notes:safe(document.getElementById('invNotes').value),createdAt:now,updatedAt:now});
-    }
-    saveInventoryData();clearInventoryFields();showToast('הקליטה נשמרה');
-  };
-
-  // QC records are independent by batch; totals sum all visible records.
-  currentQcTotal=function(){return qcHistory.reduce((s,x)=>s+qty(x.qty),0);};
-  deleteQc=function(id){
-    const item=qcHistory.find(x=>x.id===id);
-    qcHistory=qcHistory.filter(x=>x.id!==id);
-    saveHistories();renderQc();calculate(false);renderHistory();showToast(`QC נמחק${item?' '+item.cardType:''}`);
-  };
-  renderQc=function(){
-    const list=[...qcHistory].sort((a,b)=>new Date(b.updatedAt)-new Date(a.updatedAt));
-    if(!list.length){qcListEl.innerHTML='<div class="empty">אין עדיין נתוני QC</div>';return;}
-    qcListEl.innerHTML=list.map(item=>`<div class="qc-row"><div><strong>${escapeHtml(item.cardType)}</strong><div class="qc-meta">מנה: ${escapeHtml(item.batch||'—')} · ${escapeHtml(item.status||'מוכן למשלוח')}<br>נכון ל־${escapeHtml(formatDateTime(new Date(item.updatedAt)))}</div>${item.notes?`<div class="inv-note">${escapeHtml(item.notes)}</div>`:''}<div class="qc-actions-inline"><button class="qc-edit" data-id="${item.id}" type="button">ערוך הכל</button><button class="qc-delete" data-id="${item.id}" type="button">מחק</button></div></div><div class="qc-qty">${qty(item.qty)}</div></div>`).join('');
-    qcListEl.querySelectorAll('.qc-edit').forEach(b=>b.addEventListener('click',()=>openQcEditor(b.dataset.id)));
-    qcListEl.querySelectorAll('.qc-delete').forEach(b=>b.addEventListener('click',()=>{const item=qcHistory.find(x=>x.id===b.dataset.id);openConfirm('מחיקת QC',`למחוק את רשומת ה-QC${item?' של '+item.cardType:''}?`,()=>deleteQc(b.dataset.id));}));
-  };
-
-  saveQc=function(){
-    const type=safe(document.getElementById('qcCardType').value),amount=qty(document.getElementById('qcQty').value);
-    if(!type){showToast('חסר סוג כרטיס');return;}
-    if(amount<=0){showToast('חסרה כמות');return;}
-    qcHistory.unshift({id:`qc_${Date.now()}_${Math.random().toString(36).slice(2,7)}`,cardType:type,qty:amount,batch:safe(document.getElementById('qcBatchNo').value),status:document.getElementById('qcStatus').value,notes:safe(document.getElementById('qcNotes').value),updatedAt:new Date().toISOString()});
-    saveHistories();renderQc();calculate(false);
-    document.getElementById('qcQty').value='0';document.getElementById('qcBatchNo').value='';document.getElementById('qcNotes').value='';
-    showToast(`QC עודכן: ${type}`);
-  };
-
-  // Replace the old QC listener that captured the obsolete function.
-  const oldSaveQcBtn=document.getElementById('saveQc');
-  const newSaveQcBtn=oldSaveQcBtn.cloneNode(true);
-  oldSaveQcBtn.replaceWith(newSaveQcBtn);
-  newSaveQcBtn.addEventListener('click',()=>openConfirm('שמירת נתוני QC','האם אתה בטוח שברצונך לשמור את נתוני ה-QC?',saveQc));
-
-  // Persist all machine fields after edits and inputs.
-  ensureMachineIds();loadCurrentV2();refreshCards();
-  cards.forEach(card=>{
-    card.querySelectorAll('.qty,.start,.cardType,.batchNo,.nextStage,.machine-notes').forEach(el=>{
-      el.addEventListener('input',saveCurrent);el.addEventListener('change',saveCurrent);
-    });
-  });
-  saveInventoryData();renderQc();calculate(false);saveCurrent();
-
-  window.__productionFlowAudit={
-    version:'3.0',
-    checks(){return {
-      machines:cards.length,
-      machineIdsUnique:new Set(cards.map(c=>c.dataset.machineId)).size===cards.length,
-      runs:Array.isArray(runs),qc:Array.isArray(qcHistory),inventory:Array.isArray(inventoryRecords),
-      storageEnabled:(()=>{try{localStorage.setItem('__pf_test','1');localStorage.removeItem('__pf_test');return true}catch{return false}})()
-    }}
-  };
-})();
-</script>
-<script>
-/* Passive / Thermal flexible card-type patch */
-(function(){
-  const FAMILY_META={
-    PASSIVE:{title:'Passive',subtitle:'בחירת סוג כרטיס לכל ריצה',hours:8,color:'#ffbd45',next:'Thermal'},
-    THERMAL:{title:'Thermal',subtitle:'בחירת סוג כרטיס לכל ריצה',hours:14,color:'#ff5d6c',next:'QC'}
-  };
-  function normFamily(card){
-    let f=(card.dataset.family||'').toUpperCase();
-    const n=(card.dataset.name||'').toLowerCase();
-    if(f==='OTHER') f=n.includes('thermal')?'THERMAL':'PASSIVE';
-    return f;
-  }
-  function familyGroup(f){return document.querySelector(`.machine-family[data-family="${f}"] .family-machines`)}
-  function sortFamily(f){
-    const g=familyGroup(f); if(!g)return;
-    [...g.querySelectorAll('.machine')].sort((a,b)=>(Number(a.dataset.order)||999)-(Number(b.dataset.order)||999)).forEach(x=>g.appendChild(x));
-  }
-  function migrateMachines(){
-    refreshCards();
-    cards.forEach((card,i)=>{
-      const f=normFamily(card); card.dataset.family=f;
-      if(!card.dataset.order)card.dataset.order=String(i+1);
-      if(!card.dataset.color){const c=getComputedStyle(card).getPropertyValue('--accent').trim();card.dataset.color=c||FAMILY_META[f]?.color||'#328cff'}
-      card.style.setProperty('--accent',card.dataset.color);
-      if(f==='PASSIVE'||f==='THERMAL'){
-        const ct=card.querySelector('.cardType'); if(ct)ct.placeholder='MBF / EPS / Qfan / אחר';
-        const group=familyGroup(f); if(group&&card.parentElement!==group)group.appendChild(card);
-      }
-    });
-    refreshCards(); sortFamily('PASSIVE');sortFamily('THERMAL');
-  }
-  // Migrate old stored OTHER configuration before future reloads.
-  try{
-    const key=KEYS.machineConfig, cfg=JSON.parse(localStorage.getItem(key)||'[]');
-    if(Array.isArray(cfg)&&cfg.some(x=>String(x.family).toUpperCase()==='OTHER')){
-      cfg.forEach(x=>{if(String(x.family).toUpperCase()==='OTHER'){const t=/thermal/i.test(x.html||'');x.family=t?'THERMAL':'PASSIVE';x.html=(x.html||'').replace(/data-family="OTHER"/g,`data-family="${x.family}"`);}});
-      localStorage.setItem(key,JSON.stringify(cfg));
-    }
-  }catch(e){}
-  migrateMachines();
-  document.querySelectorAll('.machine-family[data-family="PASSIVE"] .family-add,.machine-family[data-family="THERMAL"] .family-add').forEach(btn=>{
-    if(btn.dataset.flexBound)return;btn.dataset.flexBound='1';btn.addEventListener('click',()=>addFamilyMachine(btn.dataset.addFamily));
-  });
-  document.querySelectorAll('.machine').forEach(card=>{
-    const edit=card.querySelector('.machine-edit');
-    if(edit&&!edit.dataset.flexEditor){edit.dataset.flexEditor='1';edit.addEventListener('click',()=>{
-      document.getElementById('editMachineColor').value=card.dataset.color||'#328cff';
-      document.getElementById('editMachineOrder').value=card.dataset.order||'1';
-    });}
-  });
-  document.getElementById('saveMachineEdit').addEventListener('click',()=>{
-    if(!editingMachine)return;
-    const f=normFamily(editingMachine);
-    editingMachine.dataset.family=f;
-    editingMachine.dataset.color=document.getElementById('editMachineColor').value||'#328cff';
-    editingMachine.dataset.order=String(Math.max(1,Number(document.getElementById('editMachineOrder').value)||1));
-    editingMachine.style.setProperty('--accent',editingMachine.dataset.color);
-    const target=familyGroup(f);if(target&&editingMachine.parentElement!==target)target.appendChild(editingMachine);
-    sortFamily(f);refreshCards();saveMachineConfig();saveCurrent();calculate(false);
-  });
-  // New generic machine defaults in Passive and Thermal.
-  const oldClone=cloneMachine;
-  cloneMachine=function(card){
-    const f=normFamily(card); oldClone(card); migrateMachines();
-    const g=familyGroup(f), arr=[...g.querySelectorAll('.machine')], clone=arr[arr.length-1];
-    if(clone&&clone!==card){
-      clone.dataset.family=f; clone.dataset.color=FAMILY_META[f]?.color||card.dataset.color||'#328cff';
-      clone.dataset.order=String(arr.length); clone.style.setProperty('--accent',clone.dataset.color);
-      clone.querySelector('.cardType').value=''; clone.querySelector('.batchNo').value=''; clone.querySelector('.qty').value='0';
-      clone.querySelector('.nextStage').value=FAMILY_META[f]?.next||'';
-      clone.querySelector('.machine-notes').value='';
-      clone.dataset.name=`${FAMILY_META[f]?.title||card.dataset.name} ${arr.length}`;
-      clone.querySelector('.machine-name-label').textContent=clone.dataset.name;
-      saveMachineConfig();saveCurrent();
-    }
-  };
-  // Persist relevant fields immediately.
-  document.querySelectorAll('.machine-family[data-family="PASSIVE"] .machine,.machine-family[data-family="THERMAL"] .machine').forEach(card=>{
-    card.querySelectorAll('.cardType,.qty,.batchNo,.nextStage,.start,.machine-notes').forEach(el=>{
-      if(el.dataset.flexPersist)return;el.dataset.flexPersist='1';el.addEventListener('input',()=>{card.dataset.manualVisible='1';saveMachineConfig();saveCurrent();calculate(false)});
-    });
-  });
-  saveMachineConfig();saveCurrent();
-})();
-</script>
-<script>
-/* Thermal complete + usability/integrity patch v4 */
-(function(){
-  'use strict';
-  const META={
-    PASSIVE:{name:'Passive',hours:8,color:'#ffbd45',next:'Thermal',icon:'P'},
-    THERMAL:{name:'Thermal',hours:14,color:'#ff5d6c',next:'QC',icon:'T'}
-  };
-  const safeText=v=>String(v??'').trim();
-  const positiveInt=v=>Math.max(0,Math.floor(Number(v)||0));
-  const familyBox=f=>document.querySelector(`.machine-family[data-family="${f}"] .family-machines`);
-
-  function prepareCard(card,family,index){
-    const meta=META[family];
-    card.dataset.family=family;
-    card.dataset.name=card.dataset.name||`${meta.name}${index>1?' '+index:''}`;
-    card.dataset.hours=String(Number(card.dataset.hours)||meta.hours);
-    card.dataset.color=card.dataset.color||meta.color;
-    card.dataset.order=String(Number(card.dataset.order)||index);
-    card.dataset.manualVisible='1';
-    card.classList.remove('is-inactive-hidden');
-    card.style.setProperty('--accent',card.dataset.color);
-    const name=card.querySelector('.machine-name-label'); if(name) name.textContent=card.dataset.name;
-    const small=card.querySelector('.machine-title small'); if(small) small.textContent=`${card.dataset.hours} שעות`;
-    const icon=card.querySelector('.machine-icon'); if(icon) icon.textContent=meta.icon;
-    const ct=card.querySelector('.cardType'); if(ct) ct.placeholder='MBF / EPS / Qfan / סוג אחר';
-    const next=card.querySelector('.nextStage'); if(next&&!safeText(next.value)) next.value=meta.next;
-    if(typeof ensureMachineIds==='function') ensureMachineIds();
-    return card;
-  }
-
-  function ensureFamilyMachine(family){
-    const box=familyBox(family); if(!box)return null;
-    let cards=[...box.querySelectorAll('.machine')];
-    if(!cards.length){
-      const source=document.querySelector('.machine-family[data-family="PASSIVE"] .machine')||document.querySelector('.machine');
-      if(!source)return null;
-      const card=source.cloneNode(true);
-      card.removeAttribute('data-bound');
-      card.removeAttribute('data-machine-id');
-      card.querySelector('.qty').value='0';
-      card.querySelector('.start').value='';
-      card.querySelector('.cardType').value='';
-      card.querySelector('.batchNo').value='';
-      card.querySelector('.nextStage').value=META[family].next;
-      card.querySelector('.machine-notes').value='';
-      card.dataset.inventoryAllocated='0';
-      box.appendChild(card);
-      if(typeof refreshCards==='function')refreshCards();
-      if(typeof bindMachineCard==='function')bindMachineCard(card);
-      cards=[card];
-    }
-    cards.forEach((c,i)=>prepareCard(c,family,i+1));
-    return cards[0];
-  }
-
-  function addGenericMachine(family){
-    const box=familyBox(family); if(!box)return;
-    const base=ensureFamilyMachine(family);
-    const card=base.cloneNode(true);
-    card.removeAttribute('data-bound');
-    card.removeAttribute('data-machine-id');
-    const number=box.querySelectorAll('.machine').length+1;
-    card.dataset.name=`${META[family].name} ${number}`;
-    card.dataset.order=String(number);
-    card.dataset.color=META[family].color;
-    card.dataset.hours=String(META[family].hours);
-    card.dataset.inventoryAllocated='0';
-    card.dataset.manualVisible='1';
-    card.querySelector('.qty').value='0';
-    card.querySelector('.start').value='';
-    card.querySelector('.cardType').value='';
-    card.querySelector('.batchNo').value='';
-    card.querySelector('.nextStage').value=META[family].next;
-    card.querySelector('.machine-notes').value='';
-    box.appendChild(card);
-    prepareCard(card,family,number);
-    if(typeof refreshCards==='function')refreshCards();
-    if(typeof bindMachineCard==='function')bindMachineCard(card);
-    if(typeof ensureMachineIds==='function')ensureMachineIds();
-    if(typeof saveMachineConfig==='function')saveMachineConfig();
-    if(typeof saveCurrent==='function')saveCurrent();
-    if(typeof calculate==='function')calculate(false);
-    if(typeof showToast==='function')showToast(`${card.dataset.name}: נוספה מכונת ${META[family].name}`);
-    card.scrollIntoView({behavior:'smooth',block:'center'});
-    setTimeout(()=>card.querySelector('.cardType')?.focus(),250);
-  }
-
-  ['PASSIVE','THERMAL'].forEach(f=>{
-    ensureFamilyMachine(f);
-    const old=document.querySelector(`.machine-family[data-family="${f}"] .family-add`);
-    if(old){
-      const fresh=old.cloneNode(true);
-      old.replaceWith(fresh);
-      fresh.addEventListener('click',()=>addGenericMachine(f));
-      fresh.setAttribute('aria-label',`הוסף מכונת ${META[f].name}`);
-      fresh.title=`הוסף מכונת ${META[f].name}`;
+  document.querySelectorAll(".machine").forEach(card => {
+    const q = qty(card.querySelector(".qty").value);
+    total += q;
+    const r = updateCard(card, now);
+    if (r) {
+      if (r.end > now) active++;
+      if (!latest || r.end > latest) latest = r.end;
     }
   });
 
-  // Replace the save button to remove conflicting legacy listeners and save every editable field atomically.
-  const oldSave=document.getElementById('saveMachineEdit');
-  if(oldSave){
-    const saveBtn=oldSave.cloneNode(true); oldSave.replaceWith(saveBtn);
-    saveBtn.addEventListener('click',()=>{
-      if(!window.editingMachine){ if(typeof showToast==='function')showToast('לא נבחרה מכונה לעריכה'); return; }
-      const card=window.editingMachine;
-      const name=safeText(document.getElementById('editMachineName')?.value);
-      const hours=Number(document.getElementById('editMachineHours')?.value);
-      const amount=positiveInt(document.getElementById('editMachineQty')?.value);
-      let family=safeText(document.getElementById('editMachineFamily')?.value).toUpperCase();
-      if(family==='OTHER')family=/thermal/i.test(name)?'THERMAL':'PASSIVE';
-      if(!document.querySelector(`.machine-family[data-family="${family}"]`)) family=card.dataset.family||'PASSIVE';
-      if(!name||!Number.isFinite(hours)||hours<=0){ if(typeof showToast==='function')showToast('יש להזין שם מכונה וזמן עבודה תקין'); return; }
-      card.dataset.name=name;
-      card.dataset.family=family;
-      card.dataset.hours=String(hours);
-      card.dataset.color=document.getElementById('editMachineColor')?.value||card.dataset.color||'#328cff';
-      card.dataset.order=String(Math.max(1,positiveInt(document.getElementById('editMachineOrder')?.value)||1));
-      card.dataset.manualVisible='1';
-      card.classList.remove('is-inactive-hidden');
-      card.style.setProperty('--accent',card.dataset.color);
-      card.querySelector('.machine-name-label').textContent=name;
-      card.querySelector('.machine-title small').textContent=`${hours} שעות`;
-      card.querySelector('.machine-icon').textContent=(family==='THERMAL'?'T':family==='PASSIVE'?'P':name.charAt(0).toUpperCase());
-      card.querySelector('.qty').value=String(amount);
-      card.querySelector('.cardType').value=safeText(document.getElementById('editMachineCard')?.value);
-      card.querySelector('.batchNo').value=safeText(document.getElementById('editMachineBatch')?.value);
-      card.querySelector('.nextStage').value=safeText(document.getElementById('editMachineNext')?.value)||(META[family]?.next||'');
-      card.querySelector('.start').value=document.getElementById('editMachineStart')?.value||'';
-      card.querySelector('.machine-notes').value=safeText(document.getElementById('editMachineNotes')?.value);
-      const target=familyBox(family); if(target&&card.parentElement!==target)target.appendChild(card);
-      if(target)[...target.querySelectorAll('.machine')].sort((a,b)=>(Number(a.dataset.order)||999)-(Number(b.dataset.order)||999)).forEach(x=>target.appendChild(x));
-      if(typeof refreshCards==='function')refreshCards();
-      if(typeof ensureMachineIds==='function')ensureMachineIds();
-      if(typeof saveMachineConfig==='function')saveMachineConfig();
-      if(typeof saveCurrent==='function')saveCurrent();
-      if(typeof calculate==='function')calculate(false);
-      if(typeof closeMachineEditor==='function')closeMachineEditor();
-      else document.getElementById('machineEditOverlay')?.classList.remove('open');
-      if(typeof showToast==='function')showToast('כל נתוני המכונה נשמרו');
-    });
-  }
+  document.getElementById("totalQty").textContent = String(total);
+  document.getElementById("activeMachines").textContent = String(active);
+  document.getElementById("latestEnd").textContent = latest ? formatDateTime(latest) : "--";
+  document.getElementById("systemClock").textContent = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
 
-  // Re-save on every operational field change; protects quantities/batches/notes after closing Safari.
-  function bindPersistence(){
-    document.querySelectorAll('.machine').forEach(card=>{
-      card.querySelectorAll('.qty,.start,.cardType,.batchNo,.nextStage,.machine-notes').forEach(el=>{
-        if(el.dataset.integrityBound)return; el.dataset.integrityBound='1';
-        const persist=()=>{card.dataset.manualVisible='1';if(typeof saveMachineConfig==='function')saveMachineConfig();if(typeof saveCurrent==='function')saveCurrent();if(typeof calculate==='function')calculate(false)};
-        el.addEventListener('change',persist); el.addEventListener('blur',persist);
-      });
-    });
-  }
-  bindPersistence();
-  const machineRoot=document.getElementById('machines');
-  if(machineRoot)new MutationObserver(bindPersistence).observe(machineRoot,{childList:true,subtree:true});
+  const todayStr = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
+  document.getElementById("todayRuns").textContent = String(runs.filter(r => (r.completedAt || "").startsWith(todayStr)).length);
+  document.getElementById("totalQc").textContent = String(qcHistory.reduce((a, b) => a + qty(b.qty), 0));
+}
 
-  // Defensive storage backup of all operational datasets.
-  function backup(){
-    try{
-      const payload={at:new Date().toISOString(),runs:window.runs||[],qcHistory:window.qcHistory||[],inventoryRecords:window.inventoryRecords||[]};
-      localStorage.setItem('productionFlow_integrityBackup_v4',JSON.stringify(payload));
-    }catch(e){console.warn('Backup failed',e)}
-  }
-  window.addEventListener('pagehide',()=>{try{if(typeof saveMachineConfig==='function')saveMachineConfig();if(typeof saveCurrent==='function')saveCurrent();if(typeof saveInventoryData==='function')saveInventoryData();backup()}catch(e){console.warn(e)}});
-  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')backup()});
-  backup();
+function bindMachineEvents(card) {
+  if (card.dataset.bound === "1") return;
+  card.dataset.bound = "1";
 
-  window.__productionFlowAuditV4={
-    version:'4.0-thermal-complete',
-    checks(){
-      const all=[...document.querySelectorAll('.machine')];
-      const passive=[...document.querySelectorAll('.machine-family[data-family="PASSIVE"] .machine')];
-      const thermal=[...document.querySelectorAll('.machine-family[data-family="THERMAL"] .machine')];
-      return {
-        passiveMachines:passive.length,
-        thermalMachines:thermal.length,
-        thermalVisible:thermal.some(x=>!x.classList.contains('is-inactive-hidden')),
-        thermalHasCardType:thermal.every(x=>!!x.querySelector('.cardType')),
-        thermalHasBatch:thermal.every(x=>!!x.querySelector('.batchNo')),
-        thermalHasQuantity:thermal.every(x=>!!x.querySelector('.qty')),
-        thermalHasNotes:thermal.every(x=>!!x.querySelector('.machine-notes')),
-        machineIdsUnique:new Set(all.map(x=>x.dataset.machineId)).size===all.length,
-        historyArray:Array.isArray(window.runs),qcArray:Array.isArray(window.qcHistory),inventoryArray:Array.isArray(window.inventoryRecords),
-        storage:(()=>{try{localStorage.setItem('__mes_v4_test','1');localStorage.removeItem('__mes_v4_test');return true}catch(e){return false}})()
-      };
-    }
-  };
-  if(typeof refreshCards==='function')refreshCards();
-  if(typeof ensureMachineIds==='function')ensureMachineIds();
-  if(typeof saveMachineConfig==='function')saveMachineConfig();
-  if(typeof saveCurrent==='function')saveCurrent();
-  if(typeof calculate==='function')calculate(false);
-})();
-</script>
+  const inputs = card.querySelectorAll("input, textarea");
+  inputs.forEach(i => i.addEventListener("input", calculate));
 
-<script>
-/* Hide idle Burn-In ovens while preserving configuration and history. */
-(function(){
-  const OVEN_FAMILIES=new Set(['MBF','EPS','QFAN']);
-  const isOven=card=>card&&OVEN_FAMILIES.has(String(card.dataset.family||'').toUpperCase());
-  const hasOperationalData=card=>{
-    const start=card.querySelector('.start')?.value||'';
-    const amount=Math.max(0,Number(card.querySelector('.qty')?.value)||0);
-    return Boolean(start)||amount>0;
-  };
-
-  const baseRefresh=window.refreshInactiveVisibility;
-  window.refreshInactiveVisibility=function(){
-    if(typeof baseRefresh==='function')baseRefresh();
-    document.querySelectorAll('.machine').forEach(card=>{
-      if(!isOven(card))return;
-      const working=hasOperationalData(card);
-      const explicitlyOpened=card.dataset.manualVisible==='1';
-      card.classList.toggle('is-inactive-hidden',!(working||explicitlyOpened));
-    });
-  };
-  refreshInactiveVisibility=window.refreshInactiveVisibility;
-
-  const baseFinish=window.finishRun;
-  window.finishRun=function(card){
-    const result=baseFinish(card);
-    if(result!==false&&isOven(card)){
-      card.dataset.manualVisible='0';
-      card.classList.add('is-inactive-hidden');
-      if(typeof saveMachineConfig==='function')saveMachineConfig();
-      if(typeof saveCurrent==='function')saveCurrent();
-    }
-    return result;
-  };
-  finishRun=window.finishRun;
-
-  // Remove stale visibility left by older versions. Ovens with no quantity/start stay hidden.
-  document.querySelectorAll('.machine').forEach(card=>{
-    if(isOven(card)&&!hasOperationalData(card))card.dataset.manualVisible='0';
+  card.querySelector(".now").addEventListener("click", () => {
+    card.querySelector(".start").value = toInputDateTime(new Date());
+    calculate();
+    showToast(`${card.dataset.name}: עודכן עכשיו`);
   });
-  window.refreshInactiveVisibility();
-  if(typeof saveMachineConfig==='function')saveMachineConfig();
-})();
-</script>
 
-
-<script>
-/* Visibility and completion behavior: hide every idle machine; keep completed runs visible until manual clear. */
-(function(){
-  const hasOperationalData=card=>{
-    const start=card.querySelector('.start')?.value||'';
-    const amount=Math.max(0,Number(card.querySelector('.qty')?.value)||0);
-    return Boolean(start)||amount>0;
-  };
-  const isFinished=card=>card?.dataset.runFinished==='1';
-
-  function paintFinished(card){
-    if(!card)return;
-    card.dataset.state='finished';
-    card.classList.remove('is-inactive-hidden');
-    card.dataset.manualVisible='1';
-    const state=card.querySelector('.state');
-    if(state){state.className='state finished';state.textContent='הסתיים';}
-    const nextEl=card.querySelector('.next');
-    const next=card.querySelector('.nextStage')?.value||'';
-    if(nextEl)nextEl.textContent=next?`✅ הסתיים – ${next}`:'✅ הסתיים – ממתין לסגירה';
-    const finishBtn=card.querySelector('.finish');
-    if(finishBtn){finishBtn.disabled=true;finishBtn.textContent='נשמר בהיסטוריה';}
-  }
-
-  window.refreshInactiveVisibility=function(){
-    document.querySelectorAll('.machine').forEach(card=>{
-      const visible=hasOperationalData(card)||isFinished(card)||card.dataset.manualVisible==='1';
-      card.classList.toggle('is-inactive-hidden',!visible);
-      if(isFinished(card))paintFinished(card);
-    });
-  };
-  refreshInactiveVisibility=window.refreshInactiveVisibility;
-
-  const previousSetNow=window.setNow;
-  window.setNow=function(card){
-    card.dataset.runFinished='0';
-    card.dataset.completedAt='';
-    const finishBtn=card.querySelector('.finish');
-    if(finishBtn){finishBtn.disabled=false;finishBtn.textContent='סיים ושמור';}
-    const result=previousSetNow(card);
-    if(result!==false){card.dataset.manualVisible='1';saveMachineConfig?.();saveCurrent?.();}
-    return result;
-  };
-  setNow=window.setNow;
-
-  window.finishRun=function(card){
-    if(card.dataset.runFinished==='1'){showToast('הריצה כבר נשמרה בהיסטוריה');return false;}
-    const d=cardData(card);
-    const start=parseLocal(d.startValue);
-    if(!start){showToast('חסר מועד התחלה');return false;}
-    if(d.qty<=0){showToast('חסרה כמות');return false;}
-    if(!safe(d.cardType)){showToast('חסר סוג כרטיס');return false;}
-
-    const completedAt=new Date();
-    const plannedEnd=new Date(start.getTime()+d.hours*3600000);
-    const batch=card.querySelector('.batchNo')?.value||'';
-    const next=card.querySelector('.nextStage')?.value||'';
-    const notes=card.querySelector('.machine-notes')?.value||'';
+  card.querySelector(".finish").addEventListener("click", () => {
+    const q = qty(card.querySelector(".qty").value);
+    const startVal = card.querySelector(".start").value;
+    if (!startVal || q <= 0) { showToast("חסר זמן התחלה או כמות"); return; }
 
     runs.unshift({
-      id:`run_${Date.now()}_${Math.random().toString(36).slice(2,7)}`,
-      machineId:card.dataset.machineId||'',machine:d.machine,cardType:d.cardType,qty:d.qty,hours:d.hours,
-      batch,nextStage:next,notes,startedAt:start.toISOString(),plannedEnd:plannedEnd.toISOString(),
-      completedAt:completedAt.toISOString(),actualDurationMs:completedAt-start,finishedOnTime:completedAt<=plannedEnd
+      id: Date.now(),
+      machine: card.dataset.name,
+      cardType: card.querySelector(".cardType").value,
+      qty: q,
+      completedAt: new Date().toISOString()
     });
 
-    const movementId=card.dataset.inventoryMovementId||'';
-    if(movementId)inventoryRecords=inventoryRecords.filter(r=>r.id!==movementId);
-    inventoryRecords.unshift({
-      id:'wait_'+Date.now()+'_'+Math.random().toString(36).slice(2,6),kind:'movement',
-      machineId:card.dataset.machineId||'',cardType:d.cardType,batch,qty:d.qty,
-      status:safe(next).toLowerCase().includes('qc')?'qc':'waiting',nextStage:next,
-      notes:notes||`הסתיים ב-${d.machine}`,source:d.machine,
-      createdAt:completedAt.toISOString(),updatedAt:completedAt.toISOString()
-    });
-
-    card.dataset.inventoryAllocated='0';
-    card.dataset.inventoryMovementId='';
-    card.dataset.runFinished='1';
-    card.dataset.completedAt=completedAt.toISOString();
-    card.dataset.manualVisible='1';
-    paintFinished(card);
-
+    card.querySelector(".qty").value = "0";
+    card.querySelector(".start").value = "";
+    card.querySelector(".cardType").value = "";
     saveHistories();
-    saveInventoryData();
-    renderHistory();
-    saveMachineConfig();
-    saveCurrent();
-    calculate(false);
-    paintFinished(card);
-    haptic();
-    showToast(`${d.machine}: הסתיים ונשמר בהיסטוריה`);
-    return true;
-  };
-  finishRun=window.finishRun;
-
-  const previousClearCard=window.clearCard;
-  window.clearCard=function(card,...args){
-    const result=previousClearCard(card,...args);
-    card.dataset.runFinished='0';
-    card.dataset.completedAt='';
-    card.dataset.manualVisible='0';
-    const finishBtn=card.querySelector('.finish');
-    if(finishBtn){finishBtn.disabled=false;finishBtn.textContent='סיים ושמור';}
-    window.refreshInactiveVisibility();
-    saveMachineConfig?.();
-    saveCurrent?.();
-    return result;
-  };
-  clearCard=window.clearCard;
-
-  document.querySelectorAll('.machine').forEach(card=>{
-    if(isFinished(card))paintFinished(card);
-    else if(!hasOperationalData(card))card.dataset.manualVisible='0';
+    calculate();
+    showToast(`${card.dataset.name}: נשמר בהיסטוריה`);
   });
-  window.refreshInactiveVisibility();
-  saveMachineConfig?.();
-})();
-</script>
 
-<script>
-/* Final acceptance hardening: storage, controls and WhatsApp delivery. */
-(function(){
-  'use strict';
-  const FINAL_VERSION=APP_VERSION;
-
-  function persistAll(){
-    try{ if(typeof saveMachineConfig==='function')saveMachineConfig(); }catch(e){console.error(e)}
-    try{ if(typeof saveCurrent==='function')saveCurrent(); }catch(e){console.error(e)}
-    try{ if(typeof saveInventoryData==='function')saveInventoryData(); }catch(e){console.error(e)}
-    try{ if(typeof saveHistories==='function')saveHistories(); }catch(e){console.error(e)}
-    try{ localStorage.setItem('productionFlow_lastSuccessfulSave',new Date().toISOString()); }catch(e){}
-  }
-
-  // WhatsApp: save the latest screen state, validate the message and use a direct user-gesture navigation.
-  window.shareWhatsApp=function(message){
-    persistAll();
-    const text=String(message||'').trim();
-    if(!text){ if(typeof showToast==='function')showToast('אין נתונים לשליחה'); return false; }
-    const url='https://wa.me/?text='+encodeURIComponent(text);
-    try{
-      const popup=window.open(url,'_blank','noopener,noreferrer');
-      if(!popup) window.location.href=url;
-      if(typeof showToast==='function')showToast('פותח את WhatsApp');
-      return true;
-    }catch(e){
-      try{ window.location.href=url; return true; }
-      catch(_){ if(typeof showToast==='function')showToast('לא ניתן לפתוח את WhatsApp'); return false; }
-    }
-  };
-  try{ shareWhatsApp=window.shareWhatsApp; }catch(e){}
-
-  // Add clear accessibility labels and prevent accidental double taps on destructive confirmation.
-  document.querySelectorAll('button').forEach(btn=>{
-    if(!btn.getAttribute('aria-label')){
-      const label=(btn.textContent||'').replace(/\s+/g,' ').trim();
-      if(label)btn.setAttribute('aria-label',label);
-    }
+  card.querySelector(".clear").addEventListener("click", () => {
+    card.querySelector(".qty").value = "0";
+    card.querySelector(".start").value = "";
+    card.querySelector(".cardType").value = "";
+    calculate();
+    showToast("נוקה");
   });
-  const confirmBtn=document.getElementById('confirmAction');
-  if(confirmBtn){
-    confirmBtn.addEventListener('click',()=>{
-      confirmBtn.disabled=true;
-      setTimeout(()=>{confirmBtn.disabled=false},500);
-    },true);
-  }
 
-  // Runtime acceptance check. It does not change production data.
-  const requiredIds=[
-    'shareBtn','historyBtn','modeFab','resetBtn','livePage','simulationPage','inventoryPage',
-    'historyOverlay','confirmOverlay','machineEditOverlay','qcEditOverlay','modeMenuOverlay',
-    'saveInventory','saveQc','saveMachineEdit','shareHistory'
-  ];
-  const missing=requiredIds.filter(id=>!document.getElementById(id));
-  const machineProblems=[...document.querySelectorAll('.machine')].filter(card=>
-    !card.querySelector('.qty')||!card.querySelector('.start')||!card.querySelector('.cardType')||
-    !card.querySelector('.now')||!card.querySelector('.finish')||!card.querySelector('.clear')
-  ).length;
-  let storageOK=false;
-  try{localStorage.setItem('__pf_acceptance','1');storageOK=localStorage.getItem('__pf_acceptance')==='1';localStorage.removeItem('__pf_acceptance')}catch(e){}
-  window.PRODUCTION_FLOW_ACCEPTANCE={
-    version:FINAL_VERSION,
-    checkedAt:new Date().toISOString(),
-    missingElements:missing,
-    machineProblems,
-    storageOK,
-    machineCount:document.querySelectorAll('.machine').length,
-    buttonCount:document.querySelectorAll('button').length,
-    passed:missing.length===0&&machineProblems===0&&storageOK
-  };
-  try{localStorage.setItem('productionFlow_acceptanceReport',JSON.stringify(window.PRODUCTION_FLOW_ACCEPTANCE))}catch(e){}
-  if(missing.length||machineProblems)console.error('Production Flow acceptance failed',window.PRODUCTION_FLOW_ACCEPTANCE);
-
-  // Save on every lifecycle exit and before opening external WhatsApp.
-  window.addEventListener('beforeunload',persistAll);
-  window.addEventListener('pagehide',persistAll);
-  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')persistAll()});
-  persistAll();
-})();
-</script>
-
-<script>
-/* Centralized application branding. */
-(function(){
-  'use strict';
-  document.title=`${APP_NAME} — ${APP_VERSION_LABEL}`;
-  const nameView=document.getElementById('appNameView');
-  const versionView=document.getElementById('appVersionView');
-  const footer=document.getElementById('appFooter');
-  if(nameView)nameView.textContent=APP_NAME;
-  if(versionView)versionView.textContent=APP_VERSION_LABEL;
-  if(footer)footer.textContent=`${APP_NAME} • ${APP_VERSION_LABEL}`;
-  document.documentElement.dataset.appVersion=APP_VERSION;
-  window.BDS_APP={name:APP_NAME,version:APP_VERSION,label:APP_VERSION_LABEL};
-})();
-</script>
-
-
-<style>
-/* UX safety layer — Version 1.2.5 */
-.machine .machine-extra{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
-.machine .machine-extra .field.full{grid-column:1/-1}
-.machine .nextStage,.machine .machine-notes{min-height:58px}
-.machine .machine-notes{resize:vertical;max-height:130px}
-.machine.is-run-locked .fields input,
-.machine.is-run-locked .fields textarea,
-.machine.is-run-locked .machine-extra input,
-.machine.is-run-locked .machine-extra textarea{opacity:.86;background:#0b1623;border-color:#28405a;color:#eaf4ff;pointer-events:none}
-.machine.is-run-locked .machine-edit,
-.machine.is-run-locked .machine-clone,
-.machine.is-run-locked .machine-remove,
-.machine.is-run-locked .now,
-.machine.is-run-locked .clear{opacity:.35;filter:grayscale(.35);pointer-events:none}
-.machine-lock-banner{display:none;align-items:center;justify-content:center;gap:8px;margin:12px 0 2px;padding:12px;border:1px solid rgba(33,199,121,.45);border-radius:14px;background:rgba(24,105,70,.28);color:#9af0c0;font-weight:900;text-align:center}
-.machine.is-run-locked .machine-lock-banner{display:flex}
-.machine .finish{position:relative}
-.machine .finish.is-armed{background:#a26a13!important;border-color:#ffbd45!important;color:#fff!important;animation:safePulse .7s ease-in-out infinite alternate}
-@keyframes safePulse{from{transform:scale(1)}to{transform:scale(1.025)}}
-.machine.is-run-finished .finish{background:#18334c!important;color:#a9bdd0!important;pointer-events:none}
-.machine.is-run-finished .machine-lock-banner{display:flex;border-color:rgba(50,140,255,.5);background:rgba(38,91,153,.22);color:#b9d8ff}
-.machine-summary{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
-.machine-summary .summary-box{border:1px solid var(--line);background:#0c1927;border-radius:14px;padding:12px;min-height:78px;display:flex;flex-direction:column;justify-content:center}
-.machine-summary .summary-box span{color:var(--muted);font-size:12px;font-weight:800;margin-bottom:6px}
-.machine-summary .summary-box strong{font-size:15px;line-height:1.45;word-break:break-word}
-.machine-summary .summary-box.notes{grid-column:1/-1}
-@media(max-width:520px){
-  .machine .machine-extra{grid-template-columns:1fr}
-  .machine .machine-extra .field.full{grid-column:auto}
-  .machine-summary{grid-template-columns:1fr 1fr}
-  .machine-summary .summary-box.notes{grid-column:1/-1}
-  .machine .actions{grid-template-columns:1.35fr 1fr!important}
-  .machine .actions .clear{grid-column:1/-1;width:100%!important}
+  card.querySelector(".machine-edit").addEventListener("click", () => {
+    editingMachine = card;
+    document.getElementById("editMachineName").value = card.dataset.name;
+    document.getElementById("editMachineHours").value = card.dataset.hours;
+    document.getElementById("editMachineQty").value = card.querySelector(".qty").value;
+    document.getElementById("editMachineCard").value = card.querySelector(".cardType").value;
+    document.getElementById("machineEditOverlay").classList.add("open");
+  });
 }
-</style>
-<script>
-/* Professional run-lock and accidental-tap protection. */
-(function(){
-  'use strict';
-  const ARM_MS=4500;
 
-  function hasStarted(card){
-    return Boolean(card.querySelector('.start')?.value) && card.dataset.runFinished!=='1';
-  }
-  function addUx(card){
-    if(!card || card.dataset.safeUx==='1') return;
-    card.dataset.safeUx='1';
-    const actions=card.querySelector('.actions');
-    if(actions && !card.querySelector('.machine-lock-banner')){
-      const banner=document.createElement('div');
-      banner.className='machine-lock-banner';
-      banner.innerHTML='<span aria-hidden="true">🔒</span><span class="lock-copy">הריצה פעילה — הנתונים נעולים למניעת שינוי בטעות</span>';
-      actions.before(banner);
+function openConfirm(title, text, cb) {
+  document.getElementById("confirmTitle").textContent = title;
+  document.getElementById("confirmText").textContent = text;
+  confirmCallback = cb;
+  document.getElementById("confirmOverlay").classList.add("open");
+}
+
+document.getElementById("confirmAction").addEventListener("click", () => {
+  if (confirmCallback) confirmCallback();
+  document.getElementById("confirmOverlay").classList.remove("open");
+});
+
+document.getElementById("cancelConfirm").addEventListener("click", () => {
+  document.getElementById("confirmOverlay").classList.remove("open");
+});
+
+document.getElementById("closeConfirm").addEventListener("click", () => {
+  document.getElementById("confirmOverlay").classList.remove("open");
+});
+
+function switchPage(pageId) {
+  document.querySelectorAll(".app-page").forEach(p => p.classList.remove("is-active"));
+  document.getElementById(`${pageId}Page`).classList.add("is-active");
+  document.querySelectorAll(".mode-option").forEach(m => {
+    m.classList.toggle("is-current", m.dataset.page === pageId);
+  });
+  document.getElementById("modeMenuOverlay").classList.remove("open");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+document.querySelectorAll(".mode-option").forEach(btn => {
+  btn.addEventListener("click", () => switchPage(btn.dataset.page));
+});
+
+document.getElementById("modeFab").addEventListener("click", () => {
+  document.getElementById("modeMenuOverlay").classList.add("open");
+});
+
+document.getElementById("closeModeMenu").addEventListener("click", () => {
+  document.getElementById("modeMenuOverlay").classList.remove("open");
+});
+
+document.getElementById("saveMachineEdit").addEventListener("click", () => {
+  if (!editingMachine) return;
+  const name = safe(document.getElementById("editMachineName").value);
+  const hours = Number(document.getElementById("editMachineHours").value);
+  if (!name || hours <= 0) return;
+
+  editingMachine.dataset.name = name;
+  editingMachine.dataset.hours = String(hours);
+  editingMachine.querySelector(".machine-name-label").textContent = name;
+  editingMachine.querySelector(".machine-title small").textContent = `${hours} שעות`;
+  editingMachine.querySelector(".qty").value = document.getElementById("editMachineQty").value;
+  editingMachine.querySelector(".cardType").value = document.getElementById("editMachineCard").value;
+
+  document.getElementById("machineEditOverlay").classList.remove("open");
+  calculate();
+  showToast("עודכן בהצלחה");
+});
+
+document.getElementById("cancelMachineEdit").addEventListener("click", () => {
+  document.getElementById("machineEditOverlay").classList.remove("open");
+});
+
+document.getElementById("closeMachineEdit").addEventListener("click", () => {
+  document.getElementById("machineEditOverlay").classList.remove("open");
+});
+
+document.getElementById("shareBtn").addEventListener("click", () => {
+  let text = `*${APP_NAME}*\nתמונת מצב:\n`;
+  document.querySelectorAll(".machine").forEach(card => {
+    const q = qty(card.querySelector(".qty").value);
+    if (q > 0) {
+      text += `• ${card.dataset.name}: ${q} יח' (${card.querySelector(".cardType").value || "כללי"})\n`;
     }
-    if(!card.querySelector('.machine-summary')){
-      const summary=document.createElement('div');
-      summary.className='machine-summary';
-      summary.innerHTML='<div class="summary-box"><span>שלב הבא</span><strong class="summary-next">לא הוגדר</strong></div><div class="summary-box notes"><span>הערות למכונה</span><strong class="summary-notes">אין הערות</strong></div>';
-      const result=card.querySelector('.result');
-      if(result) result.before(summary);
-    }
-    ['.nextStage','.machine-notes','.batchNo','.cardType','.qty','.start'].forEach(sel=>{
-      const el=card.querySelector(sel);
-      if(el){el.addEventListener('input',()=>{updateSummary(card);syncLock(card)});el.addEventListener('change',()=>{updateSummary(card);syncLock(card)})}
+  });
+  window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank");
+});
+
+document.getElementById("resetBtn").addEventListener("click", () => {
+  openConfirm("איפוס מסך", "האם לנקות את כל הנתונים הפעילים במסך?", () => {
+    document.querySelectorAll(".machine").forEach(card => {
+      card.querySelector(".qty").value = "0";
+      card.querySelector(".start").value = "";
+      card.querySelector(".cardType").value = "";
     });
-    updateSummary(card);
-    syncLock(card);
-  }
+    calculate();
+    showToast("המסך אופס");
+  });
+});
 
-  function updateSummary(card){
-    const next=safe(card.querySelector('.nextStage')?.value||'');
-    const notes=safe(card.querySelector('.machine-notes')?.value||'');
-    const n=card.querySelector('.summary-next');
-    const t=card.querySelector('.summary-notes');
-    if(n)n.textContent=next||'לא הוגדר';
-    if(t)t.textContent=notes||'אין הערות';
-  }
-
-  function setDisabled(card,locked){
-    card.classList.toggle('is-run-locked',locked);
-    card.classList.toggle('is-run-finished',card.dataset.runFinished==='1');
-    const copy=card.querySelector('.lock-copy');
-    if(copy)copy.textContent=card.dataset.runFinished==='1'?'הריצה הסתיימה ונשמרה — לחץ נקה כדי לפנות את המכונה':'הריצה פעילה — הנתונים והפעולות המסוכנות נעולים';
-    ['.qty','.start','.cardType','.batchNo','.nextStage','.machine-notes'].forEach(sel=>{
-      const el=card.querySelector(sel);
-      if(el){el.readOnly=locked;el.setAttribute('aria-readonly',locked?'true':'false')}
-    });
-    ['.machine-edit','.machine-clone','.machine-remove','.now','.clear'].forEach(sel=>{
-      const b=card.querySelector(sel);
-      if(b){b.disabled=locked;b.setAttribute('aria-disabled',locked?'true':'false')}
-    });
-    const finish=card.querySelector('.finish');
-    if(finish){
-      finish.disabled=card.dataset.runFinished==='1';
-      if(card.dataset.runFinished==='1')finish.textContent='נשמר בהיסטוריה';
-      else if(!finish.classList.contains('is-armed'))finish.textContent='סיים שלב';
-    }
-  }
-
-  function syncLock(card){
-    if(!card)return;
-    setDisabled(card,hasStarted(card)||card.dataset.runFinished==='1');
-    updateSummary(card);
-  }
-
-  function armFinish(card,btn){
-    document.querySelectorAll('.finish.is-armed').forEach(other=>{
-      if(other!==btn){other.classList.remove('is-armed');other.textContent='סיים שלב';delete other.dataset.armedUntil}
-    });
-    const now=Date.now();
-    const until=Number(btn.dataset.armedUntil||0);
-    if(until>now){
-      btn.classList.remove('is-armed');delete btn.dataset.armedUntil;btn.textContent='סיים שלב';
-      openConfirm('אישור סיום שלב',`לסיים את ${card.dataset.name}? הריצה תישמר בהיסטוריה והכמות תועבר לשלב הבא.`,()=>{finishRun(card);syncLock(card)});
-      return;
-    }
-    btn.dataset.armedUntil=String(now+ARM_MS);
-    btn.classList.add('is-armed');
-    btn.textContent='לחץ שוב לסיום';
-    showToast('הגנת לחיצה: לחץ שוב בתוך 4 שניות');
-    setTimeout(()=>{
-      if(Number(btn.dataset.armedUntil||0)<=Date.now()){
-        btn.classList.remove('is-armed');delete btn.dataset.armedUntil;
-        if(card.dataset.runFinished!=='1')btn.textContent='סיים שלב';
-      }
-    },ARM_MS+150);
-  }
-
-  document.addEventListener('click',function(e){
-    const btn=e.target.closest('.machine .finish');
-    if(!btn)return;
-    const card=btn.closest('.machine');
-    if(!card||card.dataset.runFinished==='1')return;
-    e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();
-    const d=cardData(card);
-    if(!parseLocal(d.startValue)){showToast('חסר מועד התחלה');return}
-    if(d.qty<=0){showToast('חסרה כמות');return}
-    if(!safe(d.cardType)){showToast('חסר סוג כרטיס');return}
-    armFinish(card,btn);
-  },true);
-
-  const originalSetNow=window.setNow;
-  window.setNow=function(card){
-    const result=originalSetNow(card);
-    setTimeout(()=>syncLock(card),0);
-    return result;
-  };
-  setNow=window.setNow;
-
-  const originalClear=window.clearCard;
-  window.clearCard=function(card,...args){
-    const r=originalClear(card,...args);
-    card.classList.remove('is-run-locked','is-run-finished');
-    setTimeout(()=>syncLock(card),0);
-    return r;
-  };
-  clearCard=window.clearCard;
-
-  const originalRefresh=window.refreshCards;
-  window.refreshCards=function(){
-    if(typeof originalRefresh==='function')originalRefresh();
-    document.querySelectorAll('.machine').forEach(addUx);
-  };
-  refreshCards=window.refreshCards;
-
-  document.querySelectorAll('.machine').forEach(addUx);
-  setInterval(()=>document.querySelectorAll('.machine').forEach(syncLock),1000);
-})();
+document.querySelectorAll(".machine").forEach(bindMachineEvents);
+setInterval(calculate, 1000);
+calculate();
 </script>
-
-<style>
-/* Premium mobile UI refinement */
-.machine{padding:0;border-radius:22px;border-color:#2c4765;background:linear-gradient(180deg,#0d1d30 0%,#091624 100%);box-shadow:0 14px 34px rgba(0,0,0,.28)}
-.machine::before{width:4px}
-.machine-head{padding:17px 18px 15px;margin:0;border-bottom:1px solid rgba(255,255,255,.07)}
-.machine-icon{width:48px;height:48px;border-radius:15px;font-size:20px;background:color-mix(in srgb,var(--accent) 18%,#11243a);border-color:color-mix(in srgb,var(--accent) 45%,#34506d);color:#fff}
-.machine-title strong{font-size:21px}.machine-title small{font-size:13px}
-.machine-tools{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:7px}.machine-tool{min-height:40px;padding:0 13px;border-radius:12px}
-.machine>.fields{margin:16px 18px 0}.machine .machine-extra{margin:12px 18px 0}
-.machine .fields,.machine .machine-extra{gap:11px}
-.machine input,.machine textarea{background:#081522;border-color:#2f4b69;border-radius:15px}
-.machine textarea{padding:13px;line-height:1.45}
-.machine-lock-banner{margin:15px 18px 0;border-radius:15px;min-height:58px;font-size:14px}
-.machine-summary{margin:14px 18px 0;gap:11px}
-.machine-summary .summary-box{min-height:96px;border-radius:16px;background:linear-gradient(180deg,#0b1928,#081522);border-color:#2b4562;padding:14px}
-.machine-summary .summary-box strong{font-size:17px}.machine-summary .summary-box.notes{grid-column:auto}
-.machine .actions{margin:15px 18px 0;grid-template-columns:1.25fr 1fr auto;gap:10px}
-.machine .actions .btn{min-height:60px;border-radius:16px;font-size:16px}
-.machine .result{margin:16px 18px 18px;padding:14px 0 0}
-.machine[data-state="running"] .fields,.machine.is-run-locked .fields,.machine.is-run-locked .machine-extra{display:none}
-.machine:not(.is-run-locked) .machine-summary{display:none}
-.machine.is-run-locked .machine-summary{display:grid}
-.machine.is-run-locked .machine-edit,.machine.is-run-locked .machine-clone,.machine.is-run-locked .machine-remove{display:none}
-.machine.is-run-locked .actions{grid-template-columns:1fr}
-.machine.is-run-locked .actions .now,.machine.is-run-locked .actions .clear{display:none}
-.machine.is-run-finished .actions .clear{display:flex!important;pointer-events:auto;opacity:1;width:100%!important}
-.machine.is-run-finished .actions{grid-template-columns:1fr 1fr}
-.runtime-panel{margin:14px 18px 0;padding:17px;border:1px solid #2d4967;border-radius:18px;background:radial-gradient(circle at 80% 10%,rgba(50,140,255,.12),transparent 36%),#081522;display:none;grid-template-columns:1fr auto;align-items:center;gap:16px}
-.machine.is-run-locked .runtime-panel{display:grid}
-.runtime-caption{color:var(--muted);font-size:13px;font-weight:800;margin-bottom:7px}.runtime-value{font-size:34px;font-weight:950;letter-spacing:1px}.runtime-end{margin-top:12px;padding-top:11px;border-top:1px solid rgba(255,255,255,.08);color:var(--muted);font-size:12px}.runtime-end strong{display:block;color:#62dc9c;font-size:17px;margin-top:4px}
-.progress-ring{--p:0;width:104px;height:104px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(#35ce7d calc(var(--p)*1%),#1d3348 0);position:relative;box-shadow:inset 0 0 18px rgba(0,0,0,.26)}
-.progress-ring::before{content:"";position:absolute;inset:11px;border-radius:50%;background:#0a1725}.progress-ring strong{position:relative;font-size:24px}
-.machine.is-run-locked .result{display:none}
-.state.running{font-size:12px;padding:8px 12px}
-.bottom{padding-top:8px}.bottom-inner{gap:8px}.bottom .btn{border-radius:16px;min-height:62px}
-@media(max-width:520px){.machine-summary{grid-template-columns:1fr 1fr}.machine-summary .summary-box.notes{grid-column:auto}.runtime-value{font-size:31px}.progress-ring{width:92px;height:92px}.machine.is-run-finished .actions{grid-template-columns:1fr}.machine .actions{grid-template-columns:1fr 1fr}.machine .actions .clear{grid-column:1/-1}.machine-head{align-items:flex-start}}
-@media(max-width:380px){.runtime-panel{grid-template-columns:1fr}.progress-ring{margin:auto}.runtime-copy{text-align:center}.machine-summary{grid-template-columns:1fr}.machine-summary .summary-box.notes{grid-column:auto}}
-</style>
-<script>
-(function(){
-  'use strict';
-  function ensureRuntime(card){
-    if(card.querySelector('.runtime-panel'))return;
-    const p=document.createElement('div');p.className='runtime-panel';
-    p.innerHTML='<div class="runtime-copy"><div class="runtime-caption">זמן שעבר</div><div class="runtime-value">00:00:00</div><div class="runtime-end">סיום משוער<strong>--</strong></div></div><div class="progress-ring" style="--p:0"><strong>0%</strong></div>';
-    const actions=card.querySelector('.actions'); if(actions)actions.before(p);
-  }
-  function parseStart(v){if(!v)return null;const d=new Date(v);return isNaN(d)?null:d}
-  function pad(n){return String(Math.max(0,Math.floor(n))).padStart(2,'0')}
-  function updatePremium(card){
-    ensureRuntime(card);
-    const start=parseStart(card.querySelector('.start')?.value);const hours=Number(card.dataset.hours||0);const panel=card.querySelector('.runtime-panel');if(!panel)return;
-    if(!start||!hours){panel.querySelector('.runtime-value').textContent='00:00:00';panel.querySelector('.runtime-end strong').textContent='--';return}
-    const now=Date.now(), total=hours*3600000, elapsed=Math.max(0,now-start.getTime()), pct=Math.max(0,Math.min(100,elapsed/total*100));
-    const sec=Math.floor(elapsed/1000);panel.querySelector('.runtime-value').textContent=`${pad(sec/3600)}:${pad((sec%3600)/60)}:${pad(sec%60)}`;
-    const end=new Date(start.getTime()+total);panel.querySelector('.runtime-end strong').textContent=end.toLocaleString('he-IL',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
-    const ring=panel.querySelector('.progress-ring');ring.style.setProperty('--p',pct.toFixed(1));ring.querySelector('strong').textContent=`${Math.floor(pct)}%`;
-  }
-  function run(){document.querySelectorAll('.machine').forEach(updatePremium)}
-  run();setInterval(run,1000);
-  const mo=new MutationObserver(run);mo.observe(document.getElementById('machines')||document.body,{childList:true,subtree:true});
-})();
-</script>
-
 </body>
 </html>
