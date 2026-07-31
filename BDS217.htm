@@ -1989,5 +1989,241 @@ applyQcRubric();
 })();
 </script>
 
+
+<style>
+/* UX safety layer — Version 1.2.5 */
+.machine .machine-extra{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+.machine .machine-extra .field.full{grid-column:1/-1}
+.machine .nextStage,.machine .machine-notes{min-height:58px}
+.machine .machine-notes{resize:vertical;max-height:130px}
+.machine.is-run-locked .fields input,
+.machine.is-run-locked .fields textarea,
+.machine.is-run-locked .machine-extra input,
+.machine.is-run-locked .machine-extra textarea{opacity:.86;background:#0b1623;border-color:#28405a;color:#eaf4ff;pointer-events:none}
+.machine.is-run-locked .machine-edit,
+.machine.is-run-locked .machine-clone,
+.machine.is-run-locked .machine-remove,
+.machine.is-run-locked .now,
+.machine.is-run-locked .clear{opacity:.35;filter:grayscale(.35);pointer-events:none}
+.machine-lock-banner{display:none;align-items:center;justify-content:center;gap:8px;margin:12px 0 2px;padding:12px;border:1px solid rgba(33,199,121,.45);border-radius:14px;background:rgba(24,105,70,.28);color:#9af0c0;font-weight:900;text-align:center}
+.machine.is-run-locked .machine-lock-banner{display:flex}
+.machine .finish{position:relative}
+.machine .finish.is-armed{background:#a26a13!important;border-color:#ffbd45!important;color:#fff!important;animation:safePulse .7s ease-in-out infinite alternate}
+@keyframes safePulse{from{transform:scale(1)}to{transform:scale(1.025)}}
+.machine.is-run-finished .finish{background:#18334c!important;color:#a9bdd0!important;pointer-events:none}
+.machine.is-run-finished .machine-lock-banner{display:flex;border-color:rgba(50,140,255,.5);background:rgba(38,91,153,.22);color:#b9d8ff}
+.machine-summary{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.machine-summary .summary-box{border:1px solid var(--line);background:#0c1927;border-radius:14px;padding:12px;min-height:78px;display:flex;flex-direction:column;justify-content:center}
+.machine-summary .summary-box span{color:var(--muted);font-size:12px;font-weight:800;margin-bottom:6px}
+.machine-summary .summary-box strong{font-size:15px;line-height:1.45;word-break:break-word}
+.machine-summary .summary-box.notes{grid-column:1/-1}
+@media(max-width:520px){
+  .machine .machine-extra{grid-template-columns:1fr}
+  .machine .machine-extra .field.full{grid-column:auto}
+  .machine-summary{grid-template-columns:1fr 1fr}
+  .machine-summary .summary-box.notes{grid-column:1/-1}
+  .machine .actions{grid-template-columns:1.35fr 1fr!important}
+  .machine .actions .clear{grid-column:1/-1;width:100%!important}
+}
+</style>
+<script>
+/* Professional run-lock and accidental-tap protection. */
+(function(){
+  'use strict';
+  const ARM_MS=4500;
+
+  function hasStarted(card){
+    return Boolean(card.querySelector('.start')?.value) && card.dataset.runFinished!=='1';
+  }
+  function addUx(card){
+    if(!card || card.dataset.safeUx==='1') return;
+    card.dataset.safeUx='1';
+    const actions=card.querySelector('.actions');
+    if(actions && !card.querySelector('.machine-lock-banner')){
+      const banner=document.createElement('div');
+      banner.className='machine-lock-banner';
+      banner.innerHTML='<span aria-hidden="true">🔒</span><span class="lock-copy">הריצה פעילה — הנתונים נעולים למניעת שינוי בטעות</span>';
+      actions.before(banner);
+    }
+    if(!card.querySelector('.machine-summary')){
+      const summary=document.createElement('div');
+      summary.className='machine-summary';
+      summary.innerHTML='<div class="summary-box"><span>שלב הבא</span><strong class="summary-next">לא הוגדר</strong></div><div class="summary-box notes"><span>הערות למכונה</span><strong class="summary-notes">אין הערות</strong></div>';
+      const result=card.querySelector('.result');
+      if(result) result.before(summary);
+    }
+    ['.nextStage','.machine-notes','.batchNo','.cardType','.qty','.start'].forEach(sel=>{
+      const el=card.querySelector(sel);
+      if(el){el.addEventListener('input',()=>{updateSummary(card);syncLock(card)});el.addEventListener('change',()=>{updateSummary(card);syncLock(card)})}
+    });
+    updateSummary(card);
+    syncLock(card);
+  }
+
+  function updateSummary(card){
+    const next=safe(card.querySelector('.nextStage')?.value||'');
+    const notes=safe(card.querySelector('.machine-notes')?.value||'');
+    const n=card.querySelector('.summary-next');
+    const t=card.querySelector('.summary-notes');
+    if(n)n.textContent=next||'לא הוגדר';
+    if(t)t.textContent=notes||'אין הערות';
+  }
+
+  function setDisabled(card,locked){
+    card.classList.toggle('is-run-locked',locked);
+    card.classList.toggle('is-run-finished',card.dataset.runFinished==='1');
+    const copy=card.querySelector('.lock-copy');
+    if(copy)copy.textContent=card.dataset.runFinished==='1'?'הריצה הסתיימה ונשמרה — לחץ נקה כדי לפנות את המכונה':'הריצה פעילה — הנתונים והפעולות המסוכנות נעולים';
+    ['.qty','.start','.cardType','.batchNo','.nextStage','.machine-notes'].forEach(sel=>{
+      const el=card.querySelector(sel);
+      if(el){el.readOnly=locked;el.setAttribute('aria-readonly',locked?'true':'false')}
+    });
+    ['.machine-edit','.machine-clone','.machine-remove','.now','.clear'].forEach(sel=>{
+      const b=card.querySelector(sel);
+      if(b){b.disabled=locked;b.setAttribute('aria-disabled',locked?'true':'false')}
+    });
+    const finish=card.querySelector('.finish');
+    if(finish){
+      finish.disabled=card.dataset.runFinished==='1';
+      if(card.dataset.runFinished==='1')finish.textContent='נשמר בהיסטוריה';
+      else if(!finish.classList.contains('is-armed'))finish.textContent='סיים שלב';
+    }
+  }
+
+  function syncLock(card){
+    if(!card)return;
+    setDisabled(card,hasStarted(card)||card.dataset.runFinished==='1');
+    updateSummary(card);
+  }
+
+  function armFinish(card,btn){
+    document.querySelectorAll('.finish.is-armed').forEach(other=>{
+      if(other!==btn){other.classList.remove('is-armed');other.textContent='סיים שלב';delete other.dataset.armedUntil}
+    });
+    const now=Date.now();
+    const until=Number(btn.dataset.armedUntil||0);
+    if(until>now){
+      btn.classList.remove('is-armed');delete btn.dataset.armedUntil;btn.textContent='סיים שלב';
+      openConfirm('אישור סיום שלב',`לסיים את ${card.dataset.name}? הריצה תישמר בהיסטוריה והכמות תועבר לשלב הבא.`,()=>{finishRun(card);syncLock(card)});
+      return;
+    }
+    btn.dataset.armedUntil=String(now+ARM_MS);
+    btn.classList.add('is-armed');
+    btn.textContent='לחץ שוב לסיום';
+    showToast('הגנת לחיצה: לחץ שוב בתוך 4 שניות');
+    setTimeout(()=>{
+      if(Number(btn.dataset.armedUntil||0)<=Date.now()){
+        btn.classList.remove('is-armed');delete btn.dataset.armedUntil;
+        if(card.dataset.runFinished!=='1')btn.textContent='סיים שלב';
+      }
+    },ARM_MS+150);
+  }
+
+  document.addEventListener('click',function(e){
+    const btn=e.target.closest('.machine .finish');
+    if(!btn)return;
+    const card=btn.closest('.machine');
+    if(!card||card.dataset.runFinished==='1')return;
+    e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();
+    const d=cardData(card);
+    if(!parseLocal(d.startValue)){showToast('חסר מועד התחלה');return}
+    if(d.qty<=0){showToast('חסרה כמות');return}
+    if(!safe(d.cardType)){showToast('חסר סוג כרטיס');return}
+    armFinish(card,btn);
+  },true);
+
+  const originalSetNow=window.setNow;
+  window.setNow=function(card){
+    const result=originalSetNow(card);
+    setTimeout(()=>syncLock(card),0);
+    return result;
+  };
+  setNow=window.setNow;
+
+  const originalClear=window.clearCard;
+  window.clearCard=function(card,...args){
+    const r=originalClear(card,...args);
+    card.classList.remove('is-run-locked','is-run-finished');
+    setTimeout(()=>syncLock(card),0);
+    return r;
+  };
+  clearCard=window.clearCard;
+
+  const originalRefresh=window.refreshCards;
+  window.refreshCards=function(){
+    if(typeof originalRefresh==='function')originalRefresh();
+    document.querySelectorAll('.machine').forEach(addUx);
+  };
+  refreshCards=window.refreshCards;
+
+  document.querySelectorAll('.machine').forEach(addUx);
+  setInterval(()=>document.querySelectorAll('.machine').forEach(syncLock),1000);
+})();
+</script>
+
+<style>
+/* Premium mobile UI refinement */
+.machine{padding:0;border-radius:22px;border-color:#2c4765;background:linear-gradient(180deg,#0d1d30 0%,#091624 100%);box-shadow:0 14px 34px rgba(0,0,0,.28)}
+.machine::before{width:4px}
+.machine-head{padding:17px 18px 15px;margin:0;border-bottom:1px solid rgba(255,255,255,.07)}
+.machine-icon{width:48px;height:48px;border-radius:15px;font-size:20px;background:color-mix(in srgb,var(--accent) 18%,#11243a);border-color:color-mix(in srgb,var(--accent) 45%,#34506d);color:#fff}
+.machine-title strong{font-size:21px}.machine-title small{font-size:13px}
+.machine-tools{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:7px}.machine-tool{min-height:40px;padding:0 13px;border-radius:12px}
+.machine>.fields{margin:16px 18px 0}.machine .machine-extra{margin:12px 18px 0}
+.machine .fields,.machine .machine-extra{gap:11px}
+.machine input,.machine textarea{background:#081522;border-color:#2f4b69;border-radius:15px}
+.machine textarea{padding:13px;line-height:1.45}
+.machine-lock-banner{margin:15px 18px 0;border-radius:15px;min-height:58px;font-size:14px}
+.machine-summary{margin:14px 18px 0;gap:11px}
+.machine-summary .summary-box{min-height:96px;border-radius:16px;background:linear-gradient(180deg,#0b1928,#081522);border-color:#2b4562;padding:14px}
+.machine-summary .summary-box strong{font-size:17px}.machine-summary .summary-box.notes{grid-column:auto}
+.machine .actions{margin:15px 18px 0;grid-template-columns:1.25fr 1fr auto;gap:10px}
+.machine .actions .btn{min-height:60px;border-radius:16px;font-size:16px}
+.machine .result{margin:16px 18px 18px;padding:14px 0 0}
+.machine[data-state="running"] .fields,.machine.is-run-locked .fields,.machine.is-run-locked .machine-extra{display:none}
+.machine:not(.is-run-locked) .machine-summary{display:none}
+.machine.is-run-locked .machine-summary{display:grid}
+.machine.is-run-locked .machine-edit,.machine.is-run-locked .machine-clone,.machine.is-run-locked .machine-remove{display:none}
+.machine.is-run-locked .actions{grid-template-columns:1fr}
+.machine.is-run-locked .actions .now,.machine.is-run-locked .actions .clear{display:none}
+.machine.is-run-finished .actions .clear{display:flex!important;pointer-events:auto;opacity:1;width:100%!important}
+.machine.is-run-finished .actions{grid-template-columns:1fr 1fr}
+.runtime-panel{margin:14px 18px 0;padding:17px;border:1px solid #2d4967;border-radius:18px;background:radial-gradient(circle at 80% 10%,rgba(50,140,255,.12),transparent 36%),#081522;display:none;grid-template-columns:1fr auto;align-items:center;gap:16px}
+.machine.is-run-locked .runtime-panel{display:grid}
+.runtime-caption{color:var(--muted);font-size:13px;font-weight:800;margin-bottom:7px}.runtime-value{font-size:34px;font-weight:950;letter-spacing:1px}.runtime-end{margin-top:12px;padding-top:11px;border-top:1px solid rgba(255,255,255,.08);color:var(--muted);font-size:12px}.runtime-end strong{display:block;color:#62dc9c;font-size:17px;margin-top:4px}
+.progress-ring{--p:0;width:104px;height:104px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(#35ce7d calc(var(--p)*1%),#1d3348 0);position:relative;box-shadow:inset 0 0 18px rgba(0,0,0,.26)}
+.progress-ring::before{content:"";position:absolute;inset:11px;border-radius:50%;background:#0a1725}.progress-ring strong{position:relative;font-size:24px}
+.machine.is-run-locked .result{display:none}
+.state.running{font-size:12px;padding:8px 12px}
+.bottom{padding-top:8px}.bottom-inner{gap:8px}.bottom .btn{border-radius:16px;min-height:62px}
+@media(max-width:520px){.machine-summary{grid-template-columns:1fr 1fr}.machine-summary .summary-box.notes{grid-column:auto}.runtime-value{font-size:31px}.progress-ring{width:92px;height:92px}.machine.is-run-finished .actions{grid-template-columns:1fr}.machine .actions{grid-template-columns:1fr 1fr}.machine .actions .clear{grid-column:1/-1}.machine-head{align-items:flex-start}}
+@media(max-width:380px){.runtime-panel{grid-template-columns:1fr}.progress-ring{margin:auto}.runtime-copy{text-align:center}.machine-summary{grid-template-columns:1fr}.machine-summary .summary-box.notes{grid-column:auto}}
+</style>
+<script>
+(function(){
+  'use strict';
+  function ensureRuntime(card){
+    if(card.querySelector('.runtime-panel'))return;
+    const p=document.createElement('div');p.className='runtime-panel';
+    p.innerHTML='<div class="runtime-copy"><div class="runtime-caption">זמן שעבר</div><div class="runtime-value">00:00:00</div><div class="runtime-end">סיום משוער<strong>--</strong></div></div><div class="progress-ring" style="--p:0"><strong>0%</strong></div>';
+    const actions=card.querySelector('.actions'); if(actions)actions.before(p);
+  }
+  function parseStart(v){if(!v)return null;const d=new Date(v);return isNaN(d)?null:d}
+  function pad(n){return String(Math.max(0,Math.floor(n))).padStart(2,'0')}
+  function updatePremium(card){
+    ensureRuntime(card);
+    const start=parseStart(card.querySelector('.start')?.value);const hours=Number(card.dataset.hours||0);const panel=card.querySelector('.runtime-panel');if(!panel)return;
+    if(!start||!hours){panel.querySelector('.runtime-value').textContent='00:00:00';panel.querySelector('.runtime-end strong').textContent='--';return}
+    const now=Date.now(), total=hours*3600000, elapsed=Math.max(0,now-start.getTime()), pct=Math.max(0,Math.min(100,elapsed/total*100));
+    const sec=Math.floor(elapsed/1000);panel.querySelector('.runtime-value').textContent=`${pad(sec/3600)}:${pad((sec%3600)/60)}:${pad(sec%60)}`;
+    const end=new Date(start.getTime()+total);panel.querySelector('.runtime-end strong').textContent=end.toLocaleString('he-IL',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+    const ring=panel.querySelector('.progress-ring');ring.style.setProperty('--p',pct.toFixed(1));ring.querySelector('strong').textContent=`${Math.floor(pct)}%`;
+  }
+  function run(){document.querySelectorAll('.machine').forEach(updatePremium)}
+  run();setInterval(run,1000);
+  const mo=new MutationObserver(run);mo.observe(document.getElementById('machines')||document.body,{childList:true,subtree:true});
+})();
+</script>
+
 </body>
 </html>
