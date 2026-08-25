@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#111827">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Image Codes">
+  <title>Image Code Assistant</title>
+  <style>
+    :root{--bg:#0f1115;--panel:#181b22;--panel2:#20242c;--text:#f5f7fa;--muted:#aeb5c0;--border:#343946}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;-webkit-font-smoothing:antialiased}.wrap{max-width:920px;margin:0 auto;padding:18px 14px 40px}.hero{padding:8px 2px 16px}.hero h1{font-size:24px;margin:0 0 6px}.hero p{margin:0;color:var(--muted);font-size:14px;line-height:1.5}.grid{display:grid;grid-template-columns:1fr;gap:14px}.card{background:var(--panel);border:1px solid var(--border);border-radius:18px;padding:15px}h2{font-size:17px;margin:0 0 12px}label{display:block;font-size:13px;font-weight:700;margin:12px 0 6px}select,textarea,input[type=file]{width:100%;font-size:16px;color:var(--text);background:#11141a;border:1px solid var(--border);border-radius:12px;padding:12px}textarea{min-height:150px;resize:vertical;line-height:1.5}.example{background:var(--panel2);border-radius:12px;padding:12px;margin-top:8px;color:var(--muted);font-size:13px;line-height:1.45}.preview{min-height:220px;border:1px dashed #4a5160;border-radius:14px;display:flex;align-items:center;justify-content:center;text-align:center;color:var(--muted);padding:12px;overflow:hidden;background:#12151b}.preview img{max-width:100%;max-height:420px;border-radius:12px;display:block}.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.chip{min-height:38px;border-radius:999px;border:1px solid #474e5b;background:transparent;color:var(--text);padding:0 11px;font-size:13px}.chip.active{background:#fff;color:#111;border-color:#fff}.actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:14px}button.main,button.secondary{min-height:46px;border:none;border-radius:12px;padding:0 16px;font-size:15px;font-weight:800}button.main{background:#fff;color:#111}button.secondary{background:#2a2f38;color:#fff}.status{min-height:20px;color:var(--muted);font-size:13px;margin-top:10px}.code{direction:ltr;text-align:left;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}.tip{margin-top:14px;padding:12px;border-radius:12px;background:#151922;color:var(--muted);font-size:13px;line-height:1.5}@media(min-width:760px){.grid{grid-template-columns:.9fr 1.1fr}}
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="hero"><h1>Image Code Assistant</h1><p>בחר קוד, העלה תמונה, הוסף שינוי רצוי וקבל פרומפט מוכן להעתקה.</p></section>
+    <div class="grid">
+      <section class="card">
+        <h2>1. בחירת קוד</h2>
+        <label for="category">קטגוריה</label>
+        <select id="category"><option value="portrait">פורטרט / אדם</option><option value="product">מוצר</option><option value="scene">סצנה מציאותית</option><option value="edit">עריכת תמונת מקור</option><option value="technical">המחשה טכנית</option></select>
+        <label for="style">קוד סגנון</label><select id="style"></select><div id="example" class="example"></div>
+        <label for="shot">צילום / קומפוזיציה</label>
+        <select id="shot"><option value="">ללא הגדרה מיוחדת</option><option value="close-up portrait">קלוז־אפ</option><option value="medium shot">חצי גוף</option><option value="full-body shot">גוף מלא</option><option value="wide shot">שוט רחב</option><option value="eye-level camera">גובה עיניים</option><option value="low-angle camera">זווית נמוכה</option><option value="high-angle camera">זווית גבוהה</option></select>
+        <label for="light">תאורה</label>
+        <select id="light"><option value="">אוטומטי</option><option value="soft natural daylight">אור יום טבעי ורך</option><option value="golden-hour lighting">שעת זהב</option><option value="soft studio lighting">סטודיו רך</option><option value="dramatic cinematic lighting">קולנועי דרמטי</option><option value="realistic indoor ambient lighting">תאורת פנים טבעית</option></select>
+        <label for="extra">מה אתה רוצה ליצור / לשנות?</label><textarea id="extra" placeholder="לדוגמה: לשמור על הפנים, להחליף בגדים, לשנות רקע, לעמוד מול המצלמה..."></textarea>
+      </section>
+      <section class="card">
+        <h2>2. תמונת מקור + פרומפט</h2>
+        <input id="file" type="file" accept="image/*"><div id="preview" class="preview">בחר תמונה מהמכשיר</div>
+        <div class="chips"><button type="button" class="chip" data-add="Preserve facial identity and distinctive facial features.">שמור פנים</button><button type="button" class="chip" data-add="Preserve body proportions and pose unless explicitly changed.">שמור פרופורציות</button><button type="button" class="chip" data-add="Do not add extra fingers, limbs, objects, text, logos, or jewelry.">מנע תוספות</button><button type="button" class="chip" data-add="Keep skin texture natural; avoid excessive smoothing or plastic-looking skin.">עור טבעי</button></div>
+        <label for="prompt">הפרומפט המוכן</label><textarea id="prompt" class="code" readonly></textarea>
+        <div class="actions"><button type="button" id="build" class="main">עדכן קוד</button><button type="button" id="copy" class="main">העתק קוד</button><button type="button" id="reset" class="secondary">איפוס</button></div>
+        <div id="status" class="status" aria-live="polite"></div>
+        <div class="tip">באייפון: פתח את הדף ב־Safari, לחץ שיתוף ואז "הוסף למסך הבית".</div>
+      </section>
+    </div>
+  </main>
+<script>
+const presets={portrait:[['P01 · REAL','Photorealistic portrait','פורטרט ריאליסטי מאוד עם מרקמי עור טבעיים.'],['P02 · NATURAL','Natural candid photography','צילום טבעי וספונטני, פחות מבוים.'],['P03 · CINEMA','Cinematic realistic portrait','פורטרט מציאותי עם תאורה קולנועית.'],['P04 · STUDIO','Professional studio portrait','צילום סטודיו מקצועי ונקי.']],product:[['PR01 · CLEAN','Clean commercial product photography','צילום מוצר מסחרי נקי.'],['PR02 · PREMIUM','Premium advertising product photography','צילום מוצר יוקרתי ופרסומי.'],['PR03 · CATALOG','Neutral catalog product photo','צילום קטלוג מדויק ונייטרלי.']],scene:[['S01 · PHOTO','Photorealistic documentary-style photography','סצנה שנראית כמו צילום אמיתי.'],['S02 · CINEMA','Photorealistic cinematic scene','סצנה ריאליסטית עם אופי קולנועי.'],['S03 · PHONE','Realistic smartphone photography','צילום טלפון טבעי ולא מושלם מדי.']],edit:[['E01 · ID LOCK','Photorealistic image edit with strict identity preservation','עריכה תוך שמירה חזקה על זהות האדם.'],['E02 · CHANGE ONLY','Localized photorealistic edit; change only the explicitly requested elements','שינוי רק של מה שביקשת.'],['E03 · BACKGROUND','Photorealistic subject-preserving background replacement','החלפת רקע תוך שמירה על הדמות.']],technical:[['T01 · CLEAN','Clean technical illustration','איור טכני נקי.'],['T02 · DIAGRAM','Precise labeled technical diagram','דיאגרמה טכנית מדויקת.'],['T03 · EXPLODED','Technical exploded-view illustration','מבט מפורק טכני.']]};
+const category=document.getElementById('category'),style=document.getElementById('style'),example=document.getElementById('example'),shot=document.getElementById('shot'),light=document.getElementById('light'),extra=document.getElementById('extra'),promptBox=document.getElementById('prompt'),file=document.getElementById('file'),preview=document.getElementById('preview'),status=document.getElementById('status');let additions=[];
+function fillStyles(){style.innerHTML='';presets[category.value].forEach((p,i)=>{const o=document.createElement('option');o.value=i;o.textContent=p[0]+' — '+p[1];style.appendChild(o)});showExample();buildPrompt()}
+function showExample(){const p=presets[category.value][Number(style.value)||0];example.innerHTML='<strong>'+p[0]+'</strong><br>'+p[2]}
+function buildPrompt(){const p=presets[category.value][Number(style.value)||0],parts=[p[1]+'.'];if(file.files[0])parts.push('Use the uploaded image as the primary visual reference.');if(category.value==='edit'||file.files[0])parts.push('Preserve the subject identity, distinctive facial structure, age appearance, and recognizable features unless explicitly requested otherwise.');if(shot.value)parts.push('Composition: '+shot.value+'.');if(light.value)parts.push('Lighting: '+light.value+'.');if(extra.value.trim())parts.push('Requested result: '+extra.value.trim()+'.');additions.forEach(x=>parts.push(x));parts.push('Maintain realistic anatomy, coherent perspective, physically plausible lighting and shadows, natural textures, and consistent details.');parts.push('Do not alter unrelated elements. Avoid artificial-looking skin, distorted hands, duplicated objects, warped geometry, unreadable text, and unnecessary stylization.');promptBox.value=parts.join('\n');status.textContent='הקוד מוכן להעתקה.'}
+async function copyPrompt(){if(!promptBox.value.trim()){status.textContent='אין קוד להעתקה.';return}try{await navigator.clipboard.writeText(promptBox.value);status.textContent='הקוד הועתק.'}catch(e){promptBox.removeAttribute('readonly');promptBox.select();document.execCommand('copy');promptBox.setAttribute('readonly','');status.textContent='הקוד הועתק.'}}
+category.addEventListener('change',fillStyles);style.addEventListener('change',()=>{showExample();buildPrompt()});shot.addEventListener('change',buildPrompt);light.addEventListener('change',buildPrompt);extra.addEventListener('input',buildPrompt);document.getElementById('build').addEventListener('click',buildPrompt);document.getElementById('copy').addEventListener('click',copyPrompt);
+document.querySelectorAll('[data-add]').forEach(btn=>btn.addEventListener('click',()=>{const v=btn.dataset.add;if(additions.includes(v)){additions=additions.filter(x=>x!==v);btn.classList.remove('active')}else{additions.push(v);btn.classList.add('active')}buildPrompt()}));
+file.addEventListener('change',()=>{const f=file.files[0];preview.innerHTML='';if(!f){preview.textContent='בחר תמונה מהמכשיר';buildPrompt();return}if(!f.type.startsWith('image/')){file.value='';preview.textContent='הקובץ אינו תמונה';status.textContent='בחר קובץ תמונה תקין.';return}const img=document.createElement('img');img.alt='תמונת המקור שהועלתה';const url=URL.createObjectURL(f);img.src=url;img.onload=()=>URL.revokeObjectURL(url);preview.appendChild(img);buildPrompt()});
+document.getElementById('reset').addEventListener('click',()=>{category.value='portrait';shot.value='';light.value='';extra.value='';file.value='';preview.textContent='בחר תמונה מהמכשיר';additions=[];document.querySelectorAll('[data-add]').forEach(b=>b.classList.remove('active'));fillStyles();status.textContent='אופס.'});fillStyles();
+</script>
+</body>
+</html>
