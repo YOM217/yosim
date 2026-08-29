@@ -11,9 +11,10 @@
 <script>
 (async()=>{
   try{
+    const build='248-final';
     const files=['assets/v248_gz_part1.txt','assets/v248_gz_part2.txt'];
     const parts=await Promise.all(files.map(async f=>{
-      const r=await fetch(f,{cache:'no-store'});
+      const r=await fetch(f+'?v='+build,{cache:'no-store'});
       if(!r.ok) throw new Error(f+' '+r.status);
       return (await r.text()).trim();
     }));
