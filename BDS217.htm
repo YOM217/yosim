@@ -2,79 +2,35 @@
 <html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Production Flow</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#0b1220">
+<title>Production Flow 2.48</title>
 </head>
-<body>
+<body style="margin:0;background:#07111f;color:#fff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif">
+<div id="loading" style="padding:24px;text-align:center">Loading Production Flow 2.48…</div>
 <script>
 (async()=>{
-  const files=['assets/bds217_part1.txt','assets/bds217_part2.txt','assets/bds217_part3.txt','assets/bds217_part4.txt'];
-  const parts=await Promise.all(files.map(async f=>{
-    const r=await fetch(f,{cache:'no-store'});
-    if(!r.ok) throw new Error(f+' '+r.status);
-    return (await r.text()).trim();
-  }));
-  const bin=atob(parts.join(''));
-  const bytes=Uint8Array.from(bin,c=>c.charCodeAt(0));
-  let html=new TextDecoder('utf-8').decode(bytes);
-
-  html=html.replace(
-    '<div class="panel summary"><div class="metric"><span>פעילות</span><strong id="activeCount">0</strong></div><div class="metric"><span>הסתיימו</span><strong id="finishedCount">0</strong></div></div>',
-    '<div class="panel summary compact-summary-top"><div class="metric"><span>RUNNING</span><strong id="activeCount">0</strong></div><div class="metric"><span>FINISHED</span><strong id="finishedCount">0</strong></div><div class="metric"><span>CARDS</span><strong id="activeCards">0</strong></div></div>'
-  );
-
-  const compactStyle=`<style id="compact-machine-v238">
-.compact-summary-top{grid-template-columns:repeat(3,1fr)!important;gap:7px}.compact-summary-top .metric{padding:9px 5px}.compact-summary-top .metric strong{font-size:24px}.compact-summary-top .metric span{font-size:10px;font-weight:900}
-.machine{padding:0!important;overflow:hidden;transition:border-color .2s,background .2s}.machine[data-state="running"]{border-color:#2f7654}.machine[data-state="finished"]{border-color:#8b6a24}.machine.soon{border-color:#d99a20;box-shadow:inset 4px 0 0 #d99a20}.machine-head{padding:12px 13px 8px;margin:0!important;cursor:pointer}.machine-head h2{font-size:18px!important}.machine-head .status{font-size:10px;padding:5px 8px}.compact-machine-view{padding:0 13px 12px;cursor:pointer}.compact-row{display:grid;grid-template-columns:1.15fr .7fr .8fr;gap:7px}.compact-cell{min-width:0;background:#081421;border:1px solid var(--line);border-radius:11px;padding:8px 9px}.compact-cell span{display:block;color:var(--muted);font-size:9px;font-weight:900;margin-bottom:3px}.compact-cell strong{display:block;font-size:16px;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.compact-cell.qty strong{font-size:22px}.compact-cell.end strong{color:#b9dcff}.machine.soon .compact-cell.end strong{color:#ffe09a}.mini-progress{height:5px;background:#16283b;border-radius:99px;overflow:hidden;margin-top:8px}.mini-progress>i{display:block;height:100%;background:#20c77a;border-radius:99px}.compact-meta{display:flex;justify-content:space-between;gap:8px;margin-top:6px;color:var(--muted);font-size:10px;font-weight:800}.compact-meta .soon-label{color:#ffe09a}.machine>.machine-main,.machine>.test-duration,.machine>.timeline,.machine>.compact-actions,.machine>.machine-details{display:none!important}.machine.show-details>.machine-main{display:grid!important;margin:10px 13px 0}.machine.show-details>.test-duration{display:block!important;margin:8px 13px 0}.machine.show-details>.timeline{display:grid!important;margin:8px 13px 0}.machine.show-details>.compact-actions{display:grid!important;margin:9px 13px 12px}.machine.show-details>.machine-details{display:block!important;margin:0 13px 12px;padding-top:8px;border-top:1px solid var(--line)}
-@media(max-width:360px){.compact-row{grid-template-columns:1.1fr .65fr .8fr}.compact-cell{padding:7px}.compact-cell strong{font-size:14px}.compact-cell.qty strong{font-size:20px}}
-</style>`;
-  html=html.replace('</head>',compactStyle+'</head>');
-
-  const compactScript=`<script>
-(function(){
-  const oldRender=render;
-  render=function(){
-    const base=machines.filter(m=>m.visible!==false);
-    const rank={running:0,finished:1,inactive:2};
-    const shown=base.map((m,i)=>({m,i,st:state(m)})).sort((a,b)=>rank[a.st]-rank[b.st]||a.i-b.i).map(x=>x.m);
-    let active=0,finished=0,activeCards=0;
-    shown.forEach(m=>{const st=state(m);if(st==='running'){active++;activeCards+=num(m.qty)}if(st==='finished')finished++});
-    $('activeCount').textContent=active;$('finishedCount').textContent=finished;if($('activeCards'))$('activeCards').textContent=activeCards;
-    $('machines').innerHTML=shown.length?shown.map(m=>{
-      const st=state(m),s=parse(m.start),e=s?new Date(s.getTime()+Number(m.hours)*3600000):null;
-      const status=st==='running'?'RUNNING':st==='finished'?'FINISHED':'WAITING';
-      const totalMs=Math.max(1,Number(m.hours)*3600000),elapsed=s?Math.max(0,Date.now()-s.getTime()):0;
-      const progress=s?Math.max(0,Math.min(100,Math.round(elapsed/totalMs*100))):0;
-      const remaining=e?e.getTime()-Date.now():null;
-      const soon=st==='running'&&remaining!==null&&remaining>0&&remaining<=3600000;
-      const minsLeft=soon?Math.max(1,Math.ceil(remaining/60000)):0;
-      return '<section class="machine '+(soon?'soon':'')+'" data-id="'+esc(m.id)+'" data-state="'+st+'"><div class="machine-head"><h2>'+esc(m.name)+'</h2><span class="status '+st+'">'+status+'</span></div><div class="compact-machine-view"><div class="compact-row"><div class="compact-cell type"><span>כרטיס</span><strong>'+esc(m.type||'--')+'</strong></div><div class="compact-cell qty"><span>כמות</span><strong>'+num(m.qty)+'</strong></div><div class="compact-cell end"><span>סיום</span><strong>'+(e?onlyTime(e):'--')+'</strong></div></div><div class="mini-progress"><i style="width:'+progress+'%"></i></div><div class="compact-meta"><span>'+(st==='running'?progress+'%':'לחץ לפרטים')+'</span><span class="'+(soon?'soon-label':'')+'">'+(soon?'נותרו '+minsLeft+' דק׳':esc(m.nextStep?'הבא: '+m.nextStep:''))+'</span></div></div><div class="machine-main"><div class="quick-field running-field"><label>כמות בהרצה עכשיו</label><input class="qty" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" value="'+num(m.qty)+'"></div><div class="quick-field waiting-field"><label>ממתינים להרצה</label><input class="waiting-qty" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" value="'+num(m.waitingQty)+'"></div><div class="quick-field" style="grid-column:1/-1"><label>סוג כרטיס</label><input class="type" list="cardTypes" value="'+esc(m.type)+'" placeholder="בחר או הקלד"></div></div><div class="test-duration"><span>זמן בדיקה:</span><strong>'+Number(m.hours)+' שעות</strong><span style="margin-right:14px">השלב הבא:</span><strong>'+esc(m.nextStep||'--')+'</strong></div><div class="timeline"><div class="timeline-box"><span>הופעלה</span><strong>'+(s?onlyTime(s):'--')+'</strong></div><div class="timeline-box elapsed"><span>זמן שעבר</span><strong>'+(s?elapsedText(s,m.hours):'--')+'</strong></div><div class="timeline-box end"><span>תסתיים</span><strong>'+(e?onlyTime(e):'--')+'</strong></div></div><div class="compact-actions"><button class="btn start">התחלה</button><button class="btn finish">סיים</button><button class="btn soft more">סגור</button></div><div class="machine-details"><div class="times"><div class="timebox"><span>תאריך ושעת התחלה</span><strong>'+(s?fmt(s):'--')+'</strong></div><div class="timebox"><span>תאריך ושעת סיום</span><strong>'+(e?fmt(e):'--')+'</strong></div></div><div class="secondary-actions"><button class="btn soft edit-machine">ערוך מכונה</button><button class="btn danger delete-machine">מחק מכונה</button></div><button class="btn reset" style="width:100%;margin-top:7px">אפס מכונה</button></div></section>';
-    }).join(''):'<div class="panel empty">לא נבחרו מכונות להצגה</div>';
-    bind();save();
-  };
-  const box=document.getElementById('machines');
-  if(box&&!box.dataset.compactClick){
-    box.dataset.compactClick='1';
-    box.addEventListener('click',e=>{
-      const t=e.target;
-      if(t.closest('button,input,select,textarea'))return;
-      const card=t.closest('.machine');
-      if(!card)return;
-      if(t.closest('.machine-head,.compact-machine-view'))card.classList.toggle('show-details');
-    });
+  try{
+    const files=['assets/v248_gz_part1.txt','assets/v248_gz_part2.txt'];
+    const parts=await Promise.all(files.map(async f=>{
+      const r=await fetch(f,{cache:'no-store'});
+      if(!r.ok) throw new Error(f+' '+r.status);
+      return (await r.text()).trim();
+    }));
+    const bin=atob(parts.join(''));
+    const compressed=Uint8Array.from(bin,c=>c.charCodeAt(0));
+    if(typeof DecompressionStream!=='function') throw new Error('DecompressionStream unsupported');
+    const ds=new DecompressionStream('gzip');
+    const stream=new Blob([compressed]).stream().pipeThrough(ds);
+    const html=await new Response(stream).text();
+    document.open();
+    document.write(html);
+    document.close();
+  }catch(e){
+    console.error(e);
+    document.getElementById('loading').innerHTML='<div style="padding:20px"><strong>Loading error</strong><br><small>Please refresh the page.</small></div>';
   }
-  render();
 })();
-<\/script>`;
-  html=html.replace('</body>',compactScript+'</body>');
-
-  document.open();
-  document.write(html);
-  document.close();
-})().catch(e=>{
-  document.body.innerHTML='<div style="font-family:-apple-system;padding:24px">טעינת הקובץ נכשלה. נסה לרענן.</div>';
-  console.error(e);
-});
 </script>
 </body>
 </html>
