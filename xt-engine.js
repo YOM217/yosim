@@ -181,7 +181,7 @@ function setCurrent(x,list){
   $('position').textContent=(index+1)+' מתוך '+list.length;
   $('source').textContent=x.source==='לפי הרגע'?'מותאם לרגע':'ניסוח טבעי';
   $('freshBadge').style.display=freshIds.has(x.id)?'inline-block':'none';
-  $('favBtn').classList.toggle('active',fav.includes(x.id));
+  const isFav=fav.includes(x.id);$('favBtn').classList.toggle('active',isFav);$('favBtn').textContent=isFav?'★ נשמר':'★ מועדף';
   if(!seenSet.has(x.id)){seen.unshift(x.id);seen=seen.slice(0,5000);seenSet.add(x.id);idleSave(K.seen,seen)}
   hist=hist.filter(id=>id!==x.id);hist.unshift(x.id);hist=hist.slice(0,100);idleSave(K.hist,hist);
   stats();
@@ -192,7 +192,7 @@ function render(){
   if(current&&list.some(x=>x.id===current.id)) setCurrent(current,list);
   else setCurrent(list[0]||null,list);
   $('freshCount').textContent=freshIds.size+' חדשים';
-  $('syncState').textContent='טבעי · קליל · ללא API';
+  if(!$('syncState').textContent.includes('נשמר')&&!$('syncState').textContent.includes('הוסר')&&!$('syncState').textContent.includes('נחסם'))$('syncState').textContent='טבעי · קליל · ללא API';
   stats();renderPanel();
 }
 
@@ -219,8 +219,25 @@ function renderPanel(){
   const rows=ids.map(byId).filter(Boolean).slice(0,40);
   $('panel').innerHTML=rows.length?rows.map(x=>'<div class="row"><div class="rowtext">'+escapeHtml(x.text)+'</div><button class="mini" data-open="'+x.id+'">פתח</button>'+(tab==='deleted'?'<button class="mini" data-restore="'+x.id+'">שחזר</button>':'')+'</div>').join(''):'<div class="empty">אין כאן פריטים עדיין</div>';
 }
-function favToggle(){if(!current)return;fav=fav.includes(current.id)?fav.filter(x=>x!==current.id):[current.id,...fav];save(K.fav,fav);render()}
-function removeCurrent(){if(!current)return;del=[current.id,...del.filter(x=>x!==current.id)];delSet=new Set(del);invalidateList();save(K.del,del);current=null;render()}
+function favToggle(){
+  if(!current)return;
+  const wasFav=fav.includes(current.id);
+  fav=wasFav?fav.filter(x=>x!==current.id):[current.id,...fav];
+  save(K.fav,fav);
+  $('syncState').textContent=wasFav?'הוסר מהמועדפים':'★ נשמר במועדפים';
+  render();
+}
+function removeCurrent(){
+  if(!current)return;
+  const blockedId=current.id;
+  del=[blockedId,...del.filter(x=>x!==blockedId)];
+  delSet=new Set(del);
+  invalidateList();
+  save(K.del,del);
+  current=null;
+  render();
+  $('syncState').textContent='🗑 נחסם ולא יוצג שוב';
+}
 function restore(id){del=del.filter(x=>x!==id);delSet=new Set(del);invalidateList();save(K.del,del);render()}
 async function copyCurrent(){if(!current)return;try{await navigator.clipboard.writeText(cleanText(current.text));$('copyBtn').textContent='הועתק';setTimeout(()=>$('copyBtn').textContent='העתק',900)}catch{}}
 function context(){const h=new Date().getHours();$('contextLine').textContent=(h<11?'בוקר':h<17?'צהריים':'ערב')+' · פתיחות טבעיות'}
