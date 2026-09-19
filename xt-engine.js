@@ -1,9 +1,9 @@
 (() => {
 'use strict';
 
-const VERSION='8.0';
-const K={pool:'op_pool_v8',fav:'op_fav_v8',del:'op_del_v8',seen:'op_seen_v8',hist:'op_hist_v8'};
-const OLD={pool:'op_pool_v6',fav:'op_fav_v6'};
+const VERSION='9.0';
+const K={pool:'op_pool_v9',fav:'op_fav_v9',del:'op_del_v9',seen:'op_seen_v9',hist:'op_hist_v9'};
+const OLD={pool:'op_pool_v8',fav:'op_fav_v8'};
 const $=id=>document.getElementById(id);
 const load=(k,d=[])=>{try{return JSON.parse(localStorage.getItem(k))??d}catch{return d}};
 const save=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch{}};
@@ -66,6 +66,7 @@ function cleanText(raw){
 function isNatural(text){
   const s=cleanText(text);
   if(!s || s.length<10 || s.length>155 || s.includes(':')) return false;
+  if((s.match(/\?/g)||[]).length>1) return false;
   if(blocked.some(x=>s.includes(x))) return false;
   if(/[!?]{2,}/.test(s)) return false;
   if((s.match(/,/g)||[]).length>3) return false;
@@ -116,24 +117,6 @@ function buildBank(target=5000){
       if(pool.length>=target) break;
       if(!p) continue;
       add({category:cat,text:p+lc,source:'וריאציה טבעית'});
-    }
-  }
-  const followups=[
-    ' ומה הסיפור מאחורי זה?',
-    ' למה דווקא זה?',
-    ' מה גורם לך לבחור בזה?',
-    ' מה הכי כיף בזה מבחינתך?',
-    ' איך הגעת לזה?',
-    ' ומה היית בוחרת היום?'
-  ];
-  for(const pair of topics){
-    if(pool.length>=target) break;
-    const cat=pair[0], core=cleanText(pair[1]);
-    if(!canWrap(core) || core.length>95) continue;
-    const base=core.replace(/\?$/,'');
-    for(const f of followups){
-      if(pool.length>=target) break;
-      add({category:cat,text:base+'?'+f,source:'המשך טבעי'});
     }
   }
   addMoments();
@@ -243,7 +226,7 @@ if(!pool.length){
   shuffle(pool);
   save(K.pool,pool);
 }else{
-  pool=pool.map(x=>({...x,text:cleanText(x.text),score:scoreText(x.text,x.category)})).filter(x=>isNatural(x.text));
+  pool=pool.map(x=>({...x,text:cleanText(x.text),score:scoreText(x.text,x.category)})).filter(x=>isNatural(x.text)&&(x.text.match(/\?/g)||[]).length<=1);
   buildBank(5000);
 }
 migrateFavorites();
