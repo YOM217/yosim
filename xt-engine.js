@@ -18,6 +18,33 @@ const tails=['',' — מה עולה לך ישר לראש?',' — בלי לחשו
 const bridges=['','ואם כבר מדברים על זה, ','ועוד משהו שמסקרן אותי, ','זה מזכיר לי לשאול, '];
 function add(item,fresh=false){const text=String(item.text||'').replace(/\s+/g,' ').trim();if(text.length<8||pool.some(x=>norm(x.text)===norm(text)))return false;const o={id:idFor(text),category:item.category||'מסקרן',text,source:item.source||'FREE',createdAt:new Date().toISOString()};pool.unshift(o);if(fresh)freshIds.add(o.id);return true}
 function generate(count=60){let n=0,t=0;while(n<count&&t<count*40){t++;const [cat,core]=pick(topics);const mode=Math.random();let text=mode<.48?core:mode<.82?`${pick(starts)} — ${core.charAt(0).toLowerCase()+core.slice(1)}${pick(tails)}`:`${pick(bridges)}${core.charAt(0).toLowerCase()+core.slice(1)}${pick(tails)}`;if(add({category:cat,text,source:'FREE'},true))n++}addMoments();pool=pool.slice(0,5000);save(K.pool,pool);return n}
+function fillBank(target=5000){
+  let before=pool.length;
+  const addVariant=(cat,text)=>add({category:cat,text,source:'FREE'},false);
+  for(const [cat,core] of topics){
+    if(pool.length>=target)break;
+    addVariant(cat,core);
+    const lc=core.charAt(0).toLowerCase()+core.slice(1);
+    for(const s of starts){
+      if(pool.length>=target)break;
+      for(const t of tails){
+        if(pool.length>=target)break;
+        addVariant(cat,`${s} — ${lc}${t}`);
+      }
+    }
+    for(const b of bridges){
+      if(pool.length>=target)break;
+      for(const t of tails){
+        if(pool.length>=target)break;
+        addVariant(cat,`${b}${lc}${t}`);
+      }
+    }
+  }
+  addMoments();
+  pool=pool.slice(0,target);
+  save(K.pool,pool);
+  return pool.length-before;
+}
 function addMoments(){const d=new Date(),h=d.getHours(),day=d.getDay(),month=d.getMonth()+1;const moment=h<11?'מה יכול להפוך את הבוקר הזה למוצלח?':h<17?'אם הייתה לך עכשיו שעה פנויה לגמרי, מה היית עושה?':'מה היה החלק הכי טוב ביום שלך עד עכשיו?';add({category:'רגעי',text:moment,source:'רגעי'},true);if(day===5||day===6)add({category:'רגעי',text:'סוף שבוע הגיע — מה מבחינתך הופך אותו למוצלח באמת?',source:'רגעי'},true);if(month>=6&&month<=9)add({category:'רגעי',text:'אם היית יכול לברוח עכשיו לכמה שעות של קיץ — לאן היית נוסע?',source:'רגעי'},true)}
 function filtered(){const q=norm($('search').value),c=$('category').value;return pool.filter(x=>!del.includes(x.id)&&(c==='all'||x.category===c)&&(!q||norm(x.text).includes(q))).sort((a,b)=>(seen.includes(a.id)?1:0)-(seen.includes(b.id)?1:0))}
 function setCurrent(x,list){current=x;if(!x){$('opener').textContent='אין תוצאות';$('position').textContent='0 מתוך 0';return}index=Math.max(0,list.findIndex(i=>i.id===x.id));$('opener').textContent=x.text;$('catLabel').textContent=x.category;$('position').textContent=`${index+1} מתוך ${list.length}`;$('source').textContent=x.source==='רגעי'?'מותאם לרגע':'נוצר במנוע FREE';$('freshBadge').style.display=freshIds.has(x.id)?'inline-block':'none';$('favBtn').classList.toggle('active',fav.includes(x.id));if(!seen.includes(x.id)){seen.unshift(x.id);seen=seen.slice(0,5000);save(K.seen,seen)}hist=hist.filter(id=>id!==x.id);hist.unshift(x.id);hist=hist.slice(0,100);save(K.hist,hist);stats()}
@@ -37,5 +64,5 @@ $('moreBtn').onclick=()=>{const n=generate(60);$('syncState').textContent=`נו�
 $('category').onchange=()=>{current=null;render()};$('search').oninput=()=>{current=null;render()};
 document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));b.classList.add('active');tab=b.dataset.tab;renderPanel()});
 $('panel').onclick=e=>{const o=e.target.dataset.open,r=e.target.dataset.restore;if(r)return restore(r);if(o){const x=byId(o);if(x){current=x;render();window.scrollTo({top:0,behavior:'smooth'})}}};
-if(!pool.length)topics.forEach(([category,text])=>add({category,text,source:'FREE'}));context();generate(80);shuffle(pool);save(K.pool,pool);render();
+if(!pool.length)topics.forEach(([category,text])=>add({category,text,source:'FREE'}));context();fillBank(5000);shuffle(pool);save(K.pool,pool);render();
 })();
