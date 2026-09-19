@@ -1,9 +1,9 @@
 (() => {
 'use strict';
 
-const VERSION='9.0';
-const K={pool:'op_pool_v9',fav:'op_fav_v9',del:'op_del_v9',seen:'op_seen_v9',hist:'op_hist_v9'};
-const OLD={pool:'op_pool_v8',fav:'op_fav_v8'};
+const VERSION='10.0';
+const K={pool:'op_pool_v10',fav:'op_fav_v10',del:'op_del_v10',seen:'op_seen_v10',hist:'op_hist_v10'};
+const OLD={pool:'op_pool_v9',fav:'op_fav_v9'};
 const $=id=>document.getElementById(id);
 const load=(k,d=[])=>{try{return JSON.parse(localStorage.getItem(k))??d}catch{return d}};
 const save=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch{}};
@@ -65,6 +65,8 @@ function cleanText(raw){
   s=s.replace(/היית בוחר/g,'היית בוחרת').replace(/היית יכול/g,'היית יכולה');
   s=s.replace(/\bאתה\b/g,'את');
   s=s.replace(/\s+,/g,',').replace(/,\s*\?/g,'?').trim();
+  const q1=s.indexOf('?');
+  if(q1>=0 && s.indexOf('?',q1+1)>=0) s=s.slice(0,q1+1).trim();
   return s;
 }
 
@@ -166,7 +168,7 @@ function setCurrent(x,list){
   current=x;
   if(!x){$('opener').textContent='אין תוצאות';$('position').textContent='0 מתוך 0';return}
   index=Math.max(0,list.findIndex(i=>i.id===x.id));
-  $('opener').textContent=x.text;
+  const safe=cleanText(x.text);$('opener').textContent=safe;
   $('catLabel').textContent=x.category;
   $('position').textContent=(index+1)+' מתוך '+list.length;
   $('source').textContent=x.source==='לפי הרגע'?'מותאם לרגע':'ניסוח טבעי';
@@ -212,7 +214,7 @@ function renderPanel(){
 function favToggle(){if(!current)return;fav=fav.includes(current.id)?fav.filter(x=>x!==current.id):[current.id,...fav];save(K.fav,fav);render()}
 function removeCurrent(){if(!current)return;del=[current.id,...del.filter(x=>x!==current.id)];save(K.del,del);current=null;render()}
 function restore(id){del=del.filter(x=>x!==id);save(K.del,del);render()}
-async function copyCurrent(){if(!current)return;try{await navigator.clipboard.writeText(current.text);$('copyBtn').textContent='הועתק';setTimeout(()=>$('copyBtn').textContent='העתק',900)}catch{}}
+async function copyCurrent(){if(!current)return;try{await navigator.clipboard.writeText(cleanText(current.text));$('copyBtn').textContent='הועתק';setTimeout(()=>$('copyBtn').textContent='העתק',900)}catch{}}
 function context(){const h=new Date().getHours();$('contextLine').textContent=(h<11?'בוקר':h<17?'צהריים':'ערב')+' · פתיחות טבעיות'}
 
 $('nextBtn').onclick=()=>move(1);
