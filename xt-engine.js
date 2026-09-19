@@ -1,7 +1,7 @@
 (() => {
 'use strict';
 
-const VERSION='11.0';
+const VERSION='11.2';
 const K={pool:'op_pool_v10',fav:'op_fav_v10',del:'op_del_v10',seen:'op_seen_v10',hist:'op_hist_v10'};
 const OLD={pool:'op_pool_v9',fav:'op_fav_v9'};
 const $=id=>document.getElementById(id);
@@ -240,8 +240,31 @@ function removeCurrent(){
 }
 function restore(id){del=del.filter(x=>x!==id);delSet=new Set(del);invalidateList();save(K.del,del);render()}
 async function copyCurrent(){if(!current)return;try{await navigator.clipboard.writeText(cleanText(current.text));$('copyBtn').textContent='הועתק';setTimeout(()=>$('copyBtn').textContent='העתק',900)}catch{}}
+async function shareCurrent(){
+  const url=new URL(window.location.href);
+  url.searchParams.delete('r');
+  const text=current?cleanText(current.text):'פתיחות PRO';
+  const data={title:'פתיחות PRO',text,url:url.toString()};
+  try{
+    if(navigator.share){await navigator.share(data);$('syncState').textContent='↗ נפתח תפריט השיתוף';return}
+  }catch(err){if(err&&err.name==='AbortError')return}
+  try{
+    await navigator.clipboard.writeText(text+'\n'+url.toString());
+    $('syncState').textContent='קישור ומשפט הועתקו';
+  }catch{
+    $('syncState').textContent='לא ניתן לשתף בדפדפן הזה';
+  }
+}
+function hardRefresh(){
+  const url=new URL(window.location.href);
+  url.searchParams.set('r',Date.now().toString());
+  window.location.replace(url.toString());
+}
+
 function context(){const h=new Date().getHours();$('contextLine').textContent=(h<11?'בוקר':h<17?'צהריים':'ערב')+' · פתיחות טבעיות'}
 
+$('refreshBtn').onclick=hardRefresh;
+$('shareBtn').onclick=shareCurrent;
 $('nextBtn').onclick=()=>move(1);
 $('prevBtn').onclick=()=>move(-1);
 $('copyBtn').onclick=copyCurrent;
