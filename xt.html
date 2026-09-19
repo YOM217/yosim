@@ -3,55 +3,173 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="theme-color" content="#080810">
+<meta name="theme-color" content="#09090c">
 <title>פתיחות PRO</title>
 <style>
-:root{--bg:#080810;--card:#12121d;--soft:#191927;--line:rgba(255,255,255,.09);--text:#f8f8fb;--muted:#9090a3;--pink:#ef476f;--orange:#ff9f43;--blue:#56ccf2;--green:#66d19e;--gold:#ffd166}
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}body{margin:0;background:radial-gradient(circle at 80% -10%,rgba(239,71,111,.16),transparent 30%),var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;min-height:100vh}button,input,select{font:inherit}button{cursor:pointer}.app{max-width:760px;margin:auto;padding:18px 14px 42px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}.brand b{font-size:23px;background:linear-gradient(135deg,var(--pink),var(--orange));-webkit-background-clip:text;color:transparent}.brand small{display:block;color:var(--muted);margin-top:4px}.topTools{display:flex;align-items:center;gap:6px}.toolBtn{border:1px solid var(--line);background:var(--soft);color:white;border-radius:10px;padding:7px 9px;font-size:11px;font-weight:700}.live{font-size:10px;border:1px solid rgba(102,209,158,.25);color:var(--green);background:rgba(102,209,158,.07);padding:7px 8px;border-radius:999px}.hero{border:1px solid var(--line);background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.015));border-radius:24px;padding:16px;box-shadow:0 18px 55px rgba(0,0,0,.3)}.freshbar{display:flex;justify-content:space-between;gap:10px;align-items:center;background:rgba(86,204,242,.08);border:1px solid rgba(86,204,242,.2);border-radius:15px;padding:10px 12px;margin-bottom:9px;color:#e1f8ff;font-size:13px}.freshbar strong{color:var(--blue)}.sync{display:flex;justify-content:space-between;gap:8px;align-items:center;color:var(--muted);font-size:11px;margin:0 2px 12px}.sync button{border:1px solid var(--line);background:var(--soft);color:white;border-radius:10px;padding:7px 10px}.filters{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}.filters select,.filters input{width:100%;border:1px solid var(--line);background:#0e0e17;color:white;border-radius:13px;padding:11px 12px;outline:none}.card{min-height:245px;background:var(--card);border:1px solid var(--line);border-radius:22px;padding:20px;display:flex;flex-direction:column;justify-content:space-between}.meta{display:flex;justify-content:space-between;gap:10px;font-size:12px;color:var(--muted)}.counter{font-weight:900;color:white;font-size:13px}.opener{font-size:27px;line-height:1.58;text-align:center;font-weight:760;margin:24px 4px}.source{text-align:center;color:var(--muted);font-size:11px}.badge{display:inline-block;border-radius:999px;padding:3px 7px;font-size:10px;background:rgba(102,209,158,.08);color:var(--green);border:1px solid rgba(102,209,158,.2)}.actions{display:grid;grid-template-columns:1.25fr 1.15fr 1.05fr .8fr 46px;gap:7px;margin-top:10px;direction:rtl}.btn{border:1px solid var(--line);background:var(--soft);color:white;border-radius:14px;padding:13px 7px;font-weight:750;white-space:nowrap;min-width:0}.btn.primary{background:linear-gradient(135deg,var(--pink),#b92f50);border:0}.btn.reject{border-color:rgba(239,71,111,.28);background:rgba(239,71,111,.07)}.btn.fav{border-color:rgba(255,209,102,.18)}.btn.fav.active{color:var(--gold);border-color:rgba(255,209,102,.44);background:rgba(255,209,102,.11)}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}.stat{background:var(--soft);border:1px solid var(--line);border-radius:14px;padding:10px}.stat b{display:block;font-size:18px}.stat span{font-size:10px;color:var(--muted)}.tabs{display:flex;gap:8px;overflow:auto;margin-top:18px}.tab{white-space:nowrap;border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:999px;padding:8px 12px}.tab.active{background:var(--soft);color:white}.panel{margin-top:10px;display:grid;gap:8px}.row{display:flex;gap:8px;align-items:center;background:var(--soft);border:1px solid var(--line);border-radius:13px;padding:10px}.rowtext{flex:1;line-height:1.45}.mini{border:1px solid var(--line);background:#0d0d15;color:white;border-radius:9px;padding:7px 9px}.empty{text-align:center;color:var(--muted);padding:20px}.foot{font-size:11px;color:var(--muted);text-align:center;line-height:1.65;margin-top:15px}
-@media(max-width:560px){
-html,body{height:100%;overflow:hidden}
-body{min-height:100%;background:var(--bg)}
-button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
-.app{height:100dvh;max-height:100dvh;padding:max(7px,env(safe-area-inset-top)) 8px max(7px,env(safe-area-inset-bottom));display:flex;flex-direction:column;overflow:hidden}
-.top{margin-bottom:5px;gap:5px;flex:0 0 auto}.brand{min-width:0}.brand b{font-size:18px}.brand small{font-size:9px;margin-top:1px}.topTools{gap:3px;flex:0 0 auto}.toolBtn{height:30px;padding:0 7px;font-size:10px;border-radius:8px}.live{font-size:8px;padding:5px 6px}
-.hero{padding:8px;border-radius:16px;box-shadow:none;flex:0 0 auto}
-.freshbar{padding:6px 8px;margin-bottom:5px;border-radius:10px;font-size:11px;min-height:30px}
-#freshRow{display:none}
-.sync{margin:0 0 5px;display:grid;grid-template-columns:1fr auto;align-items:center;font-size:10px}.sync button{padding:5px 8px;min-height:30px;border-radius:9px}
-.filters{grid-template-columns:1fr 1fr;gap:5px;margin-bottom:6px}.filters select,.filters input{padding:6px 8px;border-radius:9px;font-size:16px;height:36px}
-.card{min-height:142px;height:142px;border-radius:15px;padding:9px 11px}.meta{font-size:10px}.counter{font-size:11px}
-.opener{font-size:clamp(18px,5.5vw,22px);line-height:1.32;margin:7px 0;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
-.source{font-size:9px}.badge{font-size:8px;padding:2px 5px}
-.actions{grid-template-columns:1.2fr 1.12fr 1fr .72fr 36px;gap:4px;margin-top:6px}.btn{height:40px;padding:0 4px;border-radius:10px;font-size:11px}.btn.primary{font-size:13px}.btn.secondary{font-size:10px}
-.stats{grid-template-columns:repeat(4,1fr);gap:5px;margin-top:6px}.stat{padding:5px 3px;border-radius:9px;text-align:center}.stat b{font-size:14px}.stat span{font-size:8px}
-.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:6px;overflow:visible;flex:0 0 auto}.tab{padding:6px 4px;font-size:11px}
-.panel{flex:1;min-height:0;overflow-y:auto;margin-top:5px;gap:4px;-webkit-overflow-scrolling:touch}.row{padding:6px 7px;border-radius:9px;font-size:11px;gap:5px}.mini{padding:5px 6px;font-size:10px}.empty{padding:8px;font-size:11px}
-.foot{display:none}
+:root{
+  --bg:#09090c;--panel:#111116;--card:#17171e;--soft:#1d1d25;--line:rgba(255,255,255,.08);
+  --text:#f7f7fa;--muted:#8d8d9a;--accent:#ff3b6b;--accent2:#ff7a45;--good:#4cd59b;--gold:#ffd166;
 }
-@media(max-width:560px) and (max-height:700px){
-.app{padding-top:max(5px,env(safe-area-inset-top));padding-bottom:max(5px,env(safe-area-inset-bottom))}
-.top{margin-bottom:3px}.brand small{display:none}.toolBtn{height:27px;padding:0 5px;font-size:9px}.live{padding:4px 5px;font-size:7px}
-.freshbar{min-height:26px;padding:4px 7px;margin-bottom:4px}
-.sync{margin-bottom:4px}.sync button{min-height:27px;padding:3px 7px}
-.filters{margin-bottom:4px}.filters select,.filters input{height:33px;padding:4px 7px}
-.card{height:124px;min-height:124px;padding:7px 9px}.opener{font-size:clamp(17px,5.2vw,20px);margin:4px 0;line-height:1.25}.source{display:none}
-.actions{margin-top:4px;gap:3px}.btn{height:36px;font-size:10px}.btn.primary{font-size:12px}.stats{margin-top:4px}.stat{padding:3px 2px}.stat b{font-size:13px}.stat span{font-size:7px}
-.tabs{margin-top:4px}.tab{padding:5px 3px}.panel{margin-top:3px}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Arial,sans-serif}
+body{background:radial-gradient(circle at 80% -10%,rgba(255,59,107,.12),transparent 28%),var(--bg)}
+button,input,select{font:inherit}
+button{cursor:pointer}
+.app{max-width:720px;margin:auto;padding:16px 14px 32px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.brand{min-width:0}
+.brand b{display:block;font-size:22px;line-height:1;font-weight:850;letter-spacing:-.4px;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;color:transparent}
+.brand small{display:block;color:var(--muted);font-size:11px;margin-top:4px}
+.topTools{display:flex;align-items:center;gap:6px}
+.toolBtn{height:38px;border:1px solid var(--line);background:var(--soft);color:#fff;border-radius:12px;padding:0 11px;font-size:12px;font-weight:750;white-space:nowrap}
+.toolBtn.refreshing{opacity:.78;pointer-events:none}
+.toolBtn.refreshing .refreshIcon{display:inline-block;animation:spin .65s linear infinite}
+.version{font-size:9px;color:var(--good);border:1px solid rgba(76,213,155,.18);background:rgba(76,213,155,.06);padding:6px 7px;border-radius:999px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.hero{background:linear-gradient(180deg,rgba(255,255,255,.028),rgba(255,255,255,.012));border:1px solid var(--line);border-radius:22px;padding:12px}
+.statusRow{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;margin-bottom:8px}
+.bank{display:flex;align-items:center;gap:7px;min-width:0}
+.bank strong{font-size:15px}
+.bank span{font-size:10px;color:var(--muted)}
+.state{font-size:10px;color:var(--good);background:rgba(76,213,155,.07);border:1px solid rgba(76,213,155,.16);padding:6px 8px;border-radius:999px;white-space:nowrap}
+
+.filters{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:9px}
+.filters select,.filters input{width:100%;height:42px;border:1px solid var(--line);background:#0d0d12;color:#fff;border-radius:12px;padding:0 11px;outline:none}
+.filters input{font-size:16px}
+
+.card{min-height:190px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:13px;display:flex;flex-direction:column;justify-content:space-between}
+.meta{display:flex;justify-content:space-between;gap:8px;color:var(--muted);font-size:10px}
+.counter{color:#fff;font-weight:750}
+.opener{text-align:center;font-size:25px;line-height:1.48;font-weight:780;letter-spacing:-.2px;margin:15px 4px}
+.source{text-align:center;color:var(--muted);font-size:9px}
+.badge{display:inline-block;color:var(--good);border:1px solid rgba(76,213,155,.2);background:rgba(76,213,155,.06);border-radius:999px;padding:2px 6px}
+
+.primaryActions{display:grid;grid-template-columns:1.25fr 1fr 1fr;gap:7px;margin-top:9px}
+.secondaryActions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-top:7px}
+.btn{height:46px;border:1px solid var(--line);border-radius:13px;background:var(--soft);color:#fff;font-weight:780;padding:0 8px}
+.btn.primary{border:0;background:linear-gradient(135deg,var(--accent),#b52e52)}
+.btn.reject{background:rgba(255,59,107,.06);border-color:rgba(255,59,107,.24)}
+.btn.fav{border-color:rgba(255,209,102,.18)}
+.btn.fav.active{color:var(--gold);background:rgba(255,209,102,.08);border-color:rgba(255,209,102,.35)}
+.btn.utility{height:38px;font-size:11px;color:#d9d9df;background:#14141a}
+
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:9px}
+.stat{background:#121218;border:1px solid var(--line);border-radius:11px;padding:7px 5px;text-align:center}
+.stat b{display:block;font-size:15px}
+.stat span{font-size:8px;color:var(--muted)}
+
+.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px}
+.tab{height:36px;border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:11px;font-size:11px;font-weight:700}
+.tab.active{background:var(--soft);color:#fff}
+.panel{margin-top:7px;display:grid;gap:5px}
+.row{display:flex;align-items:center;gap:6px;background:#121218;border:1px solid var(--line);border-radius:11px;padding:8px}
+.rowtext{flex:1;min-width:0;font-size:12px;line-height:1.35}
+.mini{border:1px solid var(--line);background:#0c0c11;color:#fff;border-radius:8px;padding:6px 7px;font-size:10px}
+.empty{text-align:center;color:var(--muted);font-size:11px;padding:12px}
+.foot{text-align:center;color:var(--muted);font-size:10px;margin-top:12px}
+
+.toast{position:fixed;z-index:50;left:50%;top:max(16px,env(safe-area-inset-top));transform:translate(-50%,-12px);opacity:0;pointer-events:none;background:#f5f5f7;color:#111;border-radius:14px;padding:10px 14px;font-size:12px;font-weight:800;box-shadow:0 10px 30px rgba(0,0,0,.35);transition:.2s ease;white-space:nowrap}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+@media(max-width:560px){
+  html,body{height:100%;overflow:hidden}
+  .app{height:100dvh;max-height:100dvh;padding:max(8px,env(safe-area-inset-top)) 8px max(7px,env(safe-area-inset-bottom));display:flex;flex-direction:column;overflow:hidden}
+  .top{margin-bottom:6px;flex:0 0 auto}
+  .brand b{font-size:19px}.brand small{font-size:9px;margin-top:2px}
+  .topTools{gap:4px}.toolBtn{height:34px;padding:0 8px;font-size:10px;border-radius:10px}.version{display:none}
+  .hero{padding:8px;border-radius:17px;flex:0 0 auto}
+  .statusRow{margin-bottom:6px}.bank strong{font-size:13px}.bank span{font-size:8px}.state{font-size:8px;padding:5px 7px}
+  .filters{gap:5px;margin-bottom:6px}.filters select,.filters input{height:36px;padding:0 8px;border-radius:10px}
+  .card{height:145px;min-height:145px;padding:9px 10px;border-radius:15px}
+  .opener{font-size:clamp(18px,5.4vw,22px);line-height:1.3;margin:6px 1px;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+  .source{font-size:8px}.meta{font-size:9px}
+  .primaryActions{gap:5px;margin-top:6px}.btn{height:40px;border-radius:11px;font-size:11px}.btn.primary{font-size:13px}
+  .secondaryActions{gap:5px;margin-top:5px}.btn.utility{height:32px;font-size:10px}
+  .stats{gap:4px;margin-top:5px}.stat{padding:4px 2px;border-radius:9px}.stat b{font-size:13px}.stat span{font-size:7px}
+  .tabs{gap:4px;margin-top:5px}.tab{height:31px;font-size:10px;border-radius:9px}
+  .panel{flex:1;min-height:0;overflow-y:auto;margin-top:4px;gap:4px;-webkit-overflow-scrolling:touch}.row{padding:6px;border-radius:9px}.rowtext{font-size:10px}.mini{padding:5px 6px;font-size:9px}
+  .foot{display:none}
+}
+@media(max-width:560px) and (max-height:720px){
+  .brand small{display:none}
+  .top{margin-bottom:4px}.toolBtn{height:30px;font-size:9px}
+  .statusRow{margin-bottom:4px}.state{padding:4px 6px}
+  .filters{margin-bottom:4px}.filters select,.filters input{height:33px}
+  .card{height:125px;min-height:125px;padding:7px 9px}.source{display:none}.opener{font-size:clamp(17px,5.1vw,20px);line-height:1.24;margin:4px 0}
+  .primaryActions{margin-top:4px}.btn{height:36px;font-size:10px}.btn.primary{font-size:12px}
+  .secondaryActions{margin-top:4px}.btn.utility{height:29px}
+  .stats{margin-top:4px}.stat{padding:3px 2px}
+  .tabs{margin-top:4px}.tab{height:29px}
 }
 </style>
 </head>
-<body><main class="app">
-<div class="top"><div class="brand"><b>פתיחות PRO</b><small id="contextLine">מנוע FREE חכם</small></div><div class="topTools"><button id="refreshBtn" class="toolBtn" aria-label="רענן את האתר">↻ רענן</button><button id="shareBtn" class="toolBtn" aria-label="שתף">↗ שתף</button><div class="live">FAST v11.2</div></div></div>
-<section class="hero">
-<div class="freshbar" id="bankRow"><span>סה״כ פתיחות</span><strong id="bankCount">0 פתיחות</strong></div><div class="freshbar" id="freshRow"><span>נוספו בטעינה הזאת</span><strong id="freshCount">0 חדשים</strong></div>
-<div class="sync"><span id="syncState">FREE · ללא API</span><button id="moreBtn">ערבב והצג חדש</button></div>
-<div class="filters"><select id="category"><option value="all">הכול</option><option value="קליל">קליל</option><option value="מסקרן">מסקרן</option><option value="עמוק">עמוק</option><option value="מצחיק">מצחיק</option><option value="רגעי">לפי הרגע</option></select><input id="search" placeholder="חפש במאגר..." /></div>
-<div class="card"><div class="meta"><span id="catLabel">קטגוריה</span><span class="counter" id="position">0 מתוך 0</span></div><div id="opener" class="opener">טוען...</div><div class="source"><span id="freshBadge" class="badge">חדש</span> <span id="source">טוען מקור...</span></div></div>
-<div class="actions"><button class="btn primary" id="nextBtn" aria-label="הצג פתיחה הבאה">הבא</button><button class="btn reject" id="deleteBtn" aria-label="אל תציג את המשפט הזה שוב">🗑 לא להציג</button><button class="btn fav" id="favBtn" aria-label="הוסף למועדפים">★ מועדף</button><button class="btn secondary" id="copyBtn" aria-label="העתק">העתק</button><button class="btn secondary" id="prevBtn" aria-label="חזור לפתיחה הקודמת">‹</button></div>
-<div class="stats"><div class="stat"><b id="totalStat">0</b><span>במאגר</span></div><div class="stat"><b id="favStat">0</b><span>מועדפים</span></div><div class="stat"><b id="deletedStat">0</b><span>חסומים</span></div><div class="stat"><b id="seenStat">0</b><span>נראו</span></div></div>
-</section>
-<div class="tabs"><button class="tab active" data-tab="history">אחרונות</button><button class="tab" data-tab="favorites">מועדפים</button><button class="tab" data-tab="deleted">חסומים</button></div><div id="panel" class="panel"></div>
-<div class="foot">גרסת FAST: מותאמת לאייפון, נטענת מהר יותר ושומרת את כל הפעולות המרכזיות במסך אחד. כל פתיחה מכילה לכל היותר שאלה אחת.</div>
+<body>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<main class="app">
+  <div class="top">
+    <div class="brand"><b>פתיחות PRO</b><small id="contextLine">פתיחות טבעיות</small></div>
+    <div class="topTools">
+      <button id="refreshBtn" class="toolBtn" aria-label="רענן"><span class="refreshIcon">↻</span> רענן</button>
+      <button id="shareBtn" class="toolBtn" aria-label="שתף">↗ שתף</button>
+      <span class="version">FAST v12</span>
+    </div>
+  </div>
+
+  <section class="hero">
+    <div class="statusRow">
+      <div class="bank"><strong id="bankCount">0</strong><span>פתיחות זמינות</span></div>
+      <div class="state" id="syncState">מוכן</div>
+    </div>
+
+    <div id="freshCount" hidden>0 חדשים</div>
+
+    <div class="filters">
+      <select id="category" aria-label="קטגוריה">
+        <option value="all">כל הסגנונות</option>
+        <option value="קליל">קליל</option>
+        <option value="מסקרן">מסקרן</option>
+        <option value="עמוק">עמוק</option>
+        <option value="מצחיק">מצחיק</option>
+        <option value="רגעי">לפי הרגע</option>
+      </select>
+      <input id="search" placeholder="חיפוש..." aria-label="חיפוש במאגר">
+    </div>
+
+    <div class="card">
+      <div class="meta"><span id="catLabel">קטגוריה</span><span class="counter" id="position">0 מתוך 0</span></div>
+      <div id="opener" class="opener">טוען...</div>
+      <div class="source"><span id="freshBadge" class="badge">חדש</span> <span id="source">ניסוח טבעי</span></div>
+    </div>
+
+    <div class="primaryActions">
+      <button class="btn primary" id="nextBtn">הבא</button>
+      <button class="btn reject" id="deleteBtn">🗑 לא להציג</button>
+      <button class="btn fav" id="favBtn">★ מועדף</button>
+    </div>
+
+    <div class="secondaryActions">
+      <button class="btn utility" id="copyBtn">העתק</button>
+      <button class="btn utility" id="moreBtn">ערבב</button>
+      <button class="btn utility" id="prevBtn">הקודם</button>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><b id="totalStat">0</b><span>במאגר</span></div>
+      <div class="stat"><b id="favStat">0</b><span>מועדפים</span></div>
+      <div class="stat"><b id="deletedStat">0</b><span>חסומים</span></div>
+      <div class="stat"><b id="seenStat">0</b><span>נראו</span></div>
+    </div>
+  </section>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="history">אחרונות</button>
+    <button class="tab" data-tab="favorites">מועדפים</button>
+    <button class="tab" data-tab="deleted">חסומים</button>
+  </div>
+  <div id="panel" class="panel"></div>
+  <div class="foot">מהיר, מקומי וללא API</div>
 </main>
-<script src="xt-engine.js?v=11.2"></script>
-</body></html>
+<script src="xt-engine.js?v=12"></script>
+</body>
+</html>
