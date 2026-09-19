@@ -13,6 +13,9 @@ const idFor=s=>'n-'+hash(norm(s));
 const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
 
 let pool=load(K.pool),fav=load(K.fav),del=load(K.del),seen=load(K.seen),hist=load(K.hist);
+try{
+  ['op_pool_v6','op_pool_v8','op_pool_v9','op_seen_v6','op_seen_v8','op_seen_v9','op_hist_v6','op_hist_v8','op_hist_v9'].forEach(k=>localStorage.removeItem(k));
+}catch{}
 let current=null,index=0,tab='history',freshIds=new Set();
 
 const topics=[
@@ -168,7 +171,7 @@ function setCurrent(x,list){
   current=x;
   if(!x){$('opener').textContent='אין תוצאות';$('position').textContent='0 מתוך 0';return}
   index=Math.max(0,list.findIndex(i=>i.id===x.id));
-  const safe=cleanText(x.text);$('opener').textContent=safe;
+  let safe=cleanText(x.text);const firstQ=safe.indexOf('?');if(firstQ>=0)safe=safe.slice(0,firstQ+1);$('opener').textContent=safe;
   $('catLabel').textContent=x.category;
   $('position').textContent=(index+1)+' מתוך '+list.length;
   $('source').textContent=x.source==='לפי הרגע'?'מותאם לרגע':'ניסוח טבעי';
