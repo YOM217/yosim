@@ -1,7 +1,7 @@
 (() => {
 'use strict';
 
-const VERSION='10.0';
+const VERSION='11.0';
 const K={pool:'op_pool_v10',fav:'op_fav_v10',del:'op_del_v10',seen:'op_seen_v10',hist:'op_hist_v10'};
 const OLD={pool:'op_pool_v9',fav:'op_fav_v9'};
 const $=id=>document.getElementById(id);
@@ -17,6 +17,13 @@ try{
   ['op_pool_v6','op_pool_v8','op_pool_v9','op_seen_v6','op_seen_v8','op_seen_v9','op_hist_v6','op_hist_v8','op_hist_v9'].forEach(k=>localStorage.removeItem(k));
 }catch{}
 let current=null,index=0,tab='history',freshIds=new Set();
+let poolNorms=new Set(pool.map(x=>norm(x.text)));
+let poolById=new Map(pool.map(x=>[x.id,x]));
+let delSet=new Set(del),seenSet=new Set(seen);
+let listCache=null,listCacheKey='';
+const invalidateList=()=>{listCache=null;listCacheKey=''};
+const rebuildIndexes=()=>{poolNorms=new Set(pool.map(x=>norm(x.text)));poolById=new Map(pool.map(x=>[x.id,x]));delSet=new Set(del);seenSet=new Set(seen);invalidateList()};
+const idleSave=(k,v)=>{const run=()=>save(k,v);if('requestIdleCallback'in window)requestIdleCallback(run,{timeout:500});else setTimeout(run,0)};
 
 const topics=[
 ['קליל','מה הדבר הקטן שהכי שיפר לך את השבוע?'],['קליל','איזה מקום תמיד עושה לך טוב?'],['קליל','מה תמיד מצליח להרים לך את מצב הרוח?'],['קליל','מה הדבר הראשון שהיית עושה ביום פנוי לגמרי?'],['קליל','איזה מאכל תמיד מנצח כשאין כוח להחליט?'],['קליל','מה היה הפלייליסט המושלם ליום הזה?'],['קליל','איזה ריח ישר מזכיר לך משהו טוב?'],['קליל','איזו שעה ביום הכי כיפית מבחינתך?'],
@@ -98,9 +105,9 @@ function scoreText(text,cat){
 
 function add(item,fresh=false){
   const text=cleanText(item.text);
-  if(!isNatural(text) || pool.some(x=>norm(x.text)===norm(text))) return false;
+  const n=norm(text);if(!isNatural(text) || poolNorms.has(n)) return false;
   const o={id:idFor(text),category:item.category||'מסקרן',text,source:item.source||'טבעי',score:scoreText(text,item.category),createdAt:new Date().toISOString()};
-  pool.push(o);
+  pool.push(o);poolNorms.add(n);poolById.set(o.id,o);invalidateList();
   if(fresh)freshIds.add(o.id);
   return true;
 }
@@ -130,7 +137,7 @@ function buildBank(target=5000){
     }
   }
   addMoments();
-  pool=pool.sort((a,b)=>(b.score||0)-(a.score||0)).slice(0,target);
+  pool=pool.sort((a,b)=>(b.score||0)-(a.score||0)).slice(0,target);rebuildIndexes();
   save(K.pool,pool);
   return pool.length-before;
 }
@@ -158,13 +165,11 @@ function addMoments(){
 }
 
 function filtered(){
-  const q=norm($('search').value),c=$('category').value;
-  return pool.filter(x=>!del.includes(x.id)&&(c==='all'||x.category===c)&&(!q||norm(x.text).includes(q)))
-    .sort((a,b)=>{
-      const au=seen.includes(a.id)?1:0, bu=seen.includes(b.id)?1:0;
-      if(au!==bu) return au-bu;
-      return (b.score||0)-(a.score||0);
-    });
+  const q=norm($('search').value),c=$('category').value,key=c+'|'+q+'|'+del.length;
+  if(listCache&&listCacheKey===key)return listCache;
+  listCache=pool.filter(x=>!delSet.has(x.id)&&(c==='all'||x.category===c)&&(!q||norm(x.text).includes(q)));
+  listCacheKey=key;
+  return listCache;
 }
 
 function setCurrent(x,list){
@@ -177,8 +182,8 @@ function setCurrent(x,list){
   $('source').textContent=x.source==='לפי הרגע'?'מותאם לרגע':'ניסוח טבעי';
   $('freshBadge').style.display=freshIds.has(x.id)?'inline-block':'none';
   $('favBtn').classList.toggle('active',fav.includes(x.id));
-  if(!seen.includes(x.id)){seen.unshift(x.id);seen=seen.slice(0,5000);save(K.seen,seen)}
-  hist=hist.filter(id=>id!==x.id);hist.unshift(x.id);hist=hist.slice(0,100);save(K.hist,hist);
+  if(!seenSet.has(x.id)){seen.unshift(x.id);seen=seen.slice(0,5000);seenSet.add(x.id);idleSave(K.seen,seen)}
+  hist=hist.filter(id=>id!==x.id);hist.unshift(x.id);hist=hist.slice(0,100);idleSave(K.hist,hist);
   stats();
 }
 
@@ -199,15 +204,15 @@ function move(step){
 }
 
 function stats(){
-  const available=pool.filter(x=>!del.includes(x.id)).length;
+  const available=Math.max(0,pool.length-delSet.size);
   if($('bankCount')) $('bankCount').textContent=available.toLocaleString('he-IL')+' פתיחות';
-  $('totalStat').textContent=filtered().length;
+  $('totalStat').textContent=(listCache||filtered()).length;
   $('favStat').textContent=fav.length;
   $('deletedStat').textContent=del.length;
   $('seenStat').textContent=seen.length;
 }
 
-function byId(id){return pool.find(x=>x.id===id)}
+function byId(id){return poolById.get(id)}
 function escapeHtml(s){return s.replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
 function renderPanel(){
   const ids=tab==='favorites'?fav:tab==='deleted'?del:hist;
@@ -215,8 +220,8 @@ function renderPanel(){
   $('panel').innerHTML=rows.length?rows.map(x=>'<div class="row"><div class="rowtext">'+escapeHtml(x.text)+'</div><button class="mini" data-open="'+x.id+'">פתח</button>'+(tab==='deleted'?'<button class="mini" data-restore="'+x.id+'">שחזר</button>':'')+'</div>').join(''):'<div class="empty">אין כאן פריטים עדיין</div>';
 }
 function favToggle(){if(!current)return;fav=fav.includes(current.id)?fav.filter(x=>x!==current.id):[current.id,...fav];save(K.fav,fav);render()}
-function removeCurrent(){if(!current)return;del=[current.id,...del.filter(x=>x!==current.id)];save(K.del,del);current=null;render()}
-function restore(id){del=del.filter(x=>x!==id);save(K.del,del);render()}
+function removeCurrent(){if(!current)return;del=[current.id,...del.filter(x=>x!==current.id)];delSet=new Set(del);invalidateList();save(K.del,del);current=null;render()}
+function restore(id){del=del.filter(x=>x!==id);delSet=new Set(del);invalidateList();save(K.del,del);render()}
 async function copyCurrent(){if(!current)return;try{await navigator.clipboard.writeText(cleanText(current.text));$('copyBtn').textContent='הועתק';setTimeout(()=>$('copyBtn').textContent='העתק',900)}catch{}}
 function context(){const h=new Date().getHours();$('contextLine').textContent=(h<11?'בוקר':h<17?'צהריים':'ערב')+' · פתיחות טבעיות'}
 
@@ -225,18 +230,18 @@ $('prevBtn').onclick=()=>move(-1);
 $('copyBtn').onclick=copyCurrent;
 $('favBtn').onclick=favToggle;
 $('deleteBtn').onclick=removeCurrent;
-$('moreBtn').onclick=()=>{shuffle(pool);current=null;$('syncState').textContent='ערבבתי את המאגר · הצגתי משהו חדש';render()};
-$('category').onchange=()=>{current=null;render()};
-$('search').oninput=()=>{current=null;render()};
+$('moreBtn').onclick=()=>{shuffle(pool);rebuildIndexes();current=null;$('syncState').textContent='ערבבתי · מוכן';render()};
+$('category').onchange=()=>{invalidateList();current=null;render()};
+let searchRAF=0;$('search').oninput=()=>{cancelAnimationFrame(searchRAF);searchRAF=requestAnimationFrame(()=>{invalidateList();current=null;render()})};
 document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));b.classList.add('active');tab=b.dataset.tab;renderPanel()});
 $('panel').onclick=e=>{const o=e.target.dataset.open,r=e.target.dataset.restore;if(r)return restore(r);if(o){const x=byId(o);if(x){current=x;render();window.scrollTo({top:0,behavior:'smooth'})}}};
 
 if(!pool.length){
   buildBank(5000);
-  shuffle(pool);
+  shuffle(pool);rebuildIndexes();
   save(K.pool,pool);
 }else{
-  pool=pool.map(x=>({...x,text:cleanText(x.text),score:scoreText(x.text,x.category)})).filter(x=>isNatural(x.text)&&(x.text.match(/\?/g)||[]).length<=1);
+  pool=pool.map(x=>({...x,text:cleanText(x.text),score:scoreText(x.text,x.category)})).filter(x=>isNatural(x.text)&&(x.text.match(/\?/g)||[]).length<=1);rebuildIndexes();
   buildBank(5000);
 }
 migrateFavorites();
