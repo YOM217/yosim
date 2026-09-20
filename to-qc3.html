@@ -281,7 +281,7 @@ body:has(#quantity:focus) .toolbar{display:grid!important}
   color:#fff!important;font-size:15px!important;font-weight:800!important;
 }
 .quick-delete:active{transform:scale(.96);background:#d32f3a!important}
-</style></head><body><main><header><h1 dir="ltr">TO QC3</h1><span class="version">PRO · 5.6</span></header><form id="calculator" novalidate style="display:contents"><div class="settings-row"><fieldset class="mode-field"><legend>חישוב</legend><div class="choice-grid"><label class="choice"><input type="radio" name="mode" value="trays" checked>מגשים → כרטיסים</label><label class="choice" hidden><input type="radio" name="mode" value="cards">כרטיסים</label></div></fieldset><fieldset><legend>כרטיסים במגש</legend><div class="choice-grid"><label class="choice"><input type="radio" name="capacity" value="2">2</label><label class="choice"><input type="radio" name="capacity" value="4" checked>4</label><label class="choice"><input type="radio" name="capacity" value="8">8 EPS</label></div></fieldset></div><section aria-label="מק״ט MBF"><div class="field-label">מק״ט MBF — בחר בלחיצה</div><select id="card-type" hidden aria-label="סוג כרטיס"></select><div id="type-chips" class="type-chips" role="group" aria-label="בחירת מק״ט MBF"></div><div id="custom-wrap" class="custom" hidden><label for="custom-type" class="field-label">מק״ט אחר</label><input id="custom-type" inputmode="numeric" maxlength="30" placeholder="לדוגמה 352"></div></section><div class="calculation"><div class="quantity-box"><label for="quantity" id="quantity-label">כמות מגשים</label><input id="quantity" type="text" inputmode="numeric" pattern="[0-9]{0,2}" maxlength="2" enterkeyhint="done" autocomplete="off" value="00" aria-describedby="input-error" aria-label="כמות מגשים בשתי ספרות"></div><div class="result" aria-live="polite" aria-atomic="true"><span id="result-label">סה״כ כרטיסים</span><div class="result-number"><span id="result-value">—</span><small id="result-unit">כרטיסים</small></div><p id="result-detail">הזן כמות</p></div></div><p id="input-error" class="error" role="alert"></p><div class="primary-actions"><button class="save" id="save" type="submit" disabled>שמור לדוח</button><button id="share" type="button" class="whatsapp" disabled>שתף ב־WhatsApp</button></div></form><div class="feedback"><p id="status" class="success" role="status"></p></div><p id="storage-error" class="error" role="alert"></p><section class="live-summary" aria-live="polite"><div class="live-summary-head"><strong>QC3 TOTAL</strong><span class="count">מצטבר</span></div><div class="summary-totals"><div class="summary-stat"><b id="summary-cards">0</b><span>כרטיסים</span></div><div class="summary-stat"><b id="summary-trays">0</b><span>מגשים</span></div></div><div id="summary-types" class="summary-types"><p class="summary-empty">עדיין אין חישובים שמורים</p></div></section><nav class="toolbar" aria-label="דוח וניהול"><button id="open-report">הצג דוח</button><button id="open-history">היסטוריה <span id="count" class="count">0</span></button><button id="open-types">מק״טים</button></nav></main><dialog id="report-dialog" aria-labelledby="report-heading"><div class="dialog-head"><h2 id="report-heading">סך כרטיסים לפי סוג</h2><button data-close="report-dialog">סגור</button></div><p class="history-note">סיכום החישובים השמורים בלבד, ללא כמויות אפס.</p><textarea id="report" dir="ltr" lang="en" readonly aria-label="English QC3 report" placeholder="Save a calculation to create the summary."></textarea><button id="copy" disabled>העתק דוח</button></dialog><dialog id="history-dialog" aria-labelledby="history-heading"><div class="dialog-head"><h2 id="history-heading">היסטוריית חישובים</h2><button data-close="history-dialog">סגור</button></div><details id="history-panel" open><summary>היסטוריה</summary><p class="history-note">ההיסטוריה נשמרת במכשיר זה בלבד.</p><div id="entries" class="entry-list"></div><button id="clear-history" type="button" class="danger">מחק היסטוריה</button></details></dialog><dialog id="types-dialog" aria-labelledby="types-heading"><div class="dialog-head"><h2 id="types-heading">עריכת מק״טים MBF</h2><button data-close="types-dialog">סגור</button></div><label for="types-list" class="field-label">מק״ט אחד בכל שורה</label><textarea id="types-list" dir="ltr" rows="6" aria-describedby="types-note"></textarea><p id="types-note" class="history-note">רשום רק את המק״ט, בלי MBF. לדוגמה: 352. המערכת תוסיף MBF אוטומטית.</p><button id="save-types">שמור מק״טים</button><p id="types-status" role="status"></p></dialog><script>
+</style></head><body><main><header><h1 dir="ltr">TO QC3</h1><span class="version">PRO · 5.7</span></header><form id="calculator" novalidate style="display:contents"><div class="settings-row"><fieldset class="mode-field"><legend>חישוב</legend><div class="choice-grid"><label class="choice"><input type="radio" name="mode" value="trays" checked>מגשים → כרטיסים</label><label class="choice" hidden><input type="radio" name="mode" value="cards">כרטיסים</label></div></fieldset><fieldset><legend>כרטיסים במגש</legend><div class="choice-grid"><label class="choice"><input type="radio" name="capacity" value="2">2</label><label class="choice"><input type="radio" name="capacity" value="4" checked>4</label><label class="choice"><input type="radio" name="capacity" value="8">8 EPS</label></div></fieldset></div><section aria-label="מק״ט MBF"><div class="field-label">מק״ט MBF — בחר בלחיצה</div><select id="card-type" hidden aria-label="סוג כרטיס"></select><div id="type-chips" class="type-chips" role="group" aria-label="בחירת מק״ט MBF"></div><div id="custom-wrap" class="custom" hidden><label for="custom-type" class="field-label">מק״ט אחר</label><input id="custom-type" inputmode="numeric" maxlength="30" placeholder="לדוגמה 352"></div></section><div class="calculation"><div class="quantity-box"><label for="quantity" id="quantity-label">כמות מגשים</label><input id="quantity" type="text" inputmode="numeric" pattern="[0-9]{0,2}" maxlength="2" enterkeyhint="done" autocomplete="off" value="00" aria-describedby="input-error" aria-label="כמות מגשים בשתי ספרות"></div><div class="result" aria-live="polite" aria-atomic="true"><span id="result-label">סה״כ כרטיסים</span><div class="result-number"><span id="result-value">—</span><small id="result-unit">כרטיסים</small></div><p id="result-detail">הזן כמות</p></div></div><p id="input-error" class="error" role="alert"></p><div class="primary-actions"><button class="save" id="save" type="submit" disabled>שמור לדוח</button><button id="share" type="button" class="whatsapp" disabled>שתף ב־WhatsApp</button></div></form><div class="feedback"><p id="status" class="success" role="status"></p></div><p id="storage-error" class="error" role="alert"></p><section class="live-summary" aria-live="polite"><div class="live-summary-head"><strong>QC3 TOTAL</strong><span class="count">מצטבר</span></div><div class="summary-totals"><div class="summary-stat"><b id="summary-cards">0</b><span>כרטיסים</span></div><div class="summary-stat"><b id="summary-trays">0</b><span>מגשים</span></div></div><div id="summary-types" class="summary-types"><p class="summary-empty">עדיין אין חישובים שמורים</p></div></section><nav class="toolbar" aria-label="דוח וניהול"><button id="open-report">הצג דוח</button><button id="open-history">היסטוריה <span id="count" class="count">0</span></button><button id="open-types">מק״טים</button></nav></main><dialog id="report-dialog" aria-labelledby="report-heading"><div class="dialog-head"><h2 id="report-heading">סך כרטיסים לפי סוג</h2><button data-close="report-dialog">סגור</button></div><p class="history-note">סיכום החישובים השמורים בלבד, ללא כמויות אפס.</p><textarea id="report" dir="ltr" lang="en" readonly aria-label="English QC3 report" placeholder="Save a calculation to create the summary."></textarea><button id="copy" disabled>העתק דוח</button></dialog><dialog id="history-dialog" aria-labelledby="history-heading"><div class="dialog-head"><h2 id="history-heading">היסטוריית חישובים</h2><button data-close="history-dialog">סגור</button></div><details id="history-panel" open><summary>היסטוריה</summary><p class="history-note">ההיסטוריה נשמרת במכשיר זה בלבד.</p><div id="entries" class="entry-list"></div><button id="clear-history" type="button" class="danger">מחק היסטוריה</button></details></dialog><dialog id="types-dialog" aria-labelledby="types-heading"><div class="dialog-head"><h2 id="types-heading">עריכת מק״טים MBF</h2><button data-close="types-dialog">סגור</button></div><label for="types-list" class="field-label">מק״ט אחד בכל שורה</label><textarea id="types-list" dir="ltr" rows="6" aria-describedby="types-note"></textarea><p id="types-note" class="history-note">רשום רק את המק״ט, בלי MBF. לדוגמה: 352. המערכת תוסיף MBF אוטומטית.</p><button id="save-types">שמור מק״טים</button><p id="types-status" role="status"></p></dialog><script>
 'use strict';
 const KEY='qc3-tray-history-v2';
 const $=id=>document.getElementById(id);
@@ -366,20 +366,42 @@ $('quantity').addEventListener('focus',()=>{
 });
 $('quantity').addEventListener('click',()=>{$('quantity').select();});
 $('quantity').addEventListener('input',()=>{let v=$('quantity').value.replace(/\D/g,'').slice(0,2);if(Number(v)>99)v='99';$('quantity').value=v;update();});
-$('quantity').addEventListener('blur',()=>{clearTimeout(quantityFocusTimer);const n=parseInt($('quantity').value||'0',10);$('quantity').value=String(Math.min(99,Math.max(0,n))).padStart(2,'0');update();});$('calculator').addEventListener('input',e=>{if(e.target!==$('quantity'))update();});$('calculator').addEventListener('change',update);function playSaveSound(){
+$('quantity').addEventListener('blur',()=>{clearTimeout(quantityFocusTimer);const n=parseInt($('quantity').value||'0',10);$('quantity').value=String(Math.min(99,Math.max(0,n))).padStart(2,'0');update();});$('calculator').addEventListener('input',e=>{if(e.target!==$('quantity'))update();});$('calculator').addEventListener('change',update);let saveAudioCtx=null;
+function unlockSaveAudio(){
   try{
-    const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;
-    const ctx=new AC(),master=ctx.createGain(),now=ctx.currentTime;
-    master.gain.setValueAtTime(0.95,now);master.connect(ctx.destination);
-    [[0,1050],[0.12,1320]].forEach(([d,hz])=>{
-      const o=ctx.createOscillator(),g=ctx.createGain();
-      o.type='square';o.frequency.setValueAtTime(hz,now+d);
-      g.gain.setValueAtTime(0.0001,now+d);
-      g.gain.exponentialRampToValueAtTime(0.9,now+d+0.008);
-      g.gain.exponentialRampToValueAtTime(0.0001,now+d+0.09);
-      o.connect(g);g.connect(master);o.start(now+d);o.stop(now+d+0.1);
-    });
-    setTimeout(()=>ctx.close().catch(()=>{}),450);
+    const AC=window.AudioContext||window.webkitAudioContext;
+    if(!AC)return;
+    if(!saveAudioCtx)saveAudioCtx=new AC();
+    if(saveAudioCtx.state==='suspended')saveAudioCtx.resume().catch(()=>{});
+    /* silent warm-up inside a real user gesture for iOS Safari */
+    const o=saveAudioCtx.createOscillator(),g=saveAudioCtx.createGain();
+    g.gain.value=0.00001;o.connect(g);g.connect(saveAudioCtx.destination);
+    o.start();o.stop(saveAudioCtx.currentTime+0.01);
+  }catch{}
+}
+document.addEventListener('pointerdown',unlockSaveAudio,{once:true,capture:true});
+document.addEventListener('touchstart',unlockSaveAudio,{once:true,capture:true,passive:true});
+$('quantity').addEventListener('focus',unlockSaveAudio);
+
+function playSaveSound(){
+  try{
+    unlockSaveAudio();
+    const ctx=saveAudioCtx;if(!ctx)return;
+    const fire=()=>{
+      const now=ctx.currentTime;
+      const master=ctx.createGain();
+      master.gain.setValueAtTime(1,now);master.connect(ctx.destination);
+      [[0,880],[0.105,1320]].forEach(([d,hz])=>{
+        const o=ctx.createOscillator(),g=ctx.createGain();
+        o.type='square';o.frequency.setValueAtTime(hz,now+d);
+        g.gain.setValueAtTime(0.0001,now+d);
+        g.gain.exponentialRampToValueAtTime(1,now+d+0.006);
+        g.gain.exponentialRampToValueAtTime(0.0001,now+d+0.095);
+        o.connect(g);g.connect(master);o.start(now+d);o.stop(now+d+0.105);
+      });
+    };
+    if(ctx.state==='suspended')ctx.resume().then(fire).catch(()=>{});
+    else fire();
   }catch{}
 }
 $('calculator').addEventListener('submit',e=>{e.preventDefault();if(!current)return;loadHistory();if(!historyWritable){update();return;}const entry={...current,id:crypto.randomUUID(),created_at:new Date().toISOString()};const next=[entry,...entries];try{localStorage.setItem(KEY,JSON.stringify(next));entries=next;renderHistory();currentStamp=entry.created_at;current=entry;refreshReport();
