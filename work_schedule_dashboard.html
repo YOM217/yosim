@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#0b1220">
-<title>סידור עבודה</title>
+<title>WORK SCHEDULE · AST</title>
 <style>
 :root{
   --bg:#0b1220;--card:#111c2e;--card2:#17253a;--line:#29415e;--txt:#f5f8fc;--muted:#91a4bb;
@@ -17,7 +17,7 @@ button,input,textarea{font:inherit}
 button{cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 .app{max-width:760px;margin:auto;padding:10px 10px calc(92px + env(safe-area-inset-bottom))}
 .header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:2px 2px 10px}
-.header h1{margin:0;font-size:28px;font-weight:950;letter-spacing:-.4px}.range{font-size:12px;color:#b9cadc;font-weight:800;text-align:left}
+.header h1{margin:0;font-size:28px;font-weight:950;letter-spacing:-.4px}.headerMeta{font-size:11px;color:#8fa7c0;font-weight:850;margin-top:3px;direction:rtl}.range{font-size:12px;color:#b9cadc;font-weight:800;text-align:left}
 .card{background:linear-gradient(180deg,#132038,#0e1a2b);border:1px solid #203a58;border-radius:18px;padding:10px;margin-bottom:9px;box-shadow:0 8px 24px rgba(0,0,0,.16)}
 .week{display:grid;grid-template-columns:44px 1fr 44px;gap:7px}.nav{height:44px;border-radius:12px;border:1px solid var(--line);background:#16263b;color:#fff;font-size:23px;font-weight:950}.date{height:44px;border-radius:12px;border:1px solid var(--line);background:#0a1524;color:#fff;text-align:center;font-weight:850;width:100%}
 .days{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}.day{height:58px;border-radius:14px;border:1px solid #2b4868;background:#15263c;color:#dce8f4;font-weight:950;font-size:17px}.day small{display:block;font-size:10px;color:#91a8c0;margin-top:5px}.day.active{background:linear-gradient(135deg,var(--cyan),var(--blue));border-color:#66dafe;color:#fff}.day.active small{color:#effcff}.day.has:not(.active){box-shadow:inset 0 -3px 0 var(--blue)}
@@ -38,7 +38,7 @@ button{cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manip
 </head>
 <body>
 <div class="app">
-  <div class="header"><h1>סידור עבודה</h1><div class="range" id="rangeText"></div></div>
+  <div class="header"><div><h1>WORK SCHEDULE</h1><div class="headerMeta">מחלקת AST · סוג משמרת ב׳ · גרסה 1.3.2</div></div><div class="range" id="rangeText"></div></div>
 
   <section class="card">
     <div class="week">
@@ -228,12 +228,12 @@ function drawReport(){
   const bg=ctx.createLinearGradient(0,0,0,H);bg.addColorStop(0,'#fcfdff');bg.addColorStop(1,'#edf5fc');ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
   const top=ctx.createLinearGradient(0,0,W,0);top.addColorStop(0,'#22c7f0');top.addColorStop(1,'#3b82f6');ctx.fillStyle=top;ctx.fillRect(0,0,W,18);
 
-  ctx.textAlign='right';ctx.fillStyle='#112d50';ctx.font='900 72px Arial';ctx.fillText('סידור עבודה',1015,92);
-  ctx.fillStyle='#5d7996';ctx.font='800 34px Arial';ctx.fillText(rangeText(),1015,138);
-  ctx.textAlign='left';ctx.fillStyle='#53799d';ctx.font='900 26px Arial';ctx.fillText('WORK SCHEDULE',65,92);
-  ctx.strokeStyle='#d5e6f5';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(60,162);ctx.lineTo(1020,162);ctx.stroke();
+  ctx.textAlign='right';ctx.fillStyle='#112d50';ctx.font='900 64px Arial';ctx.fillText('WORK SCHEDULE',1015,88);
+  ctx.fillStyle='#5d7996';ctx.font='800 30px Arial';ctx.fillText('מחלקת AST · סוג משמרת ב׳ · v1.3.2',1015,126);ctx.font='800 28px Arial';ctx.fillText(rangeText(),1015,158);
+  ctx.textAlign='left';ctx.fillStyle='#53799d';ctx.font='900 24px Arial';ctx.fillText('AST DEPARTMENT',65,90);
+  ctx.strokeStyle='#d5e6f5';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(60,178);ctx.lineTo(1020,178);ctx.stroke();
 
-  const mx=60,my=186,gx=20,gy=16,cw=470,ch=430;
+  const mx=60,my=202,gx=20,gy=16,cw=470,ch=425;
   D.forEach((d,i)=>{
     const col=i%2,row=Math.floor(i/2),x=mx+col*(cw+gx),y=my+row*(ch+gy);
     ctx.fillStyle='#ffffff';ctx.strokeStyle='#cde2f4';ctx.lineWidth=2;rr(ctx,x,y,cw,ch,24);ctx.fill();ctx.stroke();
@@ -295,11 +295,11 @@ function drawReport(){
     }
   });
 
-  ctx.textAlign='center';ctx.fillStyle='#8ba1b8';ctx.font='700 20px Arial';ctx.fillText('סידור עבודה · מוכן לוואטסאפ',540,H-18);
+  ctx.textAlign='center';ctx.fillStyle='#8ba1b8';ctx.font='700 20px Arial';ctx.fillText('WORK SCHEDULE · AST · SHIFT B · v1.3.2',540,H-18);
 }
 function canvasBlob(){return new Promise((res,rej)=>$('reportCanvas').toBlob(b=>b?res(b):rej(new Error('blob')),'image/png',1))}
-async function savePng(){try{const b=await canvasBlob(),u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download='סידור-עבודה-'+S.start+'.png';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1500)}catch(e){alert('לא ניתן לשמור תמונה במכשיר הזה')}}
-async function sharePng(){try{const b=await canvasBlob(),f=new File([b],'סידור-עבודה-'+S.start+'.png',{type:'image/png'});if(navigator.share&&(!navigator.canShare||navigator.canShare({files:[f]}))){await navigator.share({files:[f],title:'סידור עבודה'})}else await savePng()}catch(e){if(e&&e.name!=='AbortError')alert('השיתוף לא נתמך. השתמש בשמור PNG.')}}
+async function savePng(){try{const b=await canvasBlob(),u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download='WORK-SCHEDULE-AST-'+S.start+'.png';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1500)}catch(e){alert('לא ניתן לשמור תמונה במכשיר הזה')}}
+async function sharePng(){try{const b=await canvasBlob(),f=new File([b],'WORK-SCHEDULE-AST-'+S.start+'.png',{type:'image/png'});if(navigator.share&&(!navigator.canShare||navigator.canShare({files:[f]}))){await navigator.share({files:[f],title:'WORK SCHEDULE · AST'})}else await savePng()}catch(e){if(e&&e.name!=='AbortError')alert('השיתוף לא נתמך. השתמש בשמור PNG.')}}
 $('prevWeek').addEventListener('click',()=>shiftWeek(-1));$('nextWeek').addEventListener('click',()=>shiftWeek(1));$('weekStart').addEventListener('change',e=>{if(e.target.value){S.start=iso(sunOf(new Date(e.target.value+'T12:00:00')));render()}});
 $('allDayBtn').addEventListener('click',markAll);$('clearDayBtn').addEventListener('click',clearDay);$('copyDayBtn').addEventListener('click',openCopy);$('dayNoteInput').addEventListener('input',()=>{S.dayNotes[S.selected]=$('dayNoteInput').value.trim();persist();drawReport()});
 $('manageBtn').addEventListener('click',openManage);$('closeManage').addEventListener('click',closeManage);$('addWorkerBtn').addEventListener('click',addWorker);$('newName').addEventListener('keydown',e=>{if(e.key==='Enter')addWorker()});$('resetData').addEventListener('click',resetData);
