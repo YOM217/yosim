@@ -6,69 +6,56 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#0b1220">
 <title>WORK SCHEDULE · AST</title>
-<style>
-:root{
-  --bg:#0b1220;--card:#111c2e;--card2:#17253a;--line:#29415e;--txt:#f5f8fc;--muted:#91a4bb;
-  --blue:#3b82f6;--cyan:#22c7f0;--green:#20c980;--red:#ff6473;--paper:#f6f9fd;--ink:#122d4f;
-}
-*{box-sizing:border-box}
-html,body{margin:0;background:var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}
-button,input,textarea{font:inherit}
-button{cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
-.app{max-width:760px;margin:auto;padding:10px 10px calc(92px + env(safe-area-inset-bottom))}
-.header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:2px 2px 10px}
-.header h1{margin:0;font-size:28px;font-weight:950;letter-spacing:-.4px}.headerMeta{font-size:11px;color:#8fa7c0;font-weight:850;margin-top:3px;direction:rtl}.range{font-size:12px;color:#b9cadc;font-weight:800;text-align:left}
-.card{background:linear-gradient(180deg,#132038,#0e1a2b);border:1px solid #203a58;border-radius:18px;padding:10px;margin-bottom:9px;box-shadow:0 8px 24px rgba(0,0,0,.16)}
-.week{display:grid;grid-template-columns:44px 1fr 44px;gap:7px}.nav{height:44px;border-radius:12px;border:1px solid var(--line);background:#16263b;color:#fff;font-size:23px;font-weight:950}.date{height:44px;border-radius:12px;border:1px solid var(--line);background:#0a1524;color:#fff;text-align:center;font-weight:850;width:100%}
-.days{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}.day{height:58px;border-radius:14px;border:1px solid #2b4868;background:#15263c;color:#dce8f4;font-weight:950;font-size:17px}.day small{display:block;font-size:10px;color:#91a8c0;margin-top:5px}.day.active{background:linear-gradient(135deg,var(--cyan),var(--blue));border-color:#66dafe;color:#fff}.day.active small{color:#effcff}.day.has:not(.active){box-shadow:inset 0 -3px 0 var(--blue)}
-.titleRow{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}.titleRow b{font-size:16px}.titleRow small{font-size:11px;color:var(--muted)}
-.liveGrid{display:grid;grid-template-columns:1fr 1fr;gap:7px}.liveDay{border:1px solid #294563;background:#0a1625;border-radius:14px;padding:9px;text-align:right;color:#fff;min-height:92px}.liveDay.active{border-color:#55d2fb;box-shadow:0 0 0 1px rgba(85,210,251,.22);background:#102a43}.liveHead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:7px}.liveHead b{font-size:15px}.liveHead span{font-size:10px;color:#91a8c0;font-weight:800}.liveWorkers{display:grid;gap:5px}.liveWorker{display:flex;align-items:center;justify-content:space-between;gap:8px;background:#13253a;border-radius:9px;padding:6px 7px;font-size:12px}.liveWorker strong{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.liveWorker em{font-style:normal;color:#9fb6cc;direction:ltr;unicode-bidi:isolate;white-space:nowrap;font-weight:800}.liveEmpty{font-size:12px;color:#738ba4;padding:4px 0}.liveMore{font-size:11px;color:#8fb0cf;font-weight:800;margin-top:3px}
-.people{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.person{position:relative;min-height:67px;border-radius:14px;border:1px solid #2b4664;background:#0a1625;color:#fff;text-align:right;padding:10px 44px 9px 11px}.person .name{display:block;font-size:17px;font-weight:950;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.person .time{display:block;margin-top:4px;font-size:12px;color:#9cb2c8;direction:ltr;unicode-bidi:isolate;text-align:right}.person .edit{position:absolute;right:9px;top:19px;width:29px;height:29px;border-radius:9px;border:1px solid #34516f;background:#14263c;color:#dce9f7;display:grid;place-items:center;font-size:14px}.person.on{background:linear-gradient(135deg,#123d51,#174c8f);border-color:#52d2fa;box-shadow:0 0 0 1px rgba(82,210,250,.22)}.person.on:after{content:'✓';position:absolute;left:9px;top:9px;width:24px;height:24px;border-radius:50%;background:var(--green);display:grid;place-items:center;font-weight:950;font-size:15px}.person .noteDot{position:absolute;left:13px;bottom:10px;width:7px;height:7px;border-radius:50%;background:#ffd166}
-.empty{grid-column:1/-1;text-align:center;color:#8298b0;padding:24px 8px;border:1px dashed #294563;border-radius:14px;font-weight:800}
-.quickActions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-top:9px}.sm{height:38px;border-radius:11px;border:1px solid #2d4d6d;background:#15273e;color:#eaf3fb;font-weight:850;font-size:13px}.sm.green{background:#123929;border-color:#1d694c;color:#d9ffee}.sm.red{background:#2c171d;border-color:#663640;color:#ffd0d5}
-.noteArea{width:100%;min-height:66px;border-radius:13px;border:1px solid #2a4867;background:#0a1524;color:#fff;padding:10px 11px;resize:vertical;font-size:14px;outline:none}
-.manageBtn{width:100%;height:44px;border-radius:12px;border:1px solid #2f4d6d;background:#15273f;color:#eaf3fb;font-weight:900}
-.sticky{position:fixed;left:0;right:0;bottom:0;background:linear-gradient(180deg,rgba(11,18,32,0),rgba(11,18,32,.96) 28%,rgba(11,18,32,1));padding:22px 10px calc(10px + env(safe-area-inset-bottom));z-index:20}.stickyInner{max-width:760px;margin:auto;display:grid;grid-template-columns:1.35fr .65fr;gap:7px}.big{height:52px;border-radius:14px;border:0;font-weight:950;font-size:16px}.big.primary{background:linear-gradient(135deg,var(--cyan),var(--blue));color:#fff}.big.secondary{background:#17283f;color:#edf6ff;border:1px solid #2d4d6c}
-.sheet{position:fixed;inset:0;background:rgba(0,0,0,.68);display:none;align-items:flex-end;z-index:50}.sheet.open{display:flex}.sheetBox{width:100%;max-width:760px;margin:auto;background:#101e31;border-radius:22px 22px 0 0;padding:14px 12px calc(18px + env(safe-area-inset-bottom));border-top:1px solid #345372}.sheetBox h3{margin:0 0 10px;font-size:20px}.formGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.formGrid input,.formGrid textarea{width:100%;border-radius:12px;border:1px solid #2d4b69;background:#091522;color:#fff;padding:11px}.formGrid textarea{grid-column:1/-1;min-height:76px;resize:vertical}.sheetBtns{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:10px}.sheetBtns button,.danger{height:44px;border-radius:12px;border:0;font-weight:950}.save{background:linear-gradient(135deg,var(--cyan),var(--blue));color:#fff}.cancel{background:#1b2b40;color:#e8f2fa;border:1px solid #304c6a!important}.danger{width:100%;margin-top:8px;background:#2b171c;color:#ffd2d7;border:1px solid #6b3740!important}
-.manageList{display:grid;gap:7px;max-height:42vh;overflow:auto;margin:10px 0}.manageRow{display:grid;grid-template-columns:1fr auto;gap:7px;align-items:center;background:#0a1625;border:1px solid #294563;border-radius:12px;padding:9px}.manageRow .mname{font-weight:900}.manageRow .mtime{font-size:11px;color:#95abc3;direction:ltr;unicode-bidi:isolate;text-align:right;margin-top:2px}.manageRow button{height:34px;border-radius:10px;border:1px solid #6a3940;background:#2d171c;color:#ffcbd1;font-weight:900;padding:0 11px}
-.addRow{display:grid;grid-template-columns:1.2fr .8fr .8fr auto;gap:7px}.addRow input{height:42px;border-radius:11px;border:1px solid #2d4b69;background:#091522;color:#fff;padding:0 10px;min-width:0}.addRow button{height:42px;border-radius:11px;border:0;background:linear-gradient(135deg,var(--cyan),var(--blue));color:#fff;font-weight:950;padding:0 13px}
-.preview{display:none}
-@media(max-width:430px){.app{padding:8px 8px calc(92px + env(safe-area-inset-bottom))}.header h1{font-size:25px}.people{grid-template-columns:1fr 1fr}.person{min-height:64px;padding-right:41px}.person .name{font-size:16px}.quickActions{grid-template-columns:1fr 1fr 1fr}.addRow{grid-template-columns:1fr 1fr}.addRow input:first-child{grid-column:1/-1}.addRow button{grid-column:1/-1}}
-</style>
+<link rel="stylesheet" href="work_schedule_dashboard.css?v=1.4.0">
 </head>
 <body>
 <div class="app">
-  <div class="header"><div><h1>WORK SCHEDULE</h1><div class="headerMeta">מחלקת AST · סוג משמרת ב׳ · גרסה 1.3.2</div></div><div class="range" id="rangeText"></div></div>
+  <div class="header">
+    <div>
+      <h1>WORK SCHEDULE</h1>
+      <div class="headerMeta">מחלקת AST · סוג משמרת ב׳ · PRO v1.4.0</div>
+    </div>
+    <div class="range" id="rangeText"></div>
+  </div>
 
   <section class="card">
-    <div class="week">
-      <button type="button" class="nav" id="nextWeek">›</button>
-      <input class="date" id="weekStart" type="date">
-      <button type="button" class="nav" id="prevWeek">‹</button>
+    <div class="sectionTitle"><b>טווח תאריכים</b><small>מתאריך עד תאריך</small></div>
+    <div class="periodBar">
+      <button type="button" class="nav" id="nextRange">›</button>
+      <input class="date" id="rangeStart" type="date">
+      <input class="date" id="rangeEnd" type="date">
+      <button type="button" class="nav" id="prevRange">‹</button>
+    </div>
+    <div class="inlineMeta" id="rangeMeta"></div>
+    <div class="quickTop">
+      <button type="button" class="topBtn" id="resetHiddenBtn">הצג את כל הימים</button>
+      <button type="button" class="topBtn red" id="toggleHideDayBtn">הסתר יום נבחר</button>
     </div>
   </section>
 
   <section class="card">
+    <div class="sectionTitle"><b>ימי עבודה</b><small>לחץ לבחירה</small></div>
     <div class="days" id="days"></div>
   </section>
 
   <section class="card">
-    <div class="titleRow"><b>תצוגת שיבוץ בזמן אמת</b><small>מתעדכן מיד</small></div>
+    <div class="sectionTitle"><b>תצוגת שיבוץ בזמן אמת</b><small>מתעדכן מיד</small></div>
     <div class="liveGrid" id="liveGrid"></div>
   </section>
 
   <section class="card">
-    <div class="titleRow"><b id="assignTitle">שיבוץ עובדים</b><small id="assignCount"></small></div>
+    <div class="sectionTitle"><b id="assignTitle">שיבוץ עובדים</b><small id="assignCount"></small></div>
     <div class="people" id="people"></div>
     <div class="quickActions">
       <button type="button" class="sm green" id="allDayBtn">כולם</button>
       <button type="button" class="sm red" id="clearDayBtn">נקה יום</button>
       <button type="button" class="sm" id="copyDayBtn">העתק יום</button>
+      <button type="button" class="sm" id="resetHiddenBtnBottom">בטל הסתרות</button>
     </div>
   </section>
 
   <section class="card">
-    <div class="titleRow"><b id="dayNoteTitle">הערה ליום</b><small>אופציונלי</small></div>
+    <div class="sectionTitle"><b id="dayNoteTitle">הערה ליום</b><small>אופציונלי</small></div>
     <textarea class="noteArea" id="dayNoteInput" placeholder="הערה כללית ליום"></textarea>
   </section>
 
@@ -76,7 +63,7 @@ button{cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manip
     <button type="button" class="manageBtn" id="manageBtn">ניהול עובדים</button>
   </section>
 
-  <canvas id="reportCanvas" class="preview" width="1080" height="1760"></canvas>
+  <canvas id="reportCanvas" class="preview" width="1080" height="1800"></canvas>
 </div>
 
 <div class="sticky"><div class="stickyInner">
@@ -126,202 +113,7 @@ button{cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manip
   </div>
 </div>
 
-<script>
-(function(){
-'use strict';
-const D=[{k:'sun',l:"א׳",n:"יום א׳"},{k:'mon',l:"ב׳",n:"יום ב׳"},{k:'tue',l:"ג׳",n:"יום ג׳"},{k:'wed',l:"ד׳",n:"יום ד׳"},{k:'thu',l:"ה׳",n:"יום ה׳"},{k:'fri',l:"ו׳",n:"יום ו׳"}];
-const $=id=>document.getElementById(id);
-const STORE='fastScheduleV5';
-let S={start:'',selected:'sun',workers:[],dayNotes:{}};
-let editingWorkerId=null;
-function uid(){return 'w'+Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
-function iso(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
-function sunOf(date){const d=new Date(date);d.setHours(12,0,0,0);d.setDate(d.getDate()-d.getDay());return d}
-function addDays(v,n){const d=new Date(v+'T12:00:00');d.setDate(d.getDate()+n);return d}
-function heDate(d,year){return d.toLocaleDateString('he-IL',year?{day:'2-digit',month:'2-digit',year:'numeric'}:{day:'2-digit',month:'2-digit'})}
-function rangeText(){return heDate(addDays(S.start,0),true)+' - '+heDate(addDays(S.start,5),true)}
-function esc(s){return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[m]))}
-function fmtRange(from,to){return '\u200E'+String(from||'')+'–'+String(to||'')+'\u200E'}
-function dayLabel(k){return (D.find(x=>x.k===k)||{}).n||k}
-function persist(){try{localStorage.setItem(STORE,JSON.stringify(S))}catch(e){}}
-function migrate(){
-  try{
-    const old=JSON.parse(localStorage.getItem('fastScheduleV4')||'null');
-    if(old&&Array.isArray(old.workers)){
-      S.start=old.start||S.start;S.selected=old.selected||S.selected;S.dayNotes=old.dayNotes||{};
-      S.workers=old.workers.map(w=>({id:w.id||uid(),name:w.name||'',from:w.from||'16:30',to:w.to||'22:00',days:w.days||{}}));
-      persist();return true;
-    }
-  }catch(e){}
-  return false;
-}
-function load(){
-  let ok=false;
-  try{const raw=JSON.parse(localStorage.getItem(STORE)||'null');if(raw&&Array.isArray(raw.workers)){S=Object.assign(S,raw);ok=true}}catch(e){}
-  if(!ok)migrate();
-  if(!S.start)S.start=iso(sunOf(new Date()));
-  if(!D.some(x=>x.k===S.selected))S.selected='sun';
-  render();
-}
-function assigned(w,k){return !!(w.days&&w.days[k])}
-function info(w,k){const d=w.days&&w.days[k];return d?{from:d.from||w.from||'16:30',to:d.to||w.to||'22:00',note:d.note||''}:{from:w.from||'16:30',to:w.to||'22:00',note:''}}
-function countDay(k){return S.workers.filter(w=>assigned(w,k)).length}
-function renderLive(){
-  const box=$('liveGrid');if(!box)return;
-  box.innerHTML=D.map((d,i)=>{
-    const arr=S.workers.filter(w=>assigned(w,d.k));
-    const rows=arr.slice(0,4).map(w=>{const x=info(w,d.k);return '<div class="liveWorker"><strong>'+esc(w.name)+'</strong><em>'+fmtRange(x.from,x.to)+'</em></div>'}).join('');
-    return '<button type="button" class="liveDay '+(S.selected===d.k?'active':'')+'" data-live-day="'+d.k+'"><div class="liveHead"><b>'+d.n+'</b><span>'+heDate(addDays(S.start,i),false)+' · '+arr.length+'</span></div><div class="liveWorkers">'+(rows||'<div class="liveEmpty">אין שיבוץ</div>')+(arr.length>4?'<div class="liveMore">+'+(arr.length-4)+' נוספים</div>':'')+'</div></button>';
-  }).join('');
-  box.querySelectorAll('[data-live-day]').forEach(b=>b.addEventListener('click',()=>{S.selected=b.dataset.liveDay;render()}));
-}
-function render(){
-  $('rangeText').textContent=rangeText();$('weekStart').value=S.start;
-  $('days').innerHTML=D.map((d,i)=>'<button type="button" class="day '+(S.selected===d.k?'active ':'')+(countDay(d.k)?'has':'')+'" data-day="'+d.k+'">'+d.l+'<small>'+heDate(addDays(S.start,i),false)+' · '+countDay(d.k)+'</small></button>').join('');
-  document.querySelectorAll('[data-day]').forEach(b=>b.addEventListener('click',()=>{S.selected=b.dataset.day;render()}));
-  renderLive();
-  const label=D.find(x=>x.k===S.selected)?.n||'';
-  $('assignTitle').textContent='שיבוץ עובדים · '+label;$('assignCount').textContent=countDay(S.selected)+' משובצים';
-  if(!S.workers.length)$('people').innerHTML='<div class="empty">אין עובדים. הוסף דרך “ניהול עובדים”.</div>';
-  else $('people').innerHTML=S.workers.map(w=>{
-    const on=assigned(w,S.selected),x=info(w,S.selected);
-    return '<button type="button" class="person '+(on?'on':'')+'" data-person="'+w.id+'"><span class="edit" data-edit="'+w.id+'">⚙︎</span><span class="name">'+esc(w.name)+'</span><span class="time">'+fmtRange(x.from,x.to)+'</span>'+(x.note?'<span class="noteDot"></span>':'')+'</button>';
-  }).join('');
-  document.querySelectorAll('[data-person]').forEach(b=>b.addEventListener('click',e=>{if(e.target.closest('[data-edit]'))return;toggleWorker(b.dataset.person)}));
-  document.querySelectorAll('[data-edit]').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();openWorker(b.dataset.edit)}));
-  $('dayNoteTitle').textContent='הערה ל'+label;$('dayNoteInput').value=S.dayNotes[S.selected]||'';
-  renderManage();drawReport();persist();
-}
-function toggleWorker(id){const w=S.workers.find(x=>x.id===id);if(!w)return;if(!w.days)w.days={};if(w.days[S.selected]){if(!confirm('להוריד את '+w.name+' מ'+dayLabel(S.selected)+'?'))return;delete w.days[S.selected];}else{w.days[S.selected]={from:w.from||'16:30',to:w.to||'22:00',note:''};}render()}
-function openWorker(id){const w=S.workers.find(x=>x.id===id);if(!w)return;editingWorkerId=id;const x=info(w,S.selected);$('workerSheetTitle').textContent=w.name+' · '+(D.find(d=>d.k===S.selected)?.n||'');$('workerFrom').value=x.from;$('workerTo').value=x.to;$('workerNote').value=x.note;$('workerSheet').classList.add('open')}
-function closeWorker(){$('workerSheet').classList.remove('open');editingWorkerId=null}
-function saveWorker(){const w=S.workers.find(x=>x.id===editingWorkerId);if(!w)return;if(!w.days)w.days={};w.days[S.selected]={from:$('workerFrom').value||w.from||'16:30',to:$('workerTo').value||w.to||'22:00',note:$('workerNote').value.trim()};closeWorker();render()}
-function markAll(){S.workers.forEach(w=>{if(!w.days)w.days={};if(!w.days[S.selected])w.days[S.selected]={from:w.from||'16:30',to:w.to||'22:00',note:''}});render()}
-function clearDay(){S.workers.forEach(w=>{if(w.days)delete w.days[S.selected]});render()}
-function shiftWeek(n){S.start=iso(addDays(S.start,n*7));render()}
-function openManage(){renderManage();$('manageSheet').classList.add('open')}
-function closeManage(){$('manageSheet').classList.remove('open');render()}
-function addWorker(){const name=$('newName').value.trim();if(!name){$('newName').focus();return}if(S.workers.some(w=>w.name.toLowerCase()===name.toLowerCase())){alert('העובד כבר קיים');return}S.workers.push({id:uid(),name,from:$('newFrom').value||'16:30',to:$('newTo').value||'22:00',days:{}});$('newName').value='';renderManage();persist();$('newName').focus()}
-function deleteWorker(id){const w=S.workers.find(x=>x.id===id);if(!w)return;if(!confirm('למחוק את העובד '+w.name+'?'))return;S.workers=S.workers.filter(x=>x.id!==id);renderManage();persist();render()}
-function renderManage(){
-  const box=$('manageList');if(!box)return;
-  if(!S.workers.length){box.innerHTML='<div class="empty">עדיין אין עובדים.</div>';return}
-  box.innerHTML=S.workers.map(w=>'<div class="manageRow"><div><div class="mname">'+esc(w.name)+'</div><div class="mtime">'+fmtRange(w.from,w.to)+'</div></div><button type="button" data-del="'+w.id+'">מחק</button></div>').join('');
-  box.querySelectorAll('[data-del]').forEach(b=>b.addEventListener('click',()=>deleteWorker(b.dataset.del)));
-}
-function resetData(){if(!confirm('לאפס את כל העובדים והשיבוצים?'))return;S={start:iso(sunOf(new Date())),selected:'sun',workers:[],dayNotes:{}};persist();$('manageSheet').classList.remove('open');render()}
-function openCopy(){
-  $('copyDays').innerHTML=D.filter(d=>d.k!==S.selected).map((d,i)=>'<button type="button" class="day" data-copy="'+d.k+'">'+d.l+'<small>'+d.n+'</small></button>').join('');
-  $('copyDays').querySelectorAll('[data-copy]').forEach(b=>b.addEventListener('click',()=>copyTo(b.dataset.copy)));
-  $('copySheet').classList.add('open');
-}
-function copyTo(target){
-  S.workers.forEach(w=>{if(!w.days)w.days={};if(w.days[S.selected])w.days[target]=JSON.parse(JSON.stringify(w.days[S.selected]));else delete w.days[target]});
-  S.dayNotes[target]=S.dayNotes[S.selected]||'';
-  $('copySheet').classList.remove('open');S.selected=target;render();
-}
-function rr(ctx,x,y,w,h,r){const q=Math.min(r,w/2,h/2);ctx.beginPath();ctx.moveTo(x+q,y);ctx.arcTo(x+w,y,x+w,y+h,q);ctx.arcTo(x+w,y+h,x,y+h,q);ctx.arcTo(x,y+h,x,y,q);ctx.arcTo(x,y,x+w,y,q);ctx.closePath()}
-function fit(ctx,text,max,start,min){let s=start;ctx.font='900 '+s+'px Arial';while(s>min&&ctx.measureText(text).width>max){s--;ctx.font='900 '+s+'px Arial'}return s}
-function wrap(ctx,text,max){const words=String(text||'').split(/\s+/),lines=[];let line='';for(const w of words){const t=line?line+' '+w:w;if(ctx.measureText(t).width>max&&line){lines.push(line);line=w}else line=t}if(line)lines.push(line);return lines}
-function drawReport(){
-  const c=$('reportCanvas'),ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);ctx.direction='rtl';
-  const W=c.width,H=c.height;
-  const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
-  const bg=ctx.createLinearGradient(0,0,0,H);bg.addColorStop(0,'#f8fbff');bg.addColorStop(1,'#ebf2fb');ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
-  ctx.fillStyle='#dff0ff';ctx.fillRect(0,0,W,18);
-  const top=ctx.createLinearGradient(0,0,W,0);top.addColorStop(0,'#21c7f0');top.addColorStop(1,'#3b82f6');ctx.fillStyle=top;ctx.fillRect(0,0,W,18);
-
-  // Header
-  ctx.textAlign='right';ctx.fillStyle='#102b4e';ctx.font='900 68px Arial';ctx.fillText('WORK SCHEDULE',1008,92);
-  ctx.fillStyle='#557595';ctx.font='800 28px Arial';ctx.fillText(rangeText(),1008,134);
-  ctx.textAlign='left';ctx.fillStyle='#5d7f9f';ctx.font='900 24px Arial';ctx.fillText('AST DEPARTMENT',66,92);
-
-  function pill(x,y,w,h,text,fill,textColor){
-    ctx.fillStyle=fill;ctx.strokeStyle='rgba(0,0,0,.03)';ctx.lineWidth=1;rr(ctx,x,y,w,h,h/2);ctx.fill();ctx.stroke();
-    ctx.textAlign='center';ctx.fillStyle=textColor;ctx.font='900 20px Arial';ctx.fillText(text,x+w/2,y+24);
-  }
-  pill(58,110,116,36,'AST','#e7f7ff','#1e6588');
-  pill(184,110,132,36,'SHIFT B','#e9f0ff','#355ea8');
-  pill(326,110,114,36,'v1.3.2','#eef3f8','#5e748d');
-
-  ctx.strokeStyle='#d5e6f5';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(60,168);ctx.lineTo(1020,168);ctx.stroke();
-
-  const mx=60,my=192,gx=20,gy=18,cw=470,ch=448;
-  D.forEach((d,i)=>{
-    const col=i%2,row=Math.floor(i/2),x=mx+col*(cw+gx),y=my+row*(ch+gy);
-
-    ctx.save();
-    ctx.shadowColor='rgba(16,43,78,0.08)';ctx.shadowBlur=20;ctx.shadowOffsetY=6;
-    ctx.fillStyle='#ffffff';rr(ctx,x,y,cw,ch,24);ctx.fill();
-    ctx.restore();
-    ctx.strokeStyle='#cddff0';ctx.lineWidth=2;rr(ctx,x,y,cw,ch,24);ctx.stroke();
-
-    const hg=ctx.createLinearGradient(x,y,x+cw,y);hg.addColorStop(0,'#e8f6ff');hg.addColorStop(1,'#d7efff');
-    ctx.fillStyle=hg;rr(ctx,x,y,cw,70,24);ctx.fill();ctx.fillRect(x,y+35,cw,35);
-    ctx.textAlign='right';ctx.fillStyle='#14375c';ctx.font='900 40px Arial';ctx.fillText(d.n,x+cw-18,y+47);
-    ctx.textAlign='left';ctx.fillStyle='#5f7c99';ctx.font='900 28px Arial';ctx.fillText(heDate(addDays(S.start,i),false),x+18,y+47);
-
-    let cy=y+96;const dn=S.dayNotes[d.k]||'';
-    if(dn){
-      ctx.fillStyle='#f2f8fe';ctx.strokeStyle='#dfeaf5';ctx.lineWidth=1.5;rr(ctx,x+16,cy-6,cw-32,72,14);ctx.fill();ctx.stroke();
-      ctx.textAlign='right';ctx.fillStyle='#5a738b';ctx.font='900 23px Arial';
-      const lines=wrap(ctx,'הערה: '+dn,cw-60).slice(0,2);lines.forEach((ln,j)=>ctx.fillText(ln,x+cw-28,cy+22+j*22));
-      cy+=80;
-    }
-
-    const arr=S.workers.filter(w=>assigned(w,d.k));
-    if(!arr.length){
-      ctx.textAlign='center';ctx.fillStyle='#a0b4c7';ctx.font='800 42px Arial';ctx.fillText('אין שיבוץ',x+cw/2,y+ch/2+10);return;
-    }
-
-    const available=Math.max(90,y+ch-20-cy);
-    const minRowH=40;
-    let maxFit=Math.max(1,Math.floor(available/minRowH));
-    let overflow=arr.length>maxFit;
-    const overflowSpace=overflow?30:0;
-    if(overflow){maxFit=Math.max(1,Math.floor((available-overflowSpace)/minRowH));overflow=arr.length>maxFit;}
-    const show=arr.slice(0,maxFit);
-    const usable=available-(overflow?overflowSpace:0);
-    const rowH=usable/show.length;
-    const nameBase=clamp(rowH*0.60,24,50);
-    const timeSize=clamp(rowH*0.40,20,34);
-    const noteSize=clamp(rowH*0.27,14,22);
-    const nameY=clamp(rowH*0.35,16,30);
-    const noteY=clamp(rowH*0.74,30,62);
-    const dividerOffset=clamp(rowH*0.18,8,16);
-
-    show.forEach((w,j)=>{
-      const v=info(w,d.k),yy=cy+j*rowH;
-      if(j){ctx.strokeStyle='#edf3f9';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x+18,yy-dividerOffset);ctx.lineTo(x+cw-18,yy-dividerOffset);ctx.stroke();}
-
-      ctx.textAlign='right';ctx.fillStyle='#102b4e';
-      const fs=fit(ctx,w.name,cw-190,Math.round(nameBase),22);
-      ctx.font='900 '+fs+'px Arial';ctx.fillText(w.name,x+cw-18,yy+nameY);
-
-      ctx.save();ctx.direction='ltr';ctx.textAlign='left';ctx.fillStyle='#2f628f';ctx.font='900 '+Math.round(timeSize)+'px Arial';ctx.fillText(fmtRange(v.from,v.to),x+18,yy+nameY);ctx.restore();ctx.direction='rtl';
-
-      if(v.note && rowH>=46){
-        ctx.textAlign='right';ctx.fillStyle='#7a8ea3';ctx.font='800 '+Math.round(noteSize)+'px Arial';
-        const limit=rowH<58?22:34;ctx.fillText(v.note.length>limit?v.note.slice(0,limit-1)+'…':v.note,x+cw-18,yy+noteY);
-      }
-    });
-
-    if(overflow){ctx.textAlign='center';ctx.fillStyle='#6f89a4';ctx.font='800 22px Arial';ctx.fillText('+'+(arr.length-show.length)+' עובדים נוספים',x+cw/2,y+ch-12);}
-  });
-
-  ctx.textAlign='center';ctx.fillStyle='#89a0b8';ctx.font='800 20px Arial';ctx.fillText('WORK SCHEDULE · AST DEPARTMENT · SHIFT B',540,H-18);
-}
-function canvasBlob(){return new Promise((res,rej)=>$('reportCanvas').toBlob(b=>b?res(b):rej(new Error('blob')),'image/png',1))}
-async function savePng(){try{const b=await canvasBlob(),u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download='WORK-SCHEDULE-AST-'+S.start+'.png';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1500)}catch(e){alert('לא ניתן לשמור תמונה במכשיר הזה')}}
-async function sharePng(){try{const b=await canvasBlob(),f=new File([b],'WORK-SCHEDULE-AST-'+S.start+'.png',{type:'image/png'});if(navigator.share&&(!navigator.canShare||navigator.canShare({files:[f]}))){await navigator.share({files:[f],title:'WORK SCHEDULE · AST'})}else await savePng()}catch(e){if(e&&e.name!=='AbortError')alert('השיתוף לא נתמך. השתמש בשמור PNG.')}}
-$('prevWeek').addEventListener('click',()=>shiftWeek(-1));$('nextWeek').addEventListener('click',()=>shiftWeek(1));$('weekStart').addEventListener('change',e=>{if(e.target.value){S.start=iso(sunOf(new Date(e.target.value+'T12:00:00')));render()}});
-$('allDayBtn').addEventListener('click',markAll);$('clearDayBtn').addEventListener('click',clearDay);$('copyDayBtn').addEventListener('click',openCopy);$('dayNoteInput').addEventListener('input',()=>{S.dayNotes[S.selected]=$('dayNoteInput').value.trim();persist();drawReport()});
-$('manageBtn').addEventListener('click',openManage);$('closeManage').addEventListener('click',closeManage);$('addWorkerBtn').addEventListener('click',addWorker);$('newName').addEventListener('keydown',e=>{if(e.key==='Enter')addWorker()});$('resetData').addEventListener('click',resetData);
-$('saveWorkerDay').addEventListener('click',saveWorker);$('cancelWorkerDay').addEventListener('click',closeWorker);$('workerSheet').addEventListener('click',e=>{if(e.target===$('workerSheet'))closeWorker()});
-$('closeCopy').addEventListener('click',()=>$('copySheet').classList.remove('open'));$('copySheet').addEventListener('click',e=>{if(e.target===$('copySheet'))$('copySheet').classList.remove('open')});
-$('manageSheet').addEventListener('click',e=>{if(e.target===$('manageSheet'))closeManage()});$('shareBtn').addEventListener('click',sharePng);$('saveBtn').addEventListener('click',savePng);
-load();
-})();
-</script>
+<script src="work_schedule_core.js?v=1.4.0"></script>
+<script src="work_schedule_report.js?v=1.4.0"></script>
 </body>
 </html>
