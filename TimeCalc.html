@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#0b0d12" />
+  <title>מחשבון זמן סיום</title>
+  <style>
+    *{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;background:#0b0d12;color:#f7f8fb}
+    body{min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:18px}
+    .app{width:min(100%,430px)}
+    h1{font-size:24px;margin:0 0 16px;text-align:center}
+    .card{background:#151922;border:1px solid #262c38;border-radius:22px;padding:16px;box-shadow:0 14px 40px #0007}
+    label{display:block;font-size:13px;color:#aeb6c5;margin:0 0 7px}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+    input{width:100%;height:54px;border:1px solid #303746;border-radius:14px;background:#0f131a;color:#fff;font-size:21px;text-align:center;outline:none;padding:0 10px}
+    input:focus{border-color:#7c8cff}
+    .quick{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:4px 0 14px}
+    button{border:0;border-radius:12px;height:42px;background:#242b38;color:#fff;font-size:15px;font-weight:700}
+    button:active{transform:scale(.98)}
+    .now{width:100%;margin:0 0 14px;background:#242b38}
+    .result{background:#0e1218;border:1px solid #303746;border-radius:18px;text-align:center;padding:18px 12px}
+    .result small{display:block;color:#98a2b3;font-size:13px;margin-bottom:4px}
+    #finish{font-size:44px;font-weight:800;letter-spacing:-1px;line-height:1}
+    #day{font-size:14px;color:#b9c1cf;margin-top:8px;min-height:18px}
+    .hint{text-align:center;color:#6f7989;font-size:11px;margin-top:12px}
+  </style>
+</head>
+<body>
+  <main class="app">
+    <h1>מחשבון זמן סיום</h1>
+    <section class="card">
+      <label for="start">שעת התחלה</label>
+      <input id="start" type="time" step="60" />
+      <button class="now" id="nowBtn" type="button">עכשיו</button>
+
+      <div class="row">
+        <div>
+          <label for="hours">שעות</label>
+          <input id="hours" type="number" min="0" max="999" inputmode="numeric" placeholder="0" />
+        </div>
+        <div>
+          <label for="minutes">דקות</label>
+          <input id="minutes" type="number" min="0" max="9999" inputmode="numeric" placeholder="0" />
+        </div>
+      </div>
+
+      <div class="quick">
+        <button type="button" data-min="15">+15 דק׳</button>
+        <button type="button" data-min="30">+30 דק׳</button>
+        <button type="button" data-min="60">+1 שעה</button>
+        <button type="button" data-min="120">+2 שעות</button>
+      </div>
+
+      <div class="result" aria-live="polite">
+        <small>שעת סיום</small>
+        <div id="finish">--:--</div>
+        <div id="day"></div>
+      </div>
+      <div class="hint">החישוב מתעדכן אוטומטית</div>
+    </section>
+  </main>
+
+  <script>
+    const start = document.getElementById('start');
+    const hours = document.getElementById('hours');
+    const minutes = document.getElementById('minutes');
+    const finish = document.getElementById('finish');
+    const day = document.getElementById('day');
+
+    const pad = n => String(n).padStart(2,'0');
+
+    function setNow(){
+      const d = new Date();
+      start.value = `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+      calc();
+    }
+
+    function calc(){
+      if(!start.value){ finish.textContent='--:--'; day.textContent=''; return; }
+      const [sh,sm] = start.value.split(':').map(Number);
+      const add = Math.max(0, Number(hours.value)||0)*60 + Math.max(0, Number(minutes.value)||0);
+      const total = sh*60 + sm + add;
+      const endMin = ((total % 1440) + 1440) % 1440;
+      const days = Math.floor(total / 1440);
+      finish.textContent = `${pad(Math.floor(endMin/60))}:${pad(endMin%60)}`;
+      day.textContent = days > 0 ? (days === 1 ? 'למחרת' : `בעוד ${days} ימים`) : 'היום';
+    }
+
+    document.getElementById('nowBtn').addEventListener('click', setNow);
+    [start,hours,minutes].forEach(el => el.addEventListener('input', calc));
+    document.querySelectorAll('[data-min]').forEach(btn => btn.addEventListener('click', () => {
+      minutes.value = (Number(minutes.value)||0) + Number(btn.dataset.min);
+      calc();
+    }));
+
+    setNow();
+  </script>
+</body>
+</html>
