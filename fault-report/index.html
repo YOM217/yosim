@@ -122,6 +122,16 @@ textarea{height:104px;resize:none;line-height:1.45}
 .btn.danger{background:linear-gradient(180deg,#f87171,#dc2626);color:#fff;box-shadow:0 8px 20px #dc262640}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--green);outline-offset:2px}
+
+/* Native iPhone controls and comfortable touch targets */
+select{display:block;width:100%;min-height:52px;padding:12px 14px;background:#0b0b0d;color:var(--text);border:1px solid var(--line2);border-radius:12px;font:16px -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;direction:rtl;text-align:right;outline:none}
+select:focus{border-color:var(--green)}
+.customEntry{margin-top:8px}
+input,textarea,select{font-size:16px!important;scroll-margin-top:100px;scroll-margin-bottom:140px}
+button,select{touch-action:manipulation}
+@media(max-width:380px){body{padding-left:10px;padding-right:10px}.card{padding:13px}.grid{gap:8px}.brand b{font-size:18px}.badge{font-size:11px;padding:5px 8px}}
+@media(max-width:340px){.grid{grid-template-columns:1fr}}
+@supports(height:100dvh){body{min-height:100dvh}}
 </style></head><body>
 <svg width="0" height="0" style="position:absolute"><defs>
 <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></symbol>
@@ -149,11 +159,11 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
 
 <section id="reportPage" class="page active"><div class="card">
 <div class="cardTitle"><svg><use href="#i-plus"/></svg><span id="formTitle">דיווח חדש</span></div>
-<div class="grid"><div><label for="station">שם עמדה</label><input id="station" list="stations" placeholder="בחר או הקלד" autocomplete="off"></div><div><label for="stationNo">מספר עמדה</label><input id="stationNo" list="stationNumbers" inputmode="numeric" placeholder="מס׳" autocomplete="off"></div></div>
-<label for="card">כרטיס</label><input id="card" list="cards" placeholder="בחר כרטיס או הקלד" autocomplete="off">
-<label for="machine">מכונה</label><input id="machine" list="machines" placeholder="בחר מכונה או הקלד" autocomplete="off">
+<div class="grid"><div><label for="station">שם עמדה</label><select id="station" aria-label="בחר עמדה"><option value="">בחר עמדה</option></select><input id="stationCustom" class="customEntry" dir="rtl" placeholder="הקלד ערך חדש" autocomplete="off" hidden></div><div><label for="stationNo">מספר עמדה</label><select id="stationNo" aria-label="בחר מספר"><option value="">בחר מספר</option></select><input id="stationNoCustom" class="customEntry" dir="rtl" placeholder="הקלד ערך חדש" autocomplete="off" hidden></div></div>
+<label for="card">כרטיס</label><select id="card" aria-label="בחר כרטיס"><option value="">בחר כרטיס</option></select><input id="cardCustom" class="customEntry" dir="rtl" placeholder="הקלד ערך חדש" autocomplete="off" hidden>
+<label for="machine">מכונה</label><select id="machine" aria-label="בחר מכונה"><option value="">בחר מכונה</option></select><input id="machineCustom" class="customEntry" dir="rtl" placeholder="הקלד ערך חדש" autocomplete="off" hidden>
 <label for="issue">תיאור התקלה <span class="req">*</span></label><textarea dir="rtl" id="issue" placeholder="מה קרה בפועל?"></textarea>
-<label for="notified">הגורם שקיבל עדכון</label><input id="notified" list="workers" placeholder="בחר גורם או הקלד" autocomplete="off">
+<label for="notified">הגורם שקיבל עדכון</label><select id="notified" aria-label="בחר גורם"><option value="">בחר גורם</option></select><input id="notifiedCustom" class="customEntry" dir="rtl" placeholder="הקלד ערך חדש" autocomplete="off" hidden>
 <button id="save" type="button" class="btn"><svg><use href="#i-save"/></svg><span id="saveTxt">שמור דיווח</span></button>
 <button id="cancelEdit" type="button" class="btn ghost" hidden><svg><use href="#i-x"/></svg>בטל עריכה</button>
 <p class="note"><svg><use href="#i-info"/></svg>הדיווח נשמר במכשיר. במסך ההיסטוריה אפשר לסנן, לבחור ולשתף.</p>
@@ -248,11 +258,17 @@ document.addEventListener("pointerdown",function(e){var b=e.target.closest&&e.ta
 
 /* ---------- Lists ---------- */
 function listValue(id){return q("#"+id).value.split(/\r?\n/).map(function(x){return x.trim()}).filter(function(x,i,a){return x&&a.indexOf(x)===i})}
-function setOptions(id,values){var dl=q("#"+id);dl.innerHTML="";values.forEach(function(v){var o=document.createElement("option");o.value=v;dl.appendChild(o)})}
+function setOptions(id,values){var map={stations:"station",stationNumbers:"stationNo",machines:"machine",cards:"card",workers:"notified"},sel=q("#"+map[id]);var previous=choiceValue(map[id]);sel.innerHTML="";var blank=document.createElement("option");blank.value="";blank.textContent="בחר מהרשימה";sel.appendChild(blank);values.forEach(function(v){var opt=document.createElement("option");opt.value=v;opt.textContent=v;sel.appendChild(opt)});var other=document.createElement("option");other.value="__other__";other.textContent="אחר — הקלדה ידנית";sel.appendChild(other);assignChoice(map[id],previous)}
 function loadLists(){var L=cfg.lists||{};var defaults={machines:["FT","Thermal 1","Thermal 2","Burn-In","הרעדה"],stations:["FT MBF","FT QFEM 424","FT QFEM 353","Burn-In MBF","Burn-In QFEM 424","Thermal 1","Thermal 2","הרעדה"],stationNumbers:["1","2","3","4"],cards:["MBF","EPS","QFEM 424","QFEM 353"],workers:["חיים","דימה","דניס","טים","אלכס","הראל"]};Object.keys(defaults).forEach(function(k){if(!Array.isArray(L[k])||!L[k].length)L[k]=defaults[k].slice()});cfg.lists=L;
   [["machines","machinesList"],["stations","stationsList"],["stationNumbers","stationNumbersList"],["cards","cardsList"],["workers","workersList"]].forEach(function(p){
     var v=Array.isArray(L[p[0]])?L[p[0]]:[];q("#"+p[1]).value=v.join(NL);setOptions(p[0],v)})}
 
+/* iPhone: native choice menus keep the keyboard closed until manual entry */
+var quickIds=["station","stationNo","card","machine","notified"];
+function choiceValue(id){var sel=q("#"+id);return sel.value==="__other__"?q("#"+id+"Custom").value.trim():sel.value.trim()}
+function assignChoice(id,value){var sel=q("#"+id),custom=q("#"+id+"Custom");if(!value){sel.value="";custom.value="";custom.hidden=true;return}var found=Array.prototype.some.call(sel.options,function(o){return o.value===value});sel.value=found?value:"__other__";custom.hidden=found;custom.value=found?"":value}
+quickIds.forEach(function(id){q("#"+id).addEventListener("change",function(){var custom=q("#"+id+"Custom");custom.hidden=this.value!=="__other__";if(this.value==="__other__")custom.focus();else custom.value=""})});
+document.addEventListener("focusin",function(e){if(e.target.matches('input:not([type="checkbox"]),textarea')){setTimeout(function(){if(document.activeElement===e.target)e.target.scrollIntoView({block:"center",behavior:"smooth"})},300)}});
 /* ---------- Selection ---------- */
 function getSelected(){return rows.filter(function(r){return selected[r.id]})}
 function pruneSelected(){var ok={};shown.forEach(function(r){ok[r.id]=1});Object.keys(selected).forEach(function(id){if(!ok[id])delete selected[id]})}
@@ -302,8 +318,8 @@ function removeIds(ids){var m={};ids.forEach(function(id){m[id]=1;delete selecte
   vibrate(15);setTimeout(render,cards.length?320:0)}
 
 /* ---------- Form / edit ---------- */
-function clearForm(){FIELDS.forEach(function(k){q("#"+k).value=""})}
-function startEdit(r){editingId=r.id;FIELDS.forEach(function(k){q("#"+k).value=r[k]||""});
+function clearForm(){FIELDS.forEach(function(k){if(quickIds.indexOf(k)>=0)assignChoice(k,"");else q("#"+k).value=""})}
+function startEdit(r){editingId=r.id;FIELDS.forEach(function(k){if(quickIds.indexOf(k)>=0)assignChoice(k,r[k]||"");else q("#"+k).value=r[k]||""});
   q("#saveTxt").textContent="עדכן דיווח "+r.reportNo;q("#formTitle").textContent="עריכת דיווח "+r.reportNo;q("#cancelEdit").hidden=false;
   var b=q("#badge");b.textContent="מצב עריכה";b.classList.add("edit");show("reportPage")}
 function stopEdit(clear){editingId=null;q("#saveTxt").textContent="שמור דיווח";q("#formTitle").textContent="דיווח חדש";q("#cancelEdit").hidden=true;
@@ -311,7 +327,7 @@ function stopEdit(clear){editingId=null;q("#saveTxt").textContent="שמור די
 q("#issue").addEventListener("input",function(){this.classList.remove("invalid")});
 
 q("#save").addEventListener("click",function(){
-  var v={};FIELDS.forEach(function(k){v[k]=q("#"+k).value.trim()});
+  var v={};FIELDS.forEach(function(k){v[k]=quickIds.indexOf(k)>=0?choiceValue(k):q("#"+k).value.trim()});
   if(!v.issue){var i=q("#issue");i.classList.remove("invalid");void i.offsetWidth;i.classList.add("invalid");i.focus();toast("יש למלא תיאור תקלה","err");return}
   if(editingId){var r=rows.filter(function(x){return x.id===editingId})[0];
     if(r){FIELDS.forEach(function(k){r[k]=v[k]});r.updatedAt=new Date().toISOString();saveRows();var no=r.reportNo;stopEdit(true);toast("דיווח "+no+" עודכן");show("historyPage");return}
