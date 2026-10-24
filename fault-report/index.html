@@ -1,0 +1,392 @@
+<!doctype html><html lang="he" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#08080a"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><title>דיווח תקלות</title>
+<style>
+:root{--bg:#08080a;--card:#141417;--card2:#1b1b1f;--line:#2a2a30;--line2:#3a3a42;--text:#f4f4f6;--muted:#9a9aa3;--green:#22c55e;--green2:#16a34a;--greenGlow:#22c55e40;--red:#f87171;--redBg:#2a1213;--amber:#fbbf24;--r:16px;--ease:cubic-bezier(.2,.8,.2,1)}
+[hidden]{display:none!important}*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{background:var(--bg)}
+body{margin:0;background:radial-gradient(1200px 500px at 50% -200px,#16301f55,transparent),var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Heebo",Arial,sans-serif;padding:env(safe-area-inset-top) 14px calc(96px + env(safe-area-inset-bottom));min-height:100vh;-webkit-font-smoothing:antialiased}
+main{max-width:460px;margin:auto}
+svg{width:18px;height:18px;flex:0 0 auto;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.top{position:sticky;top:0;z-index:5;height:64px;display:flex;align-items:center;justify-content:space-between;margin:0 -14px;padding:0 14px;background:linear-gradient(var(--bg) 60%,transparent)}
+.brand{display:flex;align-items:center;gap:10px}
+.logo{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;background:linear-gradient(135deg,var(--green),var(--green2));color:#04140a;box-shadow:0 6px 18px var(--greenGlow)}
+.logo svg{width:20px;height:20px}
+.brand b{font-size:20px;letter-spacing:-.2px}
+.badge{display:inline-flex;align-items:center;gap:6px;background:#12301d;color:var(--green);font-size:12px;font-weight:600;padding:6px 11px;border-radius:99px;border:1px solid #1d4a2c;transition:all .3s var(--ease)}
+.badge::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;animation:pulse 2s infinite}
+.badge.edit{background:#2e2410;color:var(--amber);border-color:#4a3a14}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.page{display:none}
+.page.active{display:block;animation:pageIn .35s var(--ease)}
+@keyframes pageIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.card{background:linear-gradient(180deg,var(--card2),var(--card));border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-bottom:12px;box-shadow:0 12px 30px #0008}
+.cardTitle{display:flex;align-items:center;gap:8px;font-size:16px;font-weight:700;margin-bottom:4px}
+.cardTitle svg{color:var(--green)}
+.grid{display:grid;grid-template-columns:1.25fr .75fr;gap:10px}
+.filters{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+label{display:block;color:var(--muted);font-size:12px;font-weight:600;margin:14px 0 6px}
+.grid label,.filters label{margin-top:12px}
+input,textarea{width:100%;padding:13px 14px;background:#0b0b0d;border:1px solid var(--line2);border-radius:12px;color:var(--text);font:16px inherit;font-family:inherit;outline:0;transition:border-color .2s,box-shadow .2s,background .2s}
+input::placeholder,textarea::placeholder{color:#5f5f68}
+input:focus,textarea:focus{border-color:var(--green);box-shadow:0 0 0 4px var(--greenGlow);background:#0d0f0d}
+input.invalid,textarea.invalid{border-color:var(--red);box-shadow:0 0 0 4px #f8717130;animation:shake .4s}
+@keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+input[type=date]{color-scheme:dark;min-height:48px}
+textarea{height:104px;resize:none;line-height:1.45}
+.req{color:var(--red)}
+/* buttons */
+.btn{position:relative;overflow:hidden;width:100%;min-height:52px;margin-top:12px;border:0;border-radius:14px;background:linear-gradient(180deg,#2bd168,var(--green2));color:#04140a;font:700 16px inherit;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:9px;cursor:pointer;box-shadow:0 8px 20px var(--greenGlow),inset 0 1px 0 #ffffff40;transition:transform .15s var(--ease),filter .2s,opacity .2s,box-shadow .2s}
+.btn:active{transform:scale(.97);filter:brightness(.93)}
+.btn.secondary{background:var(--card2);border:1px solid var(--line2);color:var(--text);box-shadow:none}
+.btn.secondary svg{color:var(--muted)}
+.btn.ghost{background:transparent;border:1px dashed var(--line2);color:var(--muted);box-shadow:none}
+.btn:disabled{opacity:.38;pointer-events:none;box-shadow:none}
+.btnRow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btnRow .btn{margin-top:10px}
+.ripple{position:absolute;border-radius:50%;background:#fff6;transform:scale(0);animation:ripple .55s ease-out;pointer-events:none}
+@keyframes ripple{to{transform:scale(3.2);opacity:0}}
+.chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line2);background:#0f0f12;color:var(--text);border-radius:99px;padding:8px 13px;font:600 13px inherit;font-family:inherit;cursor:pointer;transition:all .18s var(--ease)}
+.chip svg{width:15px;height:15px}
+.chip:active{transform:scale(.95)}
+.chip.danger{color:var(--red);border-color:#4a2323;background:var(--redBg)}
+.chip.on{background:#12301d;border-color:#1d4a2c;color:var(--green)}
+.chips{display:flex;flex-wrap:nowrap;gap:6px;margin-top:14px}.chips .chip{padding:8px 10px;white-space:nowrap;font-size:12.5px}
+.chips .spacer{flex:1}
+/* tabs */
+.tabs{position:fixed;z-index:20;bottom:0;left:0;right:0;display:flex;justify-content:center;padding:8px 12px calc(10px + env(safe-area-inset-bottom));background:#0a0a0ccc;backdrop-filter:blur(18px) saturate(1.4);-webkit-backdrop-filter:blur(18px) saturate(1.4);border-top:1px solid #222228}
+.tabsIn{position:relative;display:flex;width:100%;max-width:460px;gap:4px}
+.tabInd{position:absolute;top:0;bottom:0;width:calc((100% - 8px)/3);border-radius:14px;background:#1d1d22;border:1px solid #2c2c33;transition:transform .35s var(--ease)}
+.tabs button{position:relative;flex:1;border:0;background:transparent;color:var(--muted);font:600 11px inherit;font-family:inherit;display:flex;flex-direction:column;align-items:center;gap:4px;padding:9px 0 7px;cursor:pointer;transition:color .25s}
+.tabs button svg{width:22px;height:22px;transition:transform .3s var(--ease)}
+.tabs .on{color:var(--green)}
+.tabs .on svg{transform:translateY(-1px) scale(1.08)}
+.tabCount{position:absolute;top:3px;right:calc(50% - 22px);min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--green);color:#04140a;font-size:10px;font-weight:800;display:none;align-items:center;justify-content:center}
+.tabCount.show{display:flex;animation:pop .3s var(--ease)}
+@keyframes pop{from{transform:scale(0)}to{transform:scale(1)}}
+/* report list */
+.report{display:flex;gap:12px;align-items:flex-start;cursor:pointer;transition:border-color .2s,box-shadow .2s,transform .15s,opacity .3s,max-height .35s var(--ease),margin .35s,padding .35s;animation:cardIn .4s var(--ease) both;max-height:400px}
+.report:active{transform:scale(.99)}
+@keyframes cardIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.report.selected{border-color:var(--green);box-shadow:0 0 0 1px var(--greenGlow),0 12px 30px #0008;background:linear-gradient(180deg,#14251a,var(--card))}
+.report.leaving{opacity:0;transform:translateX(40px);max-height:0;padding-top:0;padding-bottom:0;margin-bottom:0;border-width:0}
+.check{appearance:none;-webkit-appearance:none;width:26px;height:26px;margin:2px 0 0;border-radius:8px;border:2px solid var(--line2);background:#0b0b0d;display:grid;place-items:center;cursor:pointer;transition:all .2s var(--ease);flex:0 0 auto;padding:0}
+.check::after{content:"";width:7px;height:12px;border:solid #04140a;border-width:0 3px 3px 0;transform:rotate(45deg) scale(0);margin-top:-3px;transition:transform .2s var(--ease)}
+.check:checked{background:var(--green);border-color:var(--green)}
+.check:checked::after{transform:rotate(45deg) scale(1)}
+.info{flex:1;min-width:0}
+.rHead{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.no{font-weight:800;font-size:15px;background:#0b0b0d;border:1px solid var(--line2);border-radius:8px;padding:2px 8px;font-variant-numeric:tabular-nums}
+.mach{font-weight:700;font-size:15px}
+.desc{margin-top:8px;line-height:1.5;font-size:15px;word-wrap:break-word}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
+.tag{font-size:11.5px;color:#c9c9d0;background:#202026;border:1px solid #2c2c33;border-radius:7px;padding:3px 8px}
+.meta{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--muted);margin-top:9px}
+.meta svg{width:13px;height:13px}
+.itemActions{display:flex;gap:8px;margin-top:12px}
+.mini{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line2);background:#202026;color:var(--text);border-radius:10px;padding:7px 12px;font:600 12.5px inherit;font-family:inherit;cursor:pointer;transition:all .15s var(--ease)}
+.mini svg{width:14px;height:14px}
+.mini:active{transform:scale(.94)}
+.mini.danger{color:var(--red);border-color:#4a2323;background:var(--redBg)}
+.empty{text-align:center;color:var(--muted);padding:38px 20px}
+.empty svg{width:46px;height:46px;color:#3a3a42;margin-bottom:10px}
+.empty b{display:block;color:var(--text);font-size:16px;margin-bottom:4px}
+.tools{position:sticky;bottom:calc(78px + env(safe-area-inset-bottom));z-index:4;margin-top:6px;padding:12px;border-radius:18px;background:#121215ee;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--line);box-shadow:0 -6px 30px #000a}
+.count{display:flex;align-items:center;justify-content:center;gap:6px;font-size:13px;color:var(--muted);font-weight:600}
+.count.has{color:var(--green)}
+.note{display:flex;gap:7px;font-size:12px;color:var(--muted);line-height:1.5;margin:12px 0 0}
+.note svg{width:15px;height:15px;margin-top:1px}
+.hint{font-size:12px;color:var(--muted);margin:10px 0 0}
+.divider{height:1px;background:var(--line);margin:18px 0 4px}
+/* toast */
+.toast{position:fixed;z-index:60;left:50%;top:calc(14px + env(safe-area-inset-top));transform:translate(-50%,-140%);display:flex;align-items:center;gap:10px;max-width:calc(100% - 28px);width:max-content;padding:12px 16px;border-radius:14px;background:#1d1d22f2;border:1px solid var(--line2);color:var(--text);font-size:14px;font-weight:600;box-shadow:0 16px 40px #000c;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);transition:transform .4s var(--ease);pointer-events:none}
+.toast.show{transform:translate(-50%,0)}
+.toast .ic{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;flex:0 0 auto}
+.toast .ic svg{width:14px;height:14px;stroke-width:3}
+.toast.ok .ic{background:var(--green);color:#04140a}
+.toast.err .ic{background:var(--red);color:#2a0606}
+.toast.info .ic{background:#3b82f6;color:#fff}
+/* modal */
+.modalBg{position:fixed;z-index:50;inset:0;background:#000a;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s}
+.modalBg.show{opacity:1;pointer-events:auto}
+.sheet{width:100%;max-width:460px;margin:0 10px calc(10px + env(safe-area-inset-bottom));background:var(--card2);border:1px solid var(--line2);border-radius:22px;padding:22px 18px 16px;text-align:center;transform:translateY(110%);transition:transform .35s var(--ease)}
+.modalBg.show .sheet{transform:none}
+.sheet .mIc{width:52px;height:52px;margin:0 auto 12px;border-radius:50%;display:grid;place-items:center;background:var(--redBg);color:var(--red)}
+.sheet .mIc svg{width:26px;height:26px}
+.sheet h3{margin:0 0 6px;font-size:18px}
+.sheet p{margin:0;color:var(--muted);font-size:14px;line-height:1.5}
+.sheet .btnRow{margin-top:8px}
+.btn.danger{background:linear-gradient(180deg,#f87171,#dc2626);color:#fff;box-shadow:0 8px 20px #dc262640}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--green);outline-offset:2px}
+</style></head><body>
+<svg width="0" height="0" style="position:absolute"><defs>
+<symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+<symbol id="i-list" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></symbol>
+<symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></symbol>
+<symbol id="i-save" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+<symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+<symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v6M14 11v6"/></symbol>
+<symbol id="i-edit" viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></symbol>
+<symbol id="i-filter" viewBox="0 0 24 24"><path d="M22 3H2l8 9.5V19l4 2v-8.5z"/></symbol>
+<symbol id="i-checks" viewBox="0 0 24 24"><path d="M18 6 7 17l-5-5M22 10l-7.5 7.5L13 16"/></symbol>
+<symbol id="i-wa" viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 21l2.1-5.4A8.4 8.4 0 1 1 21 11.5z"/></symbol>
+<symbol id="i-sheet" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18"/></symbol>
+<symbol id="i-share" viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8M16 6l-4-4-4 4M12 2v13"/></symbol>
+<symbol id="i-cloud" viewBox="0 0 24 24"><path d="M20 17.6A5 5 0 0 0 18 8h-1.3A8 8 0 1 0 4 16.3M12 12v9M8 17l4 4 4-4"/></symbol>
+<symbol id="i-restore" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5"/></symbol>
+<symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></symbol>
+<symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+<symbol id="i-inbox" viewBox="0 0 24 24"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.5 5.1 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.5-6.9A2 2 0 0 0 16.8 4H7.2a2 2 0 0 0-1.7 1.1z"/></symbol>
+<symbol id="i-alert" viewBox="0 0 24 24"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0zM12 9v4M12 17h.01"/></symbol>
+</defs></svg>
+<main>
+<header class="top"><div class="brand"><span class="logo"><svg><use href="#i-bolt"/></svg></span><b>דיווח תקלות</b></div><span id="badge" class="badge">מוכן לדיווח</span></header>
+
+<section id="reportPage" class="page active"><div class="card">
+<div class="cardTitle"><svg><use href="#i-plus"/></svg><span id="formTitle">דיווח חדש</span></div>
+<div class="grid"><div><label for="station">שם עמדה</label><input id="station" list="stations" placeholder="בחר או הקלד" autocomplete="off"></div><div><label for="stationNo">מספר עמדה</label><input id="stationNo" list="stationNumbers" inputmode="numeric" placeholder="מס׳" autocomplete="off"></div></div>
+<label for="card">כרטיס</label><input id="card" list="cards" placeholder="בחר כרטיס או הקלד" autocomplete="off">
+<label for="machine">מכונה</label><input id="machine" list="machines" placeholder="בחר מכונה או הקלד" autocomplete="off">
+<label for="issue">תיאור התקלה <span class="req">*</span></label><textarea id="issue" placeholder="מה קרה בפועל?"></textarea>
+<label for="notified">הגורם שקיבל עדכון</label><input id="notified" list="workers" placeholder="בחר גורם או הקלד" autocomplete="off">
+<button id="save" type="button" class="btn"><svg><use href="#i-save"/></svg><span id="saveTxt">שמור דיווח</span></button>
+<button id="cancelEdit" type="button" class="btn ghost" hidden><svg><use href="#i-x"/></svg>בטל עריכה</button>
+<p class="note"><svg><use href="#i-info"/></svg>הדיווח נשמר במכשיר. במסך ההיסטוריה אפשר לסנן, לבחור ולשתף.</p>
+</div></section>
+
+<section id="historyPage" class="page"><div class="card">
+<div class="cardTitle"><svg><use href="#i-filter"/></svg>סינון ובחירה</div>
+<div class="filters"><div><label for="from">מתאריך</label><input id="from" type="date"></div><div><label for="to">עד תאריך</label><input id="to" type="date"></div></div>
+<button id="apply" type="button" class="btn secondary"><svg><use href="#i-filter"/></svg>הצג לפי תאריכים</button>
+<div class="chips"><button id="toggle" type="button" class="chip"><svg><use href="#i-checks"/></svg>בחר הכל</button><span class="spacer"></span><button id="deleteSelected" type="button" class="chip danger"><svg><use href="#i-trash"/></svg>מחק מסומנים</button><button id="deleteAll" type="button" class="chip danger"><svg><use href="#i-trash"/></svg>מחק הכל</button></div>
+</div>
+<div id="list"></div>
+<div class="tools"><div id="count" class="count">לא נבחרו דיווחים</div>
+<button id="whatsapp" type="button" class="btn"><svg><use href="#i-wa"/></svg>שתף ב־WhatsApp</button>
+<div class="btnRow"><button id="download" type="button" class="btn secondary"><svg><use href="#i-sheet"/></svg>Excel</button><button id="mailSend" type="button" class="btn secondary"><svg><use href="#i-share"/></svg>שתף קובץ</button></div>
+</div></section>
+
+<section id="settingsPage" class="page"><div class="card">
+<div class="cardTitle"><svg><use href="#i-list"/></svg>רשימות בחירה מהירה</div>
+<p class="note"><svg><use href="#i-info"/></svg>כל פריט בשורה נפרדת. בטופס הדיווח תבחר אותו בלחיצה.</p>
+<label for="machinesList">מכונות</label><textarea id="machinesList" placeholder="מכונת חיתוך&#10;מכונת אריזה"></textarea>
+<label for="stationsList">עמדות</label><textarea id="stationsList" placeholder="עמדה 1&#10;עמדה 2"></textarea>
+<label for="stationNumbersList">מספרי עמדות</label><textarea id="stationNumbersList" placeholder="1&#10;2"></textarea>
+<label for="cardsList">כרטיסים</label><textarea id="cardsList" placeholder="כרטיס 101&#10;כרטיס 102"></textarea>
+<label for="workersList">גורמים שקיבלו עדכון</label><textarea id="workersList" placeholder="אחזקה&#10;חשמלאי&#10;מנהל משמרת"></textarea>
+<button id="saveSettings" type="button" class="btn"><svg><use href="#i-save"/></svg>שמור רשימות</button>
+</div>
+<div class="card">
+<div class="cardTitle"><svg><use href="#i-cloud"/></svg>גיבוי ושחזור</div>
+<p class="note"><svg><use href="#i-info"/></svg>הגיבוי כולל את כל הדיווחים, הרשימות ומספר הדיווח האחרון. לאחר ההורדה בחר שמירה ב־OneDrive.</p>
+<div class="btnRow"><button id="backup" type="button" class="btn secondary"><svg><use href="#i-cloud"/></svg>צור גיבוי</button><button id="restoreBtn" type="button" class="btn secondary"><svg><use href="#i-restore"/></svg>שחזר</button></div>
+<input id="restoreFile" type="file" accept=".json,application/json" hidden>
+</div></section>
+
+<datalist id="stations"></datalist><datalist id="stationNumbers"></datalist><datalist id="machines"></datalist><datalist id="cards"></datalist><datalist id="workers"></datalist>
+</main>
+<nav class="tabs"><div class="tabsIn"><span class="tabInd"></span>
+<button type="button" class="on" data-page="reportPage"><svg><use href="#i-plus"/></svg>דיווח</button>
+<button type="button" data-page="historyPage"><svg><use href="#i-list"/></svg>היסטוריה<span id="tabCount" class="tabCount"></span></button>
+<button type="button" data-page="settingsPage"><svg><use href="#i-gear"/></svg>הגדרות</button>
+</div></nav>
+<div id="toast" class="toast" role="status" aria-live="polite"><span class="ic"></span><span id="toastTxt"></span></div>
+<div id="modal" class="modalBg" role="dialog" aria-modal="true" aria-labelledby="mTitle"><div class="sheet"><div class="mIc"><svg><use href="#i-alert"/></svg></div><h3 id="mTitle"></h3><p id="mText"></p><div class="btnRow"><button id="mCancel" type="button" class="btn secondary">ביטול</button><button id="mOk" type="button" class="btn danger">מחק</button></div></div></div>
+<script>(function(){
+"use strict";
+var q=function(s){return document.querySelector(s)},qa=function(s){return document.querySelectorAll(s)};
+var NL="\n",mem={};
+var store={get:function(k){try{return localStorage.getItem(k)}catch(e){return k in mem?mem[k]:null}},
+           set:function(k,v){try{localStorage.setItem(k,v)}catch(e){mem[k]=v}}};
+var RK="faultReportsV1",CK="faultConfigV1",SK="faultReportSequenceV1";
+var FIELDS=["station","stationNo","card","machine","issue","notified"];
+var HEAD=["מספר דיווח","תאריך","שעה","מכונה","שם עמדה","מספר עמדה","כרטיס","תיאור תקלה","הגורם שקיבל עדכון","הערות"];
+var rows=[],cfg={},selected={},shown=[],editingId=null,page="reportPage";
+
+function parse(k,def){try{var v=JSON.parse(store.get(k)||"null");return v==null?def:v}catch(e){return def}}
+rows=parse(RK,[]);if(!Array.isArray(rows))rows=[];
+cfg=parse(CK,{});if(!cfg||typeof cfg!=="object")cfg={};
+function saveRows(){store.set(RK,JSON.stringify(rows))}
+function two(n){return("0"+n).slice(-2)}
+function fmtDate(d){return two(d.getDate())+"."+two(d.getMonth()+1)+"."+d.getFullYear()}
+function fmtTime(d){return two(d.getHours())+":"+two(d.getMinutes())}
+function localKey(d){return d.getFullYear()+"-"+two(d.getMonth()+1)+"-"+two(d.getDate())}
+function dateKey(r){if(!r.createdAt)return"";var d=new Date(r.createdAt);return isNaN(d)?"":localKey(d)}
+function when(r){if(!r.createdAt)return"לא תועד";var d=new Date(r.createdAt);return fmtDate(d)+" · "+fmtTime(d)+(r.updatedAt?" · עודכן":"")}
+function icon(id){var s=document.createElementNS("http://www.w3.org/2000/svg","svg"),u=document.createElementNS("http://www.w3.org/2000/svg","use");u.setAttribute("href","#i-"+id);s.appendChild(u);return s}
+function el(tag,cls,txt){var e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e}
+function vibrate(ms){try{navigator.vibrate&&navigator.vibrate(ms)}catch(e){}}
+
+/* ---------- Toast ---------- */
+var tTimer;
+function toast(msg,type){type=type||"ok";var t=q("#toast"),ic=t.querySelector(".ic");
+  ic.innerHTML="";ic.appendChild(icon(type==="ok"?"save":type==="err"?"x":"info"));
+  q("#toastTxt").textContent=msg;t.className="toast "+type;void t.offsetWidth;t.classList.add("show");
+  clearTimeout(tTimer);tTimer=setTimeout(function(){t.classList.remove("show")},2600);if(type==="err")vibrate(30)}
+
+/* ---------- Confirm sheet ---------- */
+var mResolve=null;
+function ask(title,text,okTxt){return new Promise(function(res){
+  q("#mTitle").textContent=title;q("#mText").textContent=text;q("#mOk").textContent=okTxt||"מחק";
+  mResolve=res;q("#modal").classList.add("show");setTimeout(function(){q("#mCancel").focus()},50)})}
+function closeAsk(v){q("#modal").classList.remove("show");var r=mResolve;mResolve=null;if(r)r(v)}
+q("#mOk").addEventListener("click",function(){closeAsk(true)});
+q("#mCancel").addEventListener("click",function(){closeAsk(false)});
+q("#modal").addEventListener("click",function(e){if(e.target===this)closeAsk(false)});
+document.addEventListener("keydown",function(e){if(e.key==="Escape"&&mResolve)closeAsk(false)});
+
+/* ---------- Ripple ---------- */
+document.addEventListener("pointerdown",function(e){var b=e.target.closest&&e.target.closest(".btn");if(!b||b.disabled)return;
+  var r=b.getBoundingClientRect(),s=Math.max(r.width,r.height),sp=el("span","ripple");
+  sp.style.width=sp.style.height=s+"px";sp.style.left=(e.clientX-r.left-s/2)+"px";sp.style.top=(e.clientY-r.top-s/2)+"px";
+  b.appendChild(sp);setTimeout(function(){sp.remove()},600)});
+
+/* ---------- Lists ---------- */
+function listValue(id){return q("#"+id).value.split(/\r?\n/).map(function(x){return x.trim()}).filter(function(x,i,a){return x&&a.indexOf(x)===i})}
+function setOptions(id,values){var dl=q("#"+id);dl.innerHTML="";values.forEach(function(v){var o=document.createElement("option");o.value=v;dl.appendChild(o)})}
+function loadLists(){var L=cfg.lists||{};
+  [["machines","machinesList"],["stations","stationsList"],["stationNumbers","stationNumbersList"],["cards","cardsList"],["workers","workersList"]].forEach(function(p){
+    var v=Array.isArray(L[p[0]])?L[p[0]]:[];q("#"+p[1]).value=v.join(NL);setOptions(p[0],v)})}
+
+/* ---------- Selection ---------- */
+function getSelected(){return rows.filter(function(r){return selected[r.id]})}
+function pruneSelected(){var ok={};shown.forEach(function(r){ok[r.id]=1});Object.keys(selected).forEach(function(id){if(!ok[id])delete selected[id]})}
+function count(){var n=getSelected().length,c=q("#count");
+  c.textContent=n?(n===1?"דיווח 1 נבחר":n+" דיווחים נבחרו"):"סמן דיווחים כדי לשתף או לייצא";c.classList.toggle("has",n>0);
+  ["#whatsapp","#download","#mailSend"].forEach(function(s){q(s).disabled=!n});
+  q("#deleteSelected").disabled=!n;q("#deleteSelected").style.opacity=n?1:.45;
+  var all=shown.length&&shown.every(function(r){return selected[r.id]}),tg=q("#toggle");
+  tg.lastChild.textContent=all?"בטל בחירה":"בחר הכל";tg.classList.toggle("on",!!all);
+  q("#deleteAll").style.display=rows.length?"":"none"}
+function tabBadge(){var t=q("#tabCount");t.textContent=rows.length>99?"99+":rows.length;t.classList.toggle("show",rows.length>0)}
+function visible(){var f=q("#from").value,t=q("#to").value;return rows.filter(function(r){var d=dateKey(r);return(!f||d>=f)&&(!t||d<=t)})}
+
+/* ---------- History ---------- */
+function render(){
+  shown=visible();pruneSelected();tabBadge();
+  var box=q("#list");box.innerHTML="";
+  if(!shown.length){var e=el("div","card empty");e.appendChild(icon("inbox"));
+    e.appendChild(el("b",null,rows.length?"אין דיווחים בטווח הזה":"עדיין אין דיווחים"));
+    e.appendChild(el("div",null,rows.length?"נסה טווח תאריכים אחר":"דיווח חדש יופיע כאן מיד לאחר השמירה"));
+    box.appendChild(e);count();return}
+  shown.forEach(function(r,i){
+    var card=el("article","card report"+(selected[r.id]?" selected":"")),check=el("input","check"),info=el("div","info"),
+        head=el("div","rHead"),tags=el("div","tags"),meta=el("div","meta"),actions=el("div","itemActions"),
+        edit=el("button","mini"),del=el("button","mini danger");
+    card.dataset.id=r.id;card.style.animationDelay=Math.min(i,8)*40+"ms";
+    check.type="checkbox";check.checked=!!selected[r.id];check.setAttribute("aria-label","בחר דיווח "+r.reportNo);
+    function setSel(v){if(v)selected[r.id]=true;else delete selected[r.id];check.checked=v;card.classList.toggle("selected",v);vibrate(8);count()}
+    check.addEventListener("change",function(){setSel(check.checked)});
+    card.addEventListener("click",function(e){if(e.target.closest("button,input"))return;setSel(!selected[r.id])});
+    head.appendChild(el("span","no",r.reportNo));if(r.machine)head.appendChild(el("span","mach",r.machine));
+    [r.station,r.stationNo?"עמדה "+r.stationNo:"",r.card?"כרטיס "+r.card:"",r.notified?"עודכן: "+r.notified:""].forEach(function(t){if(t)tags.appendChild(el("span","tag",t))});
+    meta.appendChild(icon("clock"));meta.appendChild(el("span",null,when(r)));
+    edit.type="button";edit.appendChild(icon("edit"));edit.appendChild(document.createTextNode("ערוך"));
+    edit.addEventListener("click",function(){startEdit(r)});
+    del.type="button";del.appendChild(icon("trash"));del.appendChild(document.createTextNode("מחק"));
+    del.addEventListener("click",function(){ask("למחוק את דיווח "+r.reportNo+"?","לא ניתן לבטל פעולה זו.").then(function(ok){if(ok){removeIds([r.id]);toast("דיווח "+r.reportNo+" נמחק")}})});
+    actions.appendChild(edit);actions.appendChild(del);
+    info.appendChild(head);info.appendChild(el("div","desc",r.issue||""));if(tags.childNodes.length)info.appendChild(tags);info.appendChild(meta);info.appendChild(actions);
+    card.appendChild(check);card.appendChild(info);box.appendChild(card)});
+  count()}
+
+function removeIds(ids){var m={};ids.forEach(function(id){m[id]=1;delete selected[id]});
+  rows=rows.filter(function(r){return!m[r.id]});if(editingId&&m[editingId])stopEdit(true);saveRows();tabBadge();
+  var cards=[].filter.call(qa("#list .report"),function(c){return m[c.dataset.id]});
+  cards.forEach(function(c){c.style.animation="none";c.style.maxHeight=c.offsetHeight+"px";void c.offsetWidth;c.classList.add("leaving")});
+  vibrate(15);setTimeout(render,cards.length?320:0)}
+
+/* ---------- Form / edit ---------- */
+function clearForm(){FIELDS.forEach(function(k){q("#"+k).value=""})}
+function startEdit(r){editingId=r.id;FIELDS.forEach(function(k){q("#"+k).value=r[k]||""});
+  q("#saveTxt").textContent="עדכן דיווח "+r.reportNo;q("#formTitle").textContent="עריכת דיווח "+r.reportNo;q("#cancelEdit").hidden=false;
+  var b=q("#badge");b.textContent="מצב עריכה";b.classList.add("edit");show("reportPage")}
+function stopEdit(clear){editingId=null;q("#saveTxt").textContent="שמור דיווח";q("#formTitle").textContent="דיווח חדש";q("#cancelEdit").hidden=true;
+  var b=q("#badge");b.textContent="מוכן לדיווח";b.classList.remove("edit");if(clear)clearForm()}
+q("#issue").addEventListener("input",function(){this.classList.remove("invalid")});
+
+q("#save").addEventListener("click",function(){
+  var v={};FIELDS.forEach(function(k){v[k]=q("#"+k).value.trim()});
+  if(!v.issue){var i=q("#issue");i.classList.remove("invalid");void i.offsetWidth;i.classList.add("invalid");i.focus();toast("יש למלא תיאור תקלה","err");return}
+  if(editingId){var r=rows.filter(function(x){return x.id===editingId})[0];
+    if(r){FIELDS.forEach(function(k){r[k]=v[k]});r.updatedAt=new Date().toISOString();saveRows();var no=r.reportNo;stopEdit(true);toast("דיווח "+no+" עודכן");show("historyPage");return}
+    stopEdit(false)}
+  var maxNo=rows.reduce(function(m,x){var n=parseInt(String(x.reportNo||"").replace(/\D/g,""),10);return n>m?n:m},0);
+  var next=Math.max(Number(store.get(SK)||"0")||0,maxNo)+1;store.set(SK,String(next));
+  var r2={id:Date.now().toString(36)+Math.random().toString(36).slice(2,7),reportNo:"A"+("000"+next).slice(-3),createdAt:new Date().toISOString()};
+  FIELDS.forEach(function(k){r2[k]=v[k]});rows.unshift(r2);saveRows();clearForm();tabBadge();vibrate(12);
+  toast("הדיווח נשמר · "+r2.reportNo)});
+q("#cancelEdit").addEventListener("click",function(){stopEdit(true);toast("העריכה בוטלה","info")});
+
+/* ---------- Navigation ---------- */
+var tabOrder=["reportPage","historyPage","settingsPage"];
+function show(p){page=p;qa(".page").forEach(function(x){x.classList.toggle("active",x.id===p)});
+  qa(".tabs button").forEach(function(x){x.classList.toggle("on",x.dataset.page===p)});
+  var i=tabOrder.indexOf(p);q(".tabInd").style.transform="translateX("+(-i*100)+"%) translateX("+(-i*4)+"px)";
+  if(p==="historyPage")render();window.scrollTo({top:0,behavior:"smooth"})}
+qa(".tabs button").forEach(function(b){b.addEventListener("click",function(){if(page!==b.dataset.page)show(b.dataset.page)})});
+
+/* ---------- History buttons ---------- */
+q("#apply").addEventListener("click",function(){var f=q("#from").value,t=q("#to").value;
+  if(f&&t&&f>t){toast("תאריך ההתחלה חייב להיות לפני תאריך הסיום","err");return}render();
+  toast(shown.length?"מוצגים "+shown.length+" דיווחים":"אין דיווחים בטווח","info")});
+q("#toggle").addEventListener("click",function(){if(!shown.length)return;
+  var all=shown.every(function(r){return selected[r.id]});
+  shown.forEach(function(r){if(all)delete selected[r.id];else selected[r.id]=true});
+  qa("#list .report").forEach(function(c){var on=!!selected[c.dataset.id];c.classList.toggle("selected",on);c.querySelector(".check").checked=on});count()});
+q("#deleteSelected").addEventListener("click",function(){var a=getSelected();
+  if(!a.length){toast("יש לסמן לפחות דיווח אחד למחיקה","err");return}
+  ask(a.length===1?"למחוק את הדיווח המסומן?":"למחוק "+a.length+" דיווחים מסומנים?","לא ניתן לבטל פעולה זו.").then(function(ok){
+    if(ok){removeIds(a.map(function(r){return r.id}));toast(a.length===1?"הדיווח נמחק":a.length+" דיווחים נמחקו")}})});
+q("#deleteAll").addEventListener("click",function(){if(!rows.length){toast("אין דיווחים למחיקה","info");return}
+  var n=rows.length;ask("למחוק את כל "+n+" הדיווחים?","מומלץ ליצור גיבוי לפני כן. לא ניתן לבטל.","מחק הכל").then(function(ok){
+    if(ok){removeIds(rows.map(function(r){return r.id}));toast("כל הדיווחים נמחקו")}})});
+
+/* ---------- Share / export ---------- */
+function rowText(r){var a=["*דיווח "+r.reportNo+"*"];
+  if(r.machine)a.push("מכונה: "+r.machine);if(r.station)a.push("שם עמדה: "+r.station);
+  if(r.stationNo)a.push("מספר עמדה: "+r.stationNo);if(r.card)a.push("כרטיס: "+r.card);
+  if(r.issue)a.push("תיאור תקלה: "+r.issue);if(r.notified)a.push("הגורם שקיבל עדכון: "+r.notified);
+  a.push("דווח: "+when(r));return a.join(NL)}
+function csvCell(v){return'"'+String(v==null?"":v).replace(/"/g,'""')+'"'}
+function buildCsv(a){var all=[HEAD];a.forEach(function(r){var d=r.createdAt?new Date(r.createdAt):null;
+  all.push([r.reportNo,d?fmtDate(d):"",d?fmtTime(d):"",r.machine,r.station,r.stationNo,r.card,r.issue,r.notified,""])});
+  return"\uFEFF"+all.map(function(row){return row.map(csvCell).join(",")}).join("\r\n")}
+function saveBlob(blob,name){var a=document.createElement("a"),u=URL.createObjectURL(blob);a.href=u;a.download=name;
+  document.body.appendChild(a);a.click();document.body.removeChild(a);setTimeout(function(){URL.revokeObjectURL(u)},4000)}
+function stamp(){var n=new Date();return localKey(n)+"_"+two(n.getHours())+"-"+two(n.getMinutes())}
+function need(a,what){if(!a.length){toast("יש לסמן לפחות דיווח אחד "+what,"err");return false}return true}
+
+q("#whatsapp").addEventListener("click",function(){var a=getSelected();if(!need(a,"לשליחה"))return;
+  var text=a.map(rowText).join(NL+NL);
+  if(navigator.share){navigator.share({text:text}).catch(function(e){if(e&&e.name!=="AbortError")location.href="https://wa.me/?text="+encodeURIComponent(text)});return}
+  location.href="https://wa.me/?text="+encodeURIComponent(text)});
+q("#download").addEventListener("click",function(){var a=getSelected();if(!need(a,"לייצוא"))return;
+  saveBlob(new Blob([buildCsv(a)],{type:"text/csv;charset=utf-8"}),"דיווחי_תקלות_"+stamp()+".csv");toast("הקובץ ירד · "+a.length+" דיווחים")});
+q("#mailSend").addEventListener("click",function(){var a=getSelected();if(!need(a,"לשיתוף"))return;
+  var name="דיווחי_תקלות_"+stamp()+".csv",csv=buildCsv(a),file=null;
+  try{file=new File([csv],name,{type:"text/csv"})}catch(e){}
+  if(file&&navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){navigator.share({title:"דיווחי תקלות",files:[file]}).catch(function(){});return}
+  saveBlob(new Blob([csv],{type:"text/csv;charset=utf-8"}),name);toast("הקובץ ירד. שתף אותו מתיקיית ההורדות","info")});
+
+/* ---------- Settings / backup / restore ---------- */
+q("#saveSettings").addEventListener("click",function(){
+  cfg={lists:{machines:listValue("machinesList"),stations:listValue("stationsList"),stationNumbers:listValue("stationNumbersList"),cards:listValue("cardsList"),workers:listValue("workersList")}};
+  store.set(CK,JSON.stringify(cfg));loadLists();toast("הרשימות נשמרו")});
+q("#backup").addEventListener("click",function(){var now=new Date(),
+  data={backupCreatedAt:now.toISOString(),backupCreatedAtDisplay:fmtDate(now)+" | "+fmtTime(now),reports:rows,settings:cfg,nextReportNumber:store.get(SK)||"0"};
+  saveBlob(new Blob([JSON.stringify(data,null,2)],{type:"application/json"}),"גיבוי_דיווחי_תקלות_"+stamp()+".json");
+  toast("גיבוי נוצר · שמור אותו ב־OneDrive")});
+q("#restoreBtn").addEventListener("click",function(){q("#restoreFile").value="";q("#restoreFile").click()});
+q("#restoreFile").addEventListener("change",function(){var f=this.files&&this.files[0];if(!f)return;
+  var rd=new FileReader();rd.onload=function(){var d;try{d=JSON.parse(rd.result)}catch(e){toast("קובץ הגיבוי אינו תקין","err");return}
+    if(!d||!Array.isArray(d.reports)){toast("הקובץ אינו גיבוי של דיווח תקלות","err");return}
+    ask("לשחזר "+d.reports.length+" דיווחים?",(d.backupCreatedAtDisplay?"גיבוי מ־"+d.backupCreatedAtDisplay+". ":"")+"הנתונים הנוכחיים יוחלפו.","שחזר").then(function(ok){if(!ok)return;
+      rows=d.reports.filter(function(r){return r&&r.id});cfg=d.settings&&typeof d.settings==="object"?d.settings:{};
+      store.set(SK,String(Math.max(Number(d.nextReportNumber)||0,0)));saveRows();store.set(CK,JSON.stringify(cfg));
+      selected={};stopEdit(true);loadLists();render();toast("השחזור הושלם · "+rows.length+" דיווחים")})};
+  rd.onerror=function(){toast("לא ניתן לקרוא את הקובץ","err")};rd.readAsText(f)});
+
+loadLists();tabBadge();count();
+})();
+</script></body></html>
