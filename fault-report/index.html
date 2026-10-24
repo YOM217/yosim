@@ -244,7 +244,7 @@ document.addEventListener("pointerdown",function(e){var b=e.target.closest&&e.ta
 /* ---------- Lists ---------- */
 function listValue(id){return q("#"+id).value.split(/\r?\n/).map(function(x){return x.trim()}).filter(function(x,i,a){return x&&a.indexOf(x)===i})}
 function setOptions(id,values){var dl=q("#"+id);dl.innerHTML="";values.forEach(function(v){var o=document.createElement("option");o.value=v;dl.appendChild(o)})}
-function loadLists(){var L=cfg.lists||{};
+function loadLists(){var L=cfg.lists||{};var defaults={machines:["FT","Thermal 1","Thermal 2","Burn-In","הרעדה"],stations:["FT MBF","FT QFEM 424","FT QFEM 353","Burn-In MBF","Burn-In QFEM 424","Thermal 1","Thermal 2","הרעדה"],stationNumbers:["1","2","3","4"],cards:["MBF","EPS","QFEM 424","QFEM 353"],workers:["חיים","דימה","דניס","טים","אלכס","הראל"]};Object.keys(defaults).forEach(function(k){if(!Array.isArray(L[k])||!L[k].length)L[k]=defaults[k].slice()});cfg.lists=L;
   [["machines","machinesList"],["stations","stationsList"],["stationNumbers","stationNumbersList"],["cards","cardsList"],["workers","workersList"]].forEach(function(p){
     var v=Array.isArray(L[p[0]])?L[p[0]]:[];q("#"+p[1]).value=v.join(NL);setOptions(p[0],v)})}
 
