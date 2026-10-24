@@ -27,6 +27,11 @@ label{display:block;color:var(--muted);font-size:12px;font-weight:600;margin:14p
 .grid label,.filters label{margin-top:12px}
 input,textarea{width:100%;padding:13px 14px;background:#0b0b0d;border:1px solid var(--line2);border-radius:12px;color:var(--text);font:16px inherit;font-family:inherit;outline:0;transition:border-color .2s,box-shadow .2s,background .2s}
 input::placeholder,textarea::placeholder{color:#5f5f68}
+/* Keep Hebrew form editing aligned right, including iOS Safari focus */
+input:not([type="checkbox"]):not([type="file"]),textarea,select{direction:rtl!important;text-align:right!important;unicode-bidi:plaintext}
+input::placeholder,textarea::placeholder{text-align:right;direction:rtl}
+input:focus,textarea:focus,select:focus{direction:rtl!important;text-align:right!important}
+
 input:focus,textarea:focus{border-color:var(--green);box-shadow:0 0 0 4px var(--greenGlow);background:#0d0f0d}
 input.invalid,textarea.invalid{border-color:var(--red);box-shadow:0 0 0 4px #f8717130;animation:shake .4s}
 @keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
@@ -147,7 +152,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
 <div class="grid"><div><label for="station">שם עמדה</label><input id="station" list="stations" placeholder="בחר או הקלד" autocomplete="off"></div><div><label for="stationNo">מספר עמדה</label><input id="stationNo" list="stationNumbers" inputmode="numeric" placeholder="מס׳" autocomplete="off"></div></div>
 <label for="card">כרטיס</label><input id="card" list="cards" placeholder="בחר כרטיס או הקלד" autocomplete="off">
 <label for="machine">מכונה</label><input id="machine" list="machines" placeholder="בחר מכונה או הקלד" autocomplete="off">
-<label for="issue">תיאור התקלה <span class="req">*</span></label><textarea id="issue" placeholder="מה קרה בפועל?"></textarea>
+<label for="issue">תיאור התקלה <span class="req">*</span></label><textarea dir="rtl" id="issue" placeholder="מה קרה בפועל?"></textarea>
 <label for="notified">הגורם שקיבל עדכון</label><input id="notified" list="workers" placeholder="בחר גורם או הקלד" autocomplete="off">
 <button id="save" type="button" class="btn"><svg><use href="#i-save"/></svg><span id="saveTxt">שמור דיווח</span></button>
 <button id="cancelEdit" type="button" class="btn ghost" hidden><svg><use href="#i-x"/></svg>בטל עריכה</button>
