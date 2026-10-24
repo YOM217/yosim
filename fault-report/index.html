@@ -367,7 +367,7 @@ q("#deleteAll").addEventListener("click",function(){if(!rows.length){toast("אי
 function rowText(r){var a=["*דיווח "+r.reportNo+"*"];
   if(r.machine)a.push("מכונה: "+r.machine);if(r.station)a.push("שם עמדה: "+r.station);
   if(r.stationNo)a.push("מספר עמדה: "+r.stationNo);if(r.card)a.push("כרטיס: "+r.card);
-  if(r.issue)a.push("תיאור תקלה: "+r.issue);if(r.notified)a.push("הגורם שקיבל עדכון: "+r.notified);
+  if(r.issue)a.push("*דיווח:* "+r.issue);if(r.notified)a.push("הגורם שקיבל עדכון: "+r.notified);
   a.push("דווח: "+when(r));return a.join(NL)}
 function csvCell(v){return'"'+String(v==null?"":v).replace(/"/g,'""')+'"'}
 function buildCsv(a){var all=[HEAD];a.forEach(function(r){var d=r.createdAt?new Date(r.createdAt):null;
