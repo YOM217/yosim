@@ -364,11 +364,15 @@ q("#deleteAll").addEventListener("click",function(){if(!rows.length){toast("אי
     if(ok){removeIds(rows.map(function(r){return r.id}));toast("כל הדיווחים נמחקו")}})});
 
 /* ---------- Share / export ---------- */
-function rowText(r){var a=["*דיווח "+r.reportNo+"*"];
-  if(r.machine)a.push("מכונה: "+r.machine);if(r.station)a.push("שם עמדה: "+r.station);
-  if(r.stationNo)a.push("מספר עמדה: "+r.stationNo);if(r.card)a.push("כרטיס: "+r.card);
-  if(r.issue)a.push("*דיווח:* "+r.issue);if(r.notified)a.push("הגורם שקיבל עדכון: "+r.notified);
-  a.push("דווח: "+when(r));return a.join(NL)}
+function rowText(r){var date=r.createdAt?new Date(r.createdAt):null;
+  var stamp=date&&!isNaN(date)?" | "+two(date.getDate())+"."+two(date.getMonth()+1)+" · "+fmtTime(date):"";
+  var a=["*דיווח "+r.reportNo+stamp+"*"];
+  var location=[r.machine,r.station,r.stationNo?"עמדה "+r.stationNo:""].filter(Boolean);
+  if(r.card)location.push("כרטיס "+r.card);
+  if(location.length)a.push("*"+location.join(" | ")+"*");
+  if(r.issue)a.push("*דיווח:* "+r.issue);
+  if(r.notified)a.push("*עודכן:* "+r.notified);
+  return a.join(NL)}
 function csvCell(v){return'"'+String(v==null?"":v).replace(/"/g,'""')+'"'}
 function buildCsv(a){var all=[HEAD];a.forEach(function(r){var d=r.createdAt?new Date(r.createdAt):null;
   all.push([r.reportNo,d?fmtDate(d):"",d?fmtTime(d):"",r.machine,r.station,r.stationNo,r.card,r.issue,r.notified,""])});
