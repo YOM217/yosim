@@ -366,7 +366,7 @@ q("#deleteAll").addEventListener("click",function(){if(!rows.length){toast("אי
 /* ---------- Share / export ---------- */
 function rowText(r){var a=["\u200E"+r.reportNo+"\u200E"];
   var location=[r.machine,r.station,r.stationNo?"עמדה "+r.stationNo:""].filter(Boolean);
-  if(r.card)location.push("כרטיס "+r.card);
+  if(r.card)location.push(r.card);
   if(location.length)a.push(location.join(" | "));
   if(r.issue)a.push("דיווח: *"+r.issue.replace(/\*/g,"")+"*");
   if(r.notified)a.push("עודכן: "+r.notified);
