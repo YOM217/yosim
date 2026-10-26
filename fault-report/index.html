@@ -364,12 +364,12 @@ q("#deleteAll").addEventListener("click",function(){if(!rows.length){toast("אי
     if(ok){removeIds(rows.map(function(r){return r.id}));toast("כל הדיווחים נמחקו")}})});
 
 /* ---------- Share / export ---------- */
-function rowText(r){var a=["*"+r.reportNo+"*"];
+function rowText(r){var a=["\u200E"+r.reportNo+"\u200E"];
   var location=[r.machine,r.station,r.stationNo?"עמדה "+r.stationNo:""].filter(Boolean);
   if(r.card)location.push("כרטיס "+r.card);
-  if(location.length)a.push("*"+location.join(" | ")+"*");
-  if(r.issue)a.push("*דיווח: "+r.issue.replace(/\*/g,"")+"*");
-  if(r.notified)a.push("*עודכן:* "+r.notified);
+  if(location.length)a.push(location.join(" | "));
+  if(r.issue)a.push("דיווח: *"+r.issue.replace(/\*/g,"")+"*");
+  if(r.notified)a.push("עודכן: "+r.notified);
   return a.join(NL)}
 function csvCell(v){return'"'+String(v==null?"":v).replace(/"/g,'""')+'"'}
 function buildCsv(a){var all=[HEAD];a.forEach(function(r){var d=r.createdAt?new Date(r.createdAt):null;
