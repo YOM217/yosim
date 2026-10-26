@@ -364,9 +364,7 @@ q("#deleteAll").addEventListener("click",function(){if(!rows.length){toast("אי
     if(ok){removeIds(rows.map(function(r){return r.id}));toast("כל הדיווחים נמחקו")}})});
 
 /* ---------- Share / export ---------- */
-function rowText(r){var date=r.createdAt?new Date(r.createdAt):null;
-  var stamp=date&&!isNaN(date)?" | "+two(date.getDate())+"."+two(date.getMonth()+1)+" · "+fmtTime(date):"";
-  var a=["*דיווח "+r.reportNo+stamp+"*"];
+function rowText(r){var a=["*"+r.reportNo+"*"];
   var location=[r.machine,r.station,r.stationNo?"עמדה "+r.stationNo:""].filter(Boolean);
   if(r.card)location.push("כרטיס "+r.card);
   if(location.length)a.push("*"+location.join(" | ")+"*");
