@@ -370,7 +370,7 @@ function rowText(r){var date=r.createdAt?new Date(r.createdAt):null;
   var location=[r.machine,r.station,r.stationNo?"עמדה "+r.stationNo:""].filter(Boolean);
   if(r.card)location.push("כרטיס "+r.card);
   if(location.length)a.push("*"+location.join(" | ")+"*");
-  if(r.issue)a.push("*דיווח:* "+r.issue);
+  if(r.issue)a.push("*דיווח: "+r.issue.replace(/\*/g,"")+"*");
   if(r.notified)a.push("*עודכן:* "+r.notified);
   return a.join(NL)}
 function csvCell(v){return'"'+String(v==null?"":v).replace(/"/g,'""')+'"'}
